@@ -1,5 +1,10 @@
 import { ComingSoon } from '@/components/coming-soon';
 
-export default function ServicePage({ params }: { params: { slug: string } }) {
-  return <ComingSoon title={`${params.slug} Service`} />;
+export default async function ServicePage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  return <ComingSoon title={`${slug} Service`} />;
 }

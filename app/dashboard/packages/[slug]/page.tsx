@@ -1,5 +1,10 @@
 import { ComingSoon } from '@/components/coming-soon';
 
-export default function PackagePage({ params }: { params: { slug: string } }) {
-  return <ComingSoon title={`${params.slug} Package`} />;
+export default async function PackagePage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  return <ComingSoon title={`${slug} Package`} />;
 }
