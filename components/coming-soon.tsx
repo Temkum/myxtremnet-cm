@@ -12,7 +12,7 @@ export function ComingSoon({ title }: { title: string }) {
         <h1 className="text-3xl font-bold tracking-tight capitalize">
           {title.replace('-', ' ')}
         </h1>
-        <p className="text-muted-foreground max-w-sm">
+        <p className="text-muted-foreground max-w-xs">
           This feature is currently under development.
         </p>
       </div>
