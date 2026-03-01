@@ -224,7 +224,7 @@ export default function AccountPage() {
       <Card>
         <Tabs defaultValue="account" className="w-full">
           <CardHeader className="border-b border-border pb-0">
-            <TabsList className="w-full justify-start">
+            <TabsList className="w-1/2 justify-start">
               <TabsTrigger value="account" className="flex items-center gap-2">
                 <User className="h-4 w-4" />
                 Account Information
