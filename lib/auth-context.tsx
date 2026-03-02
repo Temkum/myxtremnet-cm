@@ -1,18 +1,8 @@
 'use client';
 
-/**
- * lib/auth-context.tsx
- *
- * Replaces the old JWT-based context with Better Auth session management.
- * useSession() from Better Auth handles polling/revalidation automatically.
- *
- * The old manual fetch to /api/auth/get-session, login, register, and logout
- * are replaced by the Better Auth client methods.
- */
-
 import React, { createContext, useContext } from 'react';
 import { useSession, signOut, phoneNumber } from '@/lib/auth-client';
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@/i18n/navigation'; // locale-aware router, not next/navigation
 
 interface AuthContextType {
   user: {
@@ -31,6 +21,8 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
+  // useRouter from @/i18n/navigation automatically prepends the active locale.
+  // router.push('/') becomes /en/ or /fr/ depending on current locale.
   const router = useRouter();
   const { data: session, isPending } = useSession();
 
@@ -38,7 +30,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     ? {
         id: session.user.id,
         name: session.user.name,
-        // These fields come from the phoneNumber plugin & your custom schema
         phoneNumber: (session.user as any).phoneNumber ?? null,
         serviceId: (session.user as any).serviceId ?? null,
       }
@@ -61,6 +52,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const logout = async () => {
     await signOut();
+    // Pushes to /en/ or /fr/ automatically — no hardcoded locale
     router.push('/');
     router.refresh();
   };

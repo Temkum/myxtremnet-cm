@@ -1,7 +1,7 @@
 'use client';
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { useTranslations, useLocale } from 'next-intl';
+import { Link, usePathname, useRouter } from '@/i18n/navigation';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import {
@@ -25,23 +25,30 @@ import {
   ChevronDown,
   Rss,
 } from 'lucide-react';
-import { useLanguage } from '@/lib/language-context';
 import { useActivePath } from '@/hooks/use-active-path';
 import { useAuth } from '@/lib/auth-context';
 
-const navigation = [
-  { name: 'Dashboard', href: '/dashboard', icon: Home },
-  { name: 'Bundles', href: '/dashboard/bundles', icon: Rss },
-  { name: 'Product', href: '/dashboard/services', icon: Package },
-  { name: 'Account', href: '/dashboard/account', icon: Settings },
-  { name: 'Support', href: '/dashboard/support', icon: HelpCircle },
-];
-
 export function DashboardHeader() {
+  const t = useTranslations();
+  const locale = useLocale();
+  const router = useRouter();
   const pathname = usePathname();
-  const { language, setLanguage, t } = useLanguage();
   const { checkActive } = useActivePath();
   const { user, logout } = useAuth();
+
+  // Navigation labels come from translations
+  const navigation = [
+    { nameKey: 'nav.dashboard', href: '/dashboard', icon: Home },
+    { nameKey: 'nav.bundles', href: '/dashboard/bundles', icon: Rss },
+    { nameKey: 'nav.product', href: '/dashboard/services', icon: Package },
+    { nameKey: 'nav.account', href: '/dashboard/account', icon: Settings },
+    { nameKey: 'nav.support', href: '/dashboard/support', icon: HelpCircle },
+  ];
+
+  const switchLocale = (newLocale: string) => {
+    // useRouter from next-intl navigation preserves the current path
+    router.replace(pathname, { locale: newLocale });
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-card shadow-sm">
@@ -55,9 +62,7 @@ export function DashboardHeader() {
           />
           <div className="hidden md:block">
             <span className="text-xl font-bold text-primary">Camtel</span>
-            <p className="text-xs text-muted-foreground">
-              ...Et ce n'est pas fini!
-            </p>
+            <p className="text-xs text-muted-foreground">{t('nav.tagline')}</p>
           </div>
         </Link>
 
@@ -65,7 +70,7 @@ export function DashboardHeader() {
         <nav className="hidden md:flex items-center gap-1">
           {navigation.map((item) => (
             <Link
-              key={item.name}
+              key={item.href}
               href={item.href}
               className={cn(
                 'px-4 py-2 text-sm font-medium rounded-md transition-colors cursor-pointer',
@@ -74,14 +79,14 @@ export function DashboardHeader() {
                   : 'text-foreground hover:bg-secondary',
               )}
             >
-              {item.name}
+              {t(item.nameKey)}
             </Link>
           ))}
         </nav>
 
         {/* Right Section */}
         <div className="flex items-center gap-2">
-          {/* Language Toggle */}
+          {/* Language Switcher */}
           <div className="hidden md:flex items-center gap-1 text-sm text-muted-foreground">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -92,7 +97,9 @@ export function DashboardHeader() {
                 >
                   <Globe className="h-4 w-4" />
                   <span className="hidden sm:inline">
-                    {language === 'en' ? 'English' : 'Francais'}
+                    {locale === 'en'
+                      ? t('language.english')
+                      : t('language.french')}
                   </span>
                   <ChevronDown className="h-3 w-3" />
                 </Button>
@@ -102,24 +109,22 @@ export function DashboardHeader() {
                 className="animate-in fade-in-0 zoom-in-95"
               >
                 <DropdownMenuItem
-                  onClick={() => setLanguage('en')}
-                  className={
-                    language === 'en'
-                      ? 'bg-secondary cursor-pointer mb-1'
-                      : 'cursor-pointer'
-                  }
+                  onClick={() => switchLocale('en')}
+                  className={cn(
+                    'cursor-pointer',
+                    locale === 'en' && 'bg-secondary',
+                  )}
                 >
-                  English
+                  {t('language.english')}
                 </DropdownMenuItem>
                 <DropdownMenuItem
-                  onClick={() => setLanguage('fr')}
-                  className={
-                    language === 'fr'
-                      ? 'bg-secondary cursor-pointer mb-1'
-                      : 'cursor-pointer'
-                  }
+                  onClick={() => switchLocale('fr')}
+                  className={cn(
+                    'cursor-pointer',
+                    locale === 'fr' && 'bg-secondary',
+                  )}
                 >
-                  Francais
+                  {t('language.french')}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -131,7 +136,7 @@ export function DashboardHeader() {
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="rounded-full">
                   <User className="h-5 w-5" />
-                  <span className="sr-only">User menu</span>
+                  <span className="sr-only">{t('auth.userMenu')}</span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
@@ -145,25 +150,28 @@ export function DashboardHeader() {
                 <DropdownMenuItem asChild>
                   <Link href="/dashboard/account">
                     <User className="mr-2 h-4 w-4" />
-                    Profile
+                    {t('auth.profile')}
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <Link href="/dashboard/settings">
                     <Key className="mr-2 h-4 w-4" />
-                    Change Password
+                    {t('auth.changePassword')}
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="text-destructive" onClick={logout}>
+                <DropdownMenuItem
+                  className="text-destructive cursor-pointer"
+                  onClick={logout}
+                >
                   <LogOut className="mr-2 h-4 w-4" />
-                  Logout
+                  {t('auth.logout')}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
             <Button asChild>
-              <Link href="/login">Login</Link>
+              <Link href="/login">{t('auth.login')}</Link>
             </Button>
           )}
 
@@ -181,53 +189,60 @@ export function DashboardHeader() {
                   <div className="px-2 py-4 border-b border-border">
                     <p className="font-medium">{user.name}</p>
                     <p className="text-sm text-muted-foreground">
-                      Service: {user.phoneNumber}
+                      {user.phoneNumber}
                     </p>
                   </div>
                 ) : (
                   <div className="px-2 py-4 border-b border-border">
                     <Button asChild className="w-full">
-                      <Link href="/login">Login</Link>
+                      <Link href="/login">{t('auth.login')}</Link>
                     </Button>
                   </div>
                 )}
+
                 <nav className="flex flex-col gap-1">
                   {navigation.map((item) => {
-                    const isActive =
-                      pathname === item.href ||
-                      pathname.startsWith(item.href + '/');
                     const Icon = item.icon;
                     return (
                       <Link
-                        key={item.name}
+                        key={item.href}
                         href={item.href}
                         className={cn(
                           'flex items-center gap-3 px-3 py-2 rounded-md transition-colors',
-                          isActive
+                          checkActive(item.href)
                             ? 'bg-primary text-primary-foreground'
                             : 'text-foreground hover:bg-secondary',
                         )}
                       >
                         <Icon className="h-5 w-5" />
-                        {item.name}
+                        {t(item.nameKey)}
                       </Link>
                     );
                   })}
                 </nav>
+
+                {/* Mobile Language Switcher — fixed bugs from original */}
                 <div className="mt-auto pt-4 border-t border-border">
                   <div className="flex items-center gap-2 px-3 text-sm">
                     <button
-                      onClick={() => setLanguage('fr')}
-                      className={
-                        language === 'fr'
-                          ? 'text-blue-500 hover:text-primary'
-                          : ''
-                      }
+                      onClick={() => switchLocale('en')}
+                      className={cn(
+                        'hover:text-primary transition-colors',
+                        locale === 'en' && 'text-primary font-medium',
+                      )}
                     >
-                      English
+                      {t('language.english')}
                     </button>
-                    <span>|</span>
-                    <button className="hover:text-primary">French</button>
+                    <span className="text-muted-foreground">|</span>
+                    <button
+                      onClick={() => switchLocale('fr')}
+                      className={cn(
+                        'hover:text-primary transition-colors',
+                        locale === 'fr' && 'text-primary font-medium',
+                      )}
+                    >
+                      {t('language.french')}
+                    </button>
                   </div>
                 </div>
               </div>

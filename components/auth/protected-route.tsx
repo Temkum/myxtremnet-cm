@@ -3,6 +3,7 @@
 import React from 'react';
 import { useAuth } from '@/lib/auth-context';
 import { Loader2 } from 'lucide-react';
+import { Link } from '@/i18n/navigation';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -29,9 +30,9 @@ export function ProtectedRoute({ children, fallback }: ProtectedRouteProps) {
             <p className="text-muted-foreground mb-4">
               Please sign in to access this page.
             </p>
-            <a href="/" className="text-primary hover:underline">
-              Go to Home
-            </a>
+            <Link href="/login" className="text-primary hover:underline">
+              Go to Login
+            </Link>
           </div>
         </div>
       )

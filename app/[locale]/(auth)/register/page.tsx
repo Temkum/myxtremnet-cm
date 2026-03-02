@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
+import { useRouter, Link } from '@/i18n/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { phoneNumber as phoneNumberClient } from '@/lib/auth-client';
@@ -11,44 +12,24 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
-/**
- * Registration flow:
- * 1. User fills in details (phone, email, name, serviceId)
- * 2. We send OTP to the phone number
- * 3. User enters OTP → Better Auth creates account via signUpOnVerification
- *
- * After account creation, the user's name, email, and serviceId are updated
- * via a PATCH to /api/user/profile (you implement that endpoint separately
- * using auth.api.getSession + db.update).
- *
- * Why this approach: Better Auth's phoneNumber plugin creates the user on
- * OTP verification. There's no built-in "register with extra fields" endpoint
- * for the phone plugin, so we store extra fields after verification.
- */
-
 type Step = 'details' | 'otp';
 
 export default function RegisterPage() {
+  const t = useTranslations('register');
   const router = useRouter();
+
   const [step, setStep] = useState<Step>('details');
   const [pendingData, setPendingData] = useState<RegisterInput | null>(null);
   const [serverError, setServerError] = useState('');
   const [resendCooldown, setResendCooldown] = useState(0);
 
-  // ---- Step 1: registration details ----
   const detailsForm = useForm<RegisterInput>({
     resolver: zodResolver(registerSchema),
     mode: 'onTouched',
     criteriaMode: 'firstError',
-    defaultValues: {
-      phoneNumber: '',
-      email: '',
-      fullName: '',
-      serviceId: '',
-    },
+    defaultValues: { phoneNumber: '', email: '', fullName: '', serviceId: '' },
   });
 
-  // ---- Step 2: OTP ----
   const otpForm = useForm<OtpInput>({
     resolver: zodResolver(otpSchema),
     mode: 'onTouched',
@@ -61,12 +42,10 @@ export default function RegisterPage() {
     const { error } = await phoneNumberClient.sendOtp({
       phoneNumber: values.phoneNumber,
     });
-
     if (error) {
-      setServerError(error.message ?? 'Failed to send OTP. Try again.');
+      setServerError(error.message ?? 'Failed to send OTP.');
       return;
     }
-
     setPendingData(values);
     otpForm.setValue('phoneNumber', values.phoneNumber);
     setStep('otp');
@@ -75,21 +54,16 @@ export default function RegisterPage() {
 
   const handleVerifyOtp = async (values: OtpInput) => {
     setServerError('');
-
-    // Verify OTP — Better Auth creates the user via signUpOnVerification
     const { error } = await phoneNumberClient.verify({
       phoneNumber: values.phoneNumber,
       code: values.code,
     });
-
     if (error) {
       setServerError(error.message ?? 'Invalid or expired code.');
       return;
     }
-
-    // Update user profile with the extra fields collected at registration
     if (pendingData) {
-      const res = await fetch('/api/user/profile', {
+      await fetch('/api/user/profile', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -99,13 +73,7 @@ export default function RegisterPage() {
           serviceId: pendingData.serviceId,
         }),
       });
-
-      if (!res.ok) {
-        // Non-fatal — account is created, profile update failed
-        console.error('Profile update failed after registration');
-      }
     }
-
     router.push('/dashboard');
     router.refresh();
   };
@@ -140,27 +108,24 @@ export default function RegisterPage() {
     <div className="min-h-screen flex items-center justify-center p-4 bg-background">
       <div className="w-full max-w-sm space-y-8">
         <div className="text-center">
-          <h1 className="text-2xl font-bold tracking-tight">
-            Create your account
-          </h1>
+          <h1 className="text-2xl font-bold tracking-tight">{t('title')}</h1>
           <p className="text-sm text-muted-foreground mt-1">
             {step === 'details'
-              ? 'Fill in your details to get started'
-              : `Enter the code sent to ${pendingData?.phoneNumber}`}
+              ? t('detailsStep')
+              : t('otpStep', { phone: pendingData?.phoneNumber ?? '' })}
           </p>
         </div>
 
-        {/* Step 1 — Details */}
         {step === 'details' && (
           <form
             onSubmit={detailsForm.handleSubmit(handleSendOtp)}
             className="space-y-4"
           >
             <div className="space-y-1.5">
-              <Label htmlFor="fullName">Full Name</Label>
+              <Label htmlFor="fullName">{t('fullNameLabel')}</Label>
               <Input
                 id="fullName"
-                placeholder="Jean-Pierre Mbarga"
+                placeholder={t('fullNamePlaceholder')}
                 autoComplete="name"
                 {...detailsForm.register('fullName')}
               />
@@ -170,13 +135,12 @@ export default function RegisterPage() {
                 </p>
               )}
             </div>
-
             <div className="space-y-1.5">
-              <Label htmlFor="phoneNumber">Phone Number</Label>
+              <Label htmlFor="phoneNumber">{t('phoneLabel')}</Label>
               <Input
                 id="phoneNumber"
                 type="tel"
-                placeholder="+237 650 000 000"
+                placeholder={t('phonePlaceholder')}
                 autoComplete="tel"
                 {...detailsForm.register('phoneNumber')}
               />
@@ -186,13 +150,12 @@ export default function RegisterPage() {
                 </p>
               )}
             </div>
-
             <div className="space-y-1.5">
-              <Label htmlFor="email">Email (for account recovery)</Label>
+              <Label htmlFor="email">{t('emailLabel')}</Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="you@example.com"
+                placeholder={t('emailPlaceholder')}
                 autoComplete="email"
                 {...detailsForm.register('email')}
               />
@@ -202,18 +165,17 @@ export default function RegisterPage() {
                 </p>
               )}
             </div>
-
             <div className="space-y-1.5">
-              <Label htmlFor="serviceId">Service ID</Label>
+              <Label htmlFor="serviceId">{t('serviceIdLabel')}</Label>
               <Input
                 id="serviceId"
                 type="text"
                 inputMode="numeric"
-                placeholder="000000000"
+                placeholder={t('serviceIdPlaceholder')}
                 {...detailsForm.register('serviceId')}
               />
               <p className="text-xs text-muted-foreground">
-                Your 9-digit Camtel service identifier
+                {t('serviceIdHint')}
               </p>
               {detailsForm.formState.errors.serviceId && (
                 <p className="text-xs text-destructive">
@@ -221,38 +183,36 @@ export default function RegisterPage() {
                 </p>
               )}
             </div>
-
             {serverError && (
               <p className="text-sm text-destructive">{serverError}</p>
             )}
-
             <Button
               type="submit"
               className="w-full"
               disabled={detailsForm.formState.isSubmitting}
             >
               {detailsForm.formState.isSubmitting
-                ? 'Sending code...'
-                : 'Continue'}
+                ? t('sending')
+                : t('continue')}
             </Button>
-
             <p className="text-center text-sm text-muted-foreground">
-              Already have an account?{' '}
-              <a href="/login" className="underline font-medium">
-                Sign in
-              </a>
+              {t('hasAccount')}{' '}
+              <Link href="/login" className="underline font-medium">
+                {t('signIn')}
+              </Link>
             </p>
           </form>
         )}
 
-        {/* Step 2 — OTP */}
         {step === 'otp' && (
           <form
             onSubmit={otpForm.handleSubmit(handleVerifyOtp)}
             className="space-y-4"
           >
             <div className="space-y-1.5">
-              <Label htmlFor="code">Verification Code</Label>
+              <Label htmlFor="code">
+                {t('codeLabel', { defaultValue: 'Verification Code' })}
+              </Label>
               <Input
                 id="code"
                 type="text"
@@ -269,21 +229,18 @@ export default function RegisterPage() {
                 </p>
               )}
             </div>
-
             {serverError && (
               <p className="text-sm text-destructive">{serverError}</p>
             )}
-
             <Button
               type="submit"
               className="w-full"
               disabled={otpForm.formState.isSubmitting}
             >
               {otpForm.formState.isSubmitting
-                ? 'Verifying...'
-                : 'Verify & create account'}
+                ? t('verifying')
+                : t('verifyCreate')}
             </Button>
-
             <div className="flex items-center justify-between text-sm">
               <button
                 type="button"
@@ -293,7 +250,7 @@ export default function RegisterPage() {
                 }}
                 className="text-muted-foreground underline"
               >
-                Go back
+                {t('goBack')}
               </button>
               <button
                 type="button"
@@ -302,8 +259,8 @@ export default function RegisterPage() {
                 className="text-muted-foreground underline disabled:opacity-40"
               >
                 {resendCooldown > 0
-                  ? `Resend in ${resendCooldown}s`
-                  : 'Resend code'}
+                  ? t('resendIn', { seconds: resendCooldown })
+                  : t('resendCode')}
               </button>
             </div>
           </form>

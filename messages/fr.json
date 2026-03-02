@@ -1,0 +1,97 @@
+{
+  "nav": {
+    "dashboard": "Tableau de bord",
+    "bundles": "Forfaits",
+    "product": "Produit",
+    "account": "Compte",
+    "support": "Support",
+    "login": "Connexion",
+    "tagline": "...Et ce n'est pas fini!"
+  },
+  "auth": {
+    "login": "Connexion",
+    "logout": "Déconnexion",
+    "profile": "Profil",
+    "changePassword": "Changer le mot de passe",
+    "userMenu": "Menu utilisateur"
+  },
+  "hero": {
+    "title": "Restez Connecté, Gardez l'Avance",
+    "subtitle": "Découvrez une connectivité sans faille avec Camtel - le principal fournisseur de télécommunications du Cameroun. Rapide, fiable et toujours là pour vous.",
+    "exploreProducts": "Découvrir les Produits",
+    "contactUs": "Nous Contacter"
+  },
+  "products": {
+    "featuredOffer": "Offre Vedette",
+    "xtremNetDongle": "Clé X-tremNet",
+    "xtremNetDesc": "Internet haut débit en déplacement avec notre clé 4G. Parfait pour le travail, les études ou le divertissement partout.",
+    "perMonth": "par mois",
+    "learnMore": "En Savoir Plus"
+  },
+  "quickActions": {
+    "title": "Actions Rapides",
+    "viewBills": "Voir les Factures",
+    "recharge": "Recharger",
+    "dataUsage": "Utilisation des Données"
+  },
+  "contact": {
+    "title": "Coordonnées",
+    "address": "Adresse",
+    "addressValue": "B.P. Box: 1571 Yaoundé, Cameroun",
+    "phone": "Téléphone",
+    "fax": "Fax",
+    "website": "Site Web",
+    "email": "Email",
+    "followUs": "Suivez-nous"
+  },
+  "footer": {
+    "copyright": "Telecom Camtel. Tous droits réservés.",
+    "tagline": "...Et ce n'est pas fini!",
+    "privacyPolicy": "Politique de Confidentialité",
+    "termsOfService": "Conditions d'Utilisation"
+  },
+  "language": {
+    "english": "English",
+    "french": "Français"
+  },
+  "login": {
+    "title": "Connexion à Camtel",
+    "phoneStep": "Entrez votre numéro de téléphone pour recevoir un code unique",
+    "otpStep": "Entrez le code à 6 chiffres envoyé au {phone}",
+    "sendCode": "Envoyer le code de vérification",
+    "sending": "Envoi en cours...",
+    "verifySignIn": "Vérifier et se connecter",
+    "verifying": "Vérification...",
+    "changeNumber": "Changer de numéro",
+    "resendCode": "Renvoyer le code",
+    "resendIn": "Renvoyer dans {seconds}s",
+    "noAccount": "Vous n'avez pas de compte?",
+    "register": "S'inscrire",
+    "phoneLabel": "Numéro de téléphone",
+    "phonePlaceholder": "+237 650 000 000",
+    "codeLabel": "Code de vérification"
+  },
+  "register": {
+    "title": "Créer votre compte",
+    "detailsStep": "Remplissez vos informations pour commencer",
+    "otpStep": "Entrez le code envoyé au {phone}",
+    "continue": "Continuer",
+    "sending": "Envoi en cours...",
+    "verifyCreate": "Vérifier et créer le compte",
+    "verifying": "Vérification...",
+    "goBack": "Retour",
+    "resendCode": "Renvoyer le code",
+    "resendIn": "Renvoyer dans {seconds}s",
+    "hasAccount": "Vous avez déjà un compte?",
+    "signIn": "Se connecter",
+    "fullNameLabel": "Nom complet",
+    "fullNamePlaceholder": "Jean-Pierre Mbarga",
+    "phoneLabel": "Numéro de téléphone",
+    "phonePlaceholder": "+237 650 000 000",
+    "emailLabel": "Email (pour récupération de compte)",
+    "emailPlaceholder": "vous@exemple.com",
+    "serviceIdLabel": "Identifiant de service",
+    "serviceIdPlaceholder": "000000000",
+    "serviceIdHint": "Votre identifiant de service Camtel à 9 chiffres"
+  }
+}

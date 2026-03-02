@@ -7,7 +7,6 @@
  * Reads session from Better Auth instead of the old context.
  */
 
-import React from 'react';
 import { useAuth } from '@/lib/auth-context';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -20,6 +19,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { User, LogOut, Settings, Phone } from 'lucide-react';
+import { Link } from '@/i18n/navigation';
 
 export function AuthButton() {
   const { user, isLoading, logout } = useAuth();
@@ -32,10 +32,10 @@ export function AuthButton() {
     return (
       <div className="flex gap-2">
         <Button variant="outline" asChild>
-          <a href="/login">Sign In</a>
+          <Link href="/login">Sign In</Link>
         </Button>
         <Button asChild>
-          <a href="/register">Register</a>
+          <Link href="/register">Register</Link>
         </Button>
       </div>
     );
@@ -79,16 +79,16 @@ export function AuthButton() {
         <DropdownMenuSeparator />
 
         <DropdownMenuItem asChild>
-          <a href="/dashboard/account" className="flex items-center">
+          <Link href="/dashboard/account" className="flex items-center">
             <User className="mr-2 h-4 w-4" />
             <span>Account</span>
-          </a>
+          </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <a href="/dashboard/settings" className="flex items-center">
+          <Link href="/dashboard/settings" className="flex items-center">
             <Settings className="mr-2 h-4 w-4" />
             <span>Settings</span>
-          </a>
+          </Link>
         </DropdownMenuItem>
 
         <DropdownMenuSeparator />
