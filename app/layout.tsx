@@ -8,7 +8,18 @@
 import type { Metadata } from 'next';
 import { Analytics } from '@vercel/analytics/next';
 import { getLocale } from 'next-intl/server';
+import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
+
+const geistSans = Geist({
+  variable: '--font-geist-sans',
+  subsets: ['latin'],
+});
+
+const geistMono = Geist_Mono({
+  variable: '--font-geist-mono',
+  subsets: ['latin'],
+});
 
 export const metadata: Metadata = {
   title: 'Camtel - Customer Portal',
@@ -29,19 +40,11 @@ export default async function RootLayout({
   const locale = await getLocale();
 
   return (
-    <html lang={locale} suppressHydrationWarning>
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link
-          rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossOrigin="anonymous"
-        />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@100..900&display=swap"
-          rel="stylesheet"
-        />
-      </head>
+    <html
+      lang={locale}
+      className={`${geistSans.variable} ${geistMono.variable}`}
+      suppressHydrationWarning
+    >
       <body className="font-sans antialiased">
         {children}
         <Analytics />
