@@ -1,9 +1,6 @@
 /**
  * app/[locale]/layout.tsx
  *
- * Nested layout — must NOT render <html> or <body>.
- * Only app/layout.tsx (root) does that.
- *
  * This layout is responsible for:
  * - Validating the locale param
  * - Enabling static rendering via setRequestLocale
@@ -41,7 +38,7 @@ export default async function LocaleLayout({
   const messages = await getMessages();
 
   return (
-    <NextIntlClientProvider messages={messages}>
+    <NextIntlClientProvider messages={messages} locale={locale}>
       <AuthProvider>
         <DashboardHeader />
         {children}

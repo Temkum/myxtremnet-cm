@@ -28,6 +28,12 @@ const localePattern = new RegExp(`^/(${routing.locales.join('|')})(/|$)`);
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  // Better Auth handlers should NOT be intercepted or redirected by this proxy.
+  // This ensures /api/auth/* always works.
+  if (pathname.startsWith('/api')) {
+    return NextResponse.next();
+  }
+
   // Strip locale prefix to get bare path for matching
   // /en/dashboard → /dashboard
   // /fr/login     → /login

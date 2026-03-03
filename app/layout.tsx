@@ -3,9 +3,6 @@
  *
  * The ONLY place <html> and <body> are rendered.
  * Sets lang dynamically from the locale detected by next-intl.
- *
- * All providers (NextIntlClientProvider, AuthProvider) live in
- * app/[locale]/layout.tsx — not here.
  */
 
 import type { Metadata } from 'next';
@@ -29,7 +26,6 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   // Reads the locale from the request (set by next-intl middleware)
-  // so <html lang="fr"> is correct for French users server-side
   const locale = await getLocale();
 
   return (
