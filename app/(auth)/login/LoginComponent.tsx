@@ -15,8 +15,6 @@ type Step = 'phone' | 'otp';
 
 export function LoginComponent() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get('callbackUrl') ?? '/dashboard';
 
   const [step, setStep] = useState<Step>('phone');
   const [submittedPhone, setSubmittedPhone] = useState('');
@@ -68,7 +66,7 @@ export function LoginComponent() {
       return;
     }
 
-    router.push(callbackUrl);
+    router.push('/dashboard');
     router.refresh();
   };
 
