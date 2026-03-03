@@ -19,8 +19,6 @@ type Step = 'phone' | 'otp';
 export default function LoginComponent() {
   const t = useTranslations('login');
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get('callbackUrl') ?? '/dashboard';
 
   const [step, setStep] = useState<Step>('phone');
   const [submittedPhone, setSubmittedPhone] = useState('');
@@ -66,7 +64,8 @@ export default function LoginComponent() {
       setServerError(error.message ?? 'Invalid or expired code.');
       return;
     }
-    router.push(callbackUrl);
+
+    router.push('/dashboard');
     router.refresh();
   };
 

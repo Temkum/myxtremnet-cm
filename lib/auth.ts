@@ -115,7 +115,7 @@ export const auth = betterAuth({
   // -------------------------------------------------------------------------
   rateLimit: {
     enabled: true,
-    window: 60,
+    window: 300,
     max: 10,
     customRules: {
       // Max 1 OTP send per 5 minutes per IP
@@ -123,9 +123,9 @@ export const auth = betterAuth({
         window: 300,
         max: 1,
       },
-      // Max 5 verify attempts per minute
+      // Max 5 verify attempts per 2 minutes
       '/phone-number/verify': {
-        window: 60,
+        window: 300,
         max: 5,
       },
     },

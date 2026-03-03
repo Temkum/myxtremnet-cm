@@ -14,8 +14,8 @@
 
 import createIntlMiddleware from 'next-intl/middleware';
 import { type NextRequest, NextResponse } from 'next/server';
-import { getSessionCookie } from 'better-auth/cookies';
 import { routing } from './i18n/routing';
+import { auth } from '@/lib/auth';
 
 const intlMiddleware = createIntlMiddleware(routing);
 
@@ -46,8 +46,11 @@ export async function proxy(request: NextRequest) {
 
   // Better Auth sets the cookie as "better-auth.session_token" by default.
   // getSessionCookie reads it without a DB call — fast edge-compatible check.
-  const session = getSessionCookie(request);
-  const isAuthenticated = !!session;
+  const session = await auth.api.getSession({
+    headers: request.headers,
+  });
+
+  const isAuthenticated = Boolean(session?.user);
 
   // Redirect unauthenticated users away from protected routes
   if (

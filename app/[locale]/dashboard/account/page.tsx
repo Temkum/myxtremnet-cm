@@ -33,7 +33,7 @@ const accountInfo = {
   fraudState: 'Not blacklisted',
   accountHolder: 'KUM JUDE THADDEUS TEM',
   email: 'kum.thaddeus@email.com',
-  phone: '+237 620 779 967',
+  phone: '+237620779967',
 };
 
 const balanceData = [
