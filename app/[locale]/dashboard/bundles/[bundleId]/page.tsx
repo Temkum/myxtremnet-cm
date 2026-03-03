@@ -1,7 +1,7 @@
 import { CheckCircle2, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 
 export default function BundleDetails() {
   const details = [

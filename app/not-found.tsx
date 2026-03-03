@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 import { NotFoundActions } from '@/components/not-found-actions';
 
 export default function NotFound() {

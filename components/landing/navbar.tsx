@@ -1,10 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, Wifi, X } from 'lucide-react';
+import { Menu, Wifi } from 'lucide-react';
 
 const navLinks = [
   { href: '#features', label: 'Features' },

@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -142,7 +141,7 @@ export default function ServicesPage() {
   const [showAlert, setShowAlert] = useState(true);
 
   const currentService = serviceCategories.find(
-    (s) => s.id === selectedService
+    (s) => s.id === selectedService,
   );
 
   return (

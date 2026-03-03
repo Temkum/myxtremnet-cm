@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useLanguage } from '@/lib/language-context';
 import { AuthButton } from '@/components/auth/auth-button';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
