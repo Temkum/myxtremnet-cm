@@ -21,6 +21,7 @@ import {
   Phone,
   ChevronRight,
 } from 'lucide-react';
+import { Button } from '../ui/button';
 
 const offerLinks = [
   { name: 'LTE SERVICE', href: '/dashboard/services/lte', icon: Radio },
@@ -104,7 +105,7 @@ function SidebarSection({
                   'flex items-center justify-between px-4 py-2.5 text-sm transition-colors border-b border-border last:border-b-0',
                   isActive
                     ? 'bg-primary/10 text-primary font-medium'
-                    : 'text-foreground hover:bg-secondary'
+                    : 'text-foreground hover:bg-secondary',
                 )}
               >
                 <div className="flex items-center gap-2">
@@ -153,7 +154,9 @@ export function QuickFAQ() {
             href="/dashboard/faq"
             className="text-xs text-primary hover:underline"
           >
-            more {'>>'}
+            <Button variant="ghost" size="sm">
+              View All
+            </Button>
           </Link>
         </div>
       </CardHeader>
