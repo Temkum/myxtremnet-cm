@@ -77,11 +77,6 @@ const registerShape = {
     .string()
     .min(2, 'Full name must be at least 2 characters')
     .max(100, 'Full name is too long'),
-  serviceId: z
-    .string()
-    .min(9, 'Service ID must be at least 9 digits')
-    .max(20, 'Service ID is too long')
-    .regex(/^\d+$/, 'Service ID must contain only digits'),
 };
 
 export const registerSchema = z.object(registerShape);

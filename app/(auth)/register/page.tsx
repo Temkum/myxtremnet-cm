@@ -26,11 +26,11 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 
 /**
  * Registration flow:
- * 1. User fills in details (phone, email, name, serviceId)
+ * 1. User fills in details (phone, email, name)
  * 2. We send OTP to the phone number
  * 3. User enters OTP → Better Auth creates account via signUpOnVerification
  *
- * After account creation, the user's name, email, and serviceId are updated
+ * After account creation, the user's name, email are updated
  * via a PATCH to /api/user/profile (you implement that endpoint separately
  * using auth.api.getSession + db.update).
  *
@@ -60,7 +60,6 @@ export default function RegisterPage() {
       fullName: '',
       phoneNumber: '',
       email: '',
-      serviceId: '',
       password: '',
     },
   });
@@ -74,7 +73,6 @@ export default function RegisterPage() {
       phoneNumber: '',
       email: '',
       fullName: '',
-      serviceId: '',
     },
   });
 
@@ -186,7 +184,6 @@ export default function RegisterPage() {
       body: JSON.stringify({
         name: values.fullName,
         email: values.email,
-        serviceId: values.serviceId,
         phoneNumber: values.phoneNumber,
       }),
     });
@@ -222,7 +219,7 @@ export default function RegisterPage() {
         body: JSON.stringify({
           name: pendingData.fullName,
           email: pendingData.email,
-          serviceId: pendingData.serviceId,
+          phoneNumber: pendingData.phoneNumber,
         }),
       });
 
@@ -371,25 +368,6 @@ export default function RegisterPage() {
               )}
             </div>
 
-            <div className="space-y-1.5">
-              <Label htmlFor="serviceId">Service ID</Label>
-              <Input
-                id="serviceId"
-                type="number"
-                inputMode="numeric"
-                placeholder="620997769"
-                {...detailsForm.register('serviceId')}
-              />
-              <p className="text-xs text-muted-foreground">
-                Your 9-digit Camtel service identifier
-              </p>
-              {detailsForm.formState.errors.serviceId && (
-                <p className="text-xs text-destructive">
-                  {detailsForm.formState.errors.serviceId.message}
-                </p>
-              )}
-            </div>
-
             {serverError && (
               <p className="text-sm text-destructive">{serverError}</p>
             )}
@@ -467,7 +445,7 @@ export default function RegisterPage() {
                     const digits = e.target.value
                       .replace(/\D/g, '')
                       .slice(0, 9);
-                    detailsForm.setValue(
+                    passwordForm.setValue(
                       'phoneNumber',
                       digits ? `+237${digits}` : '',
                       {
@@ -477,9 +455,9 @@ export default function RegisterPage() {
                   }}
                 />
               </div>
-              {detailsForm.formState.errors.phoneNumber && (
+              {passwordForm.formState.errors.phoneNumber && (
                 <p className="text-xs text-destructive">
-                  {detailsForm.formState.errors.phoneNumber.message}
+                  {passwordForm.formState.errors.phoneNumber.message}
                 </p>
               )}
             </div>
@@ -498,25 +476,6 @@ export default function RegisterPage() {
               {passwordForm.formState.errors.email && (
                 <p className="text-xs text-destructive">
                   {passwordForm.formState.errors.email.message}
-                </p>
-              )}
-            </div>
-
-            <div className="space-y-1.5">
-              <Label htmlFor="serviceIdPassword">Service ID</Label>
-              <Input
-                id="serviceIdPassword"
-                type="text"
-                inputMode="numeric"
-                placeholder="000000000"
-                {...passwordForm.register('serviceId')}
-              />
-              <p className="text-xs text-muted-foreground">
-                Your 9-digit Camtel service identifier
-              </p>
-              {passwordForm.formState.errors.serviceId && (
-                <p className="text-xs text-destructive">
-                  {passwordForm.formState.errors.serviceId.message}
                 </p>
               )}
             </div>
