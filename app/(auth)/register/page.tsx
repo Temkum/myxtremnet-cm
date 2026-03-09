@@ -130,11 +130,51 @@ export default function RegisterPage() {
     const { error: signUpError } = await signUp.email({
       email: `${values.phoneNumber.replace(/[^0-9]/g, '')}@phone.camtel.local`,
       password: values.password,
+      name: values.fullName,
+    });
+
+    const { error: signUpError2 } = await signUp.email({
+      email: `${values.phoneNumber.replace(/[^0-9]/g, '')}@phone.camtel.local`,
+      password: values.password,
       name: values.fullName, // Better Auth accepts name at signup
     });
 
     if (signUpError) {
-      setServerError(signUpError.message ?? 'Registration failed. Try again.');
+      const status = (signUpError as { status?: number } | null)?.status;
+      const message =
+        (signUpError as { message?: string } | null)?.message?.toLowerCase() ??
+        '';
+
+      if (
+        status === 409 ||
+        status === 422 ||
+        message.includes('already exists') ||
+        message.includes('use another email')
+      ) {
+        setServerError('Phone number is already registered. Please sign in.');
+        return;
+      }
+
+      setServerError(
+        (signUpError as { message?: string } | null)?.message ??
+          'Registration failed. Try again.',
+      );
+      return;
+    }
+
+    if (signUpError2) {
+      // Catch duplicate phone — unique constraint on the generated email means
+      // this phone number already has an account.
+      if (
+        signUpError2.status === 409 ||
+        signUpError2.message?.toLowerCase().includes('already')
+      ) {
+        setServerError(
+          'This phone number is already registered. Sign in instead.',
+        );
+        return;
+      }
+      setServerError(signUpError2.message ?? 'Registration failed. Try again.');
       return;
     }
 
@@ -283,13 +323,31 @@ export default function RegisterPage() {
 
             <div className="space-y-1.5">
               <Label htmlFor="phoneNumber">Phone Number</Label>
-              <Input
-                id="phoneNumber"
-                type="tel"
-                placeholder="+237 650 000 000"
-                autoComplete="tel"
-                {...detailsForm.register('phoneNumber')}
-              />
+              <div className="flex">
+                <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-input bg-muted text-sm text-muted-foreground select-none">
+                  +237
+                </span>
+                <Input
+                  id="phoneNumber"
+                  type="tel"
+                  inputMode="numeric"
+                  placeholder="6207799669"
+                  maxLength={9}
+                  className="rounded-l-none"
+                  onChange={(e) => {
+                    const digits = e.target.value
+                      .replace(/\D/g, '')
+                      .slice(0, 9);
+                    detailsForm.setValue(
+                      'phoneNumber',
+                      digits ? `+237${digits}` : '',
+                      {
+                        shouldValidate: true,
+                      },
+                    );
+                  }}
+                />
+              </div>
               {detailsForm.formState.errors.phoneNumber && (
                 <p className="text-xs text-destructive">
                   {detailsForm.formState.errors.phoneNumber.message}
@@ -376,7 +434,7 @@ export default function RegisterPage() {
               )}
             </div>
 
-            <div className="space-y-1.5">
+            {/* <div className="space-y-1.5">
               <Label htmlFor="phoneNumberPassword">Phone Number</Label>
               <Input
                 id="phoneNumberPassword"
@@ -388,6 +446,40 @@ export default function RegisterPage() {
               {passwordForm.formState.errors.phoneNumber && (
                 <p className="text-xs text-destructive">
                   {passwordForm.formState.errors.phoneNumber.message}
+                </p>
+              )}
+            </div> */}
+
+            <div className="space-y-1.5">
+              <Label htmlFor="phoneNumberPassword">Phone Number</Label>
+              <div className="flex">
+                <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-input bg-muted text-sm text-muted-foreground select-none">
+                  +237
+                </span>
+                <Input
+                  id="phoneNumberPassword"
+                  type="tel"
+                  inputMode="numeric"
+                  placeholder="620779969"
+                  maxLength={9}
+                  className="rounded-l-none"
+                  onChange={(e) => {
+                    const digits = e.target.value
+                      .replace(/\D/g, '')
+                      .slice(0, 9);
+                    detailsForm.setValue(
+                      'phoneNumber',
+                      digits ? `+237${digits}` : '',
+                      {
+                        shouldValidate: true,
+                      },
+                    );
+                  }}
+                />
+              </div>
+              {detailsForm.formState.errors.phoneNumber && (
+                <p className="text-xs text-destructive">
+                  {detailsForm.formState.errors.phoneNumber.message}
                 </p>
               )}
             </div>

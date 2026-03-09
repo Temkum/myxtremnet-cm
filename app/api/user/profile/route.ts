@@ -70,11 +70,11 @@ export async function PATCH(request: NextRequest) {
       updatedAt: new Date(),
     };
 
-    if (typeof email === 'string') {
+    if (typeof email === 'string' && email.length > 0) {
       updateData.email = email;
     }
 
-    if (typeof phoneNumber === 'string') {
+    if (typeof phoneNumber === 'string' && phoneNumber.length > 0) {
       updateData.phoneNumber = phoneNumber;
     }
 

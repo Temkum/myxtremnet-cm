@@ -199,20 +199,31 @@ export function LoginComponent() {
             onSubmit={phoneForm.handleSubmit(handleSendOtp)}
             className="space-y-4"
           >
-            <div className="space-y-1.5">
-              <Label htmlFor="phoneNumber">Phone Number</Label>
+            <div className="flex">
+              <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-input bg-muted text-sm text-muted-foreground select-none">
+                +237
+              </span>
               <Input
                 id="phoneNumber"
                 type="tel"
-                placeholder="+237 650 000 000"
+                inputMode="numeric"
+                placeholder="620 000 000"
                 autoComplete="tel"
-                {...phoneForm.register('phoneNumber')}
+                maxLength={9}
+                className="rounded-l-none"
+                onChange={(e) => {
+                  const digits = e.target.value.replace(/\D/g, '').slice(0, 9);
+                  e.target.value = digits;
+                  phoneForm.setValue(
+                    'phoneNumber',
+                    digits ? `+237${digits}` : '',
+                    {
+                      shouldValidate: true,
+                    },
+                  );
+                }}
+                onBlur={() => phoneForm.trigger('phoneNumber')}
               />
-              {phoneForm.formState.errors.phoneNumber && (
-                <p className="text-xs text-destructive">
-                  {phoneForm.formState.errors.phoneNumber.message}
-                </p>
-              )}
             </div>
 
             {serverError && (
@@ -244,20 +255,31 @@ export function LoginComponent() {
             onSubmit={passwordForm.handleSubmit(handlePhonePassword)}
             className="space-y-4"
           >
-            <div className="space-y-1.5">
-              <Label htmlFor="phoneNumberPassword">Phone Number</Label>
+            <div className="flex">
+              <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-input bg-muted text-sm text-muted-foreground select-none">
+                +237
+              </span>
               <Input
                 id="phoneNumberPassword"
                 type="tel"
-                placeholder="+237 650 000 000"
+                inputMode="numeric"
+                placeholder="620 000 000"
                 autoComplete="tel"
-                {...passwordForm.register('phoneNumber')}
+                maxLength={9}
+                className="rounded-l-none"
+                onChange={(e) => {
+                  const digits = e.target.value.replace(/\D/g, '').slice(0, 9);
+                  e.target.value = digits;
+                  passwordForm.setValue(
+                    'phoneNumber',
+                    digits ? `+237${digits}` : '',
+                    {
+                      shouldValidate: true,
+                    },
+                  );
+                }}
+                onBlur={() => passwordForm.trigger('phoneNumber')}
               />
-              {passwordForm.formState.errors.phoneNumber && (
-                <p className="text-xs text-destructive">
-                  {passwordForm.formState.errors.phoneNumber.message}
-                </p>
-              )}
             </div>
 
             <div className="space-y-1.5">
