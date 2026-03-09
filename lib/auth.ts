@@ -1,6 +1,4 @@
 /**
- * lib/auth.ts  —  Better Auth server instance
- *
  * Phone number is the primary login identifier.
  * Email is collected at registration for account recovery only.
  *
@@ -32,10 +30,10 @@ export const auth = betterAuth({
   }),
 
   // -------------------------------------------------------------------------
-  // Disable email+password — phone number is the only auth method
+  // Email+password enabled for phone+password login (phone used as username)
   // -------------------------------------------------------------------------
   emailAndPassword: {
-    enabled: false,
+    enabled: true,
   },
 
   // -------------------------------------------------------------------------

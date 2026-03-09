@@ -20,8 +20,9 @@ import { eq } from 'drizzle-orm';
 
 const profileSchema = z.object({
   name: z.string().min(2).max(100),
-  email: z.string().email(),
+  email: z.string().email().optional(),
   serviceId: z.string().min(9).max(20).regex(/^\d+$/),
+  phoneNumber: z.string().optional(),
 });
 
 export async function PATCH(request: NextRequest) {
@@ -47,7 +48,7 @@ export async function PATCH(request: NextRequest) {
     );
   }
 
-  const { name, email, serviceId } = result.data;
+  const { name, email, serviceId, phoneNumber } = result.data;
 
   try {
     // Check serviceId is not already taken by another user
@@ -63,15 +64,21 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
-    await db
-      .update(user)
-      .set({
-        name,
-        email,
-        serviceId,
-        updatedAt: new Date(),
-      })
-      .where(eq(user.id, session.user.id));
+    const updateData: Partial<typeof user.$inferInsert> = {
+      name,
+      serviceId,
+      updatedAt: new Date(),
+    };
+
+    if (typeof email === 'string') {
+      updateData.email = email;
+    }
+
+    if (typeof phoneNumber === 'string') {
+      updateData.phoneNumber = phoneNumber;
+    }
+
+    await db.update(user).set(updateData).where(eq(user.id, session.user.id));
 
     return NextResponse.json({ success: true });
   } catch (err) {

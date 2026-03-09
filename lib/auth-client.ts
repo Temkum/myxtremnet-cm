@@ -1,5 +1,4 @@
 /**
- * lib/auth-client.ts  —  Browser-side Better Auth client
  *
  * Import from here in all client components. Never import from lib/auth.ts
  * on the client — that file contains server-only secrets.
@@ -13,7 +12,7 @@ export const authClient = createAuthClient({
   plugins: [phoneNumberClient()],
 });
 
-export const { signOut, useSession, getSession } = authClient;
+export const { signOut, useSession, getSession, signIn, signUp } = authClient;
 
 // Phone number specific methods — named explicitly for clarity
 export const { phoneNumber } = authClient;
