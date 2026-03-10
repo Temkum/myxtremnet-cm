@@ -295,7 +295,7 @@ export default function AccountPage() {
                       <div className="space-y-2 text-sm">
                         <div className="flex justify-between">
                           <span className="text-muted-foreground">
-                            {t('remaining')}
+                            {t('remaining', { amount: offer.remaining })}
                           </span>
                           <span className="font-medium">{offer.remaining}</span>
                         </div>
