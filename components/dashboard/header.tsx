@@ -87,20 +87,28 @@ export function DashboardHeader() {
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-1">
-          {navigation.map((item) => (
-            <Link
-              key={item.name}
-              href={item.href}
-              className={cn(
-                'px-4 py-2 text-sm font-medium rounded-md transition-colors cursor-pointer',
-                checkActive(item.href)
-                  ? 'bg-primary text-primary-foreground'
-                  : 'text-foreground hover:bg-secondary',
-              )}
-            >
-              {item.name}
-            </Link>
-          ))}
+          {navigation.map((item) => {
+            const isActive =
+              item.href === '/dashboard'
+                ? nextIntlPathname === item.href
+                : nextIntlPathname === item.href ||
+                  nextIntlPathname.startsWith(item.href + '/');
+
+            return (
+              <Link
+                key={item.name}
+                href={item.href}
+                className={cn(
+                  'px-4 py-2 text-sm font-medium rounded-md transition-colors cursor-pointer',
+                  isActive
+                    ? 'bg-primary text-primary-foreground'
+                    : 'text-foreground hover:bg-secondary',
+                )}
+              >
+                {item.name}
+              </Link>
+            );
+          })}
         </nav>
 
         {/* Right Section */}
@@ -220,8 +228,10 @@ export function DashboardHeader() {
                 <nav className="flex flex-col gap-1">
                   {navigation.map((item) => {
                     const isActive =
-                      pathname === item.href ||
-                      pathname.startsWith(item.href + '/');
+                      item.href === '/dashboard'
+                        ? nextIntlPathname === item.href
+                        : nextIntlPathname === item.href ||
+                          nextIntlPathname.startsWith(item.href + '/');
                     const Icon = item.icon;
                     return (
                       <Link
