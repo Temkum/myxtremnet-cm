@@ -234,5 +234,14 @@
     "contactSupportRecharge": "Contact our support team if you have any issues with recharging your account.",
     "mtnMobileMoney": "MTN Mobile Money",
     "orangeMoney": "Orange Money"
+  },
+  "Settings": {
+    "changePassword": "Change Password",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm Password",
+    "loginReq": "Please log in to change your password.",
+    "pwdCharacter": "Password must be at least 6 characters.",
+    "pwdMatch": "Passwords do not match.",
+    "pwdSuccess": "Password changed successfully!"
   }
 }

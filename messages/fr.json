@@ -233,6 +233,17 @@
     "needHelp": "Besoin d'aide?",
     "contactSupportRecharge": "Contactez notre équipe de support si vous avez des problèmes avec la recharge de votre compte.",
     "mtnMobileMoney": "MTN Mobile Money",
-    "orangeMoney": "Orange Money"
+    "orangeMoney": "Orange Money",
+    "systemNotice": "Avis Systeme",
+    "systemAbnormalities": "Anomalies systeme, veuillez reessayer plus tard!"
+  },
+  "Settings": {
+    "changePassword": "Changer le Mot de Passe",
+    "newPassword": "Nouveau Mot de Passe",
+    "confirmPassword": "Confirm le Mot de Passe",
+    "loginReq": "Veuillez connecter pour changer le mot de passe",
+    "pwdCharacter": "Mot de passe doit etre moins de six characters",
+    "pwdMatch": "Le mot de passe ne correspond pas!",
+    "pwdSuccess": "Mot de passe modifié avec succès!"
   }
 }

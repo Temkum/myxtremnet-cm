@@ -13,7 +13,7 @@ CREATE TABLE "account" (
 	"created_at" timestamp NOT NULL,
 	"updated_at" timestamp NOT NULL
 );
---> statement-breakpoint
+
 CREATE TABLE "session" (
 	"id" text PRIMARY KEY NOT NULL,
 	"expires_at" timestamp NOT NULL,
@@ -25,7 +25,7 @@ CREATE TABLE "session" (
 	"user_id" text NOT NULL,
 	CONSTRAINT "session_token_unique" UNIQUE("token")
 );
---> statement-breakpoint
+
 CREATE TABLE "user" (
 	"id" text PRIMARY KEY NOT NULL,
 	"name" text NOT NULL,
@@ -41,7 +41,7 @@ CREATE TABLE "user" (
 	CONSTRAINT "user_phone_number_unique" UNIQUE("phone_number"),
 	CONSTRAINT "user_service_id_unique" UNIQUE("service_id")
 );
---> statement-breakpoint
+
 CREATE TABLE "verification" (
 	"id" text PRIMARY KEY NOT NULL,
 	"identifier" text NOT NULL,
@@ -50,6 +50,6 @@ CREATE TABLE "verification" (
 	"created_at" timestamp,
 	"updated_at" timestamp
 );
---> statement-breakpoint
-ALTER TABLE "account" ADD CONSTRAINT "account_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+
+ALTER TABLE "account" ADD CONSTRAINT "account_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;
 ALTER TABLE "session" ADD CONSTRAINT "session_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;
