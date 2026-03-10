@@ -18,7 +18,6 @@ import type {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 
 type Step = 'phone' | 'otp' | 'password';
 type AuthMode = 'otp' | 'password';
@@ -59,22 +58,34 @@ export function LoginComponent() {
     defaultValues: { phoneNumber: '', code: '' },
   });
 
-  // Dev mode: capture OTP from console logs
+  // capture OTP from console logs
   useEffect(() => {
-    if (process.env.NODE_ENV === 'development' && step === 'otp') {
-      const originalLog = console.log;
-      console.log = (...args) => {
-        const message = args.join(' ');
-        const match = message.match(/📱 OTP for ([+\d]+): (\d{6})/);
-        if (match && match[1] === submittedPhone) {
-          setDevOtp(match[2]);
+    if (step !== 'otp' || !submittedPhone) return;
+
+    let cancelled = false;
+
+    const fetchOtp = async () => {
+      try {
+        const res = await fetch(
+          `/api/otp/display?phone=${encodeURIComponent(submittedPhone)}`,
+        );
+
+        if (!res.ok) return;
+
+        const data = await res.json();
+        if (!cancelled && data.code) {
+          setDevOtp(data.code);
         }
-        originalLog(...args);
-      };
-      return () => {
-        console.log = originalLog;
-      };
-    }
+      } catch {
+        // Non-critical — UI still works, user just doesn't see the code
+      }
+    };
+
+    fetchOtp();
+
+    return () => {
+      cancelled = true;
+    };
   }, [step, submittedPhone]);
 
   const handleSendOtp = async (values: LoginInput) => {
@@ -344,30 +355,22 @@ export function LoginComponent() {
                   {otpForm.formState.errors.code.message}
                 </p>
               )}
+
+              {/* display OTP code here */}
+              {devOtp && (
+                <div className="rounded-md border border-border bg-muted px-4 py-3 text-center">
+                  <p className="text-xs text-muted-foreground mb-1">
+                    Your verification code
+                  </p>
+                  <p className="text-2xl font-mono font-bold tracking-[0.4em]">
+                    {devOtp}
+                  </p>
+                </div>
+              )}
             </div>
 
             {serverError && (
               <p className="text-sm text-destructive">{serverError}</p>
-            )}
-
-            {devOtp && (
-              <Alert className="mt-4">
-                <AlertDescription>
-                  <strong>Dev mode:</strong> OTP is {devOtp}
-                  <Button
-                    type="button"
-                    size="sm"
-                    variant="outline"
-                    className="ml-2"
-                    onClick={() => {
-                      otpForm.setValue('code', devOtp);
-                      otpForm.handleSubmit(handleVerifyOtp)();
-                    }}
-                  >
-                    Auto-fill & verify
-                  </Button>
-                </AlertDescription>
-              </Alert>
             )}
 
             <Button

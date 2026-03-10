@@ -79,7 +79,7 @@ export const account = pgTable('account', {
 // ---------------------------------------------------------------------------
 export const verification = pgTable('verification', {
   id: text('id').primaryKey(),
-  identifier: text('identifier').notNull(),
+  identifier: text('identifier').notNull().unique(),
   value: text('value').notNull(),
   expiresAt: timestamp('expires_at').notNull(),
   createdAt: timestamp('created_at'),
