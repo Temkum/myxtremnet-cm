@@ -12,6 +12,7 @@ import {
   ChevronLeft,
   ChevronRight,
 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 const promos = [
   {
@@ -164,21 +165,23 @@ export function PromoBanner() {
 }
 
 export function ServiceHighlights() {
+  const t = useTranslations('Dashboard');
+
   const highlights = [
     {
       icon: Wifi,
-      title: 'High Speed Internet',
-      description: 'Up to 100 Mbps download speed',
+      title: t('highSpeedInternet'),
+      description: t('highSpeedInternetDesc'),
     },
     {
       icon: Package,
-      title: 'Flexible Packages',
-      description: 'Choose from various data plans',
+      title: t('flexiblePackages'),
+      description: t('flexiblePackagesDesc'),
     },
     {
       icon: Smartphone,
-      title: 'Mobile Ready',
-      description: 'Use with any compatible device',
+      title: t('mobileReady'),
+      description: t('mobileReadyDesc'),
     },
   ];
 

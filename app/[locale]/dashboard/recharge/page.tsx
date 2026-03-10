@@ -24,6 +24,7 @@ import {
   ArrowRight,
   Shield,
 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 const rechargeOptions = [
   { value: '1000', label: '1,000 FCFA', bonus: '' },
@@ -56,6 +57,7 @@ const paymentMethods = [
 ];
 
 export default function RechargePage() {
+  const t = useTranslations('Recharge');
   const [selectedAmount, setSelectedAmount] = useState('');
   const [customAmount, setCustomAmount] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('');
@@ -67,15 +69,13 @@ export default function RechargePage() {
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-foreground">
-            Recharge Account
+            {t('rechargeAccount')}
           </h1>
-          <p className="text-muted-foreground">
-            Top up your X-tremNet account balance
-          </p>
+          <p className="text-muted-foreground">{t('topUpAccount')}</p>
         </div>
         <Badge variant="outline" className="w-fit">
           <Wallet className="h-3 w-3 mr-1" />
-          Current Balance: 550.00 FCFA
+          {t('currentBalance', { balance: '550.00' })}
         </Badge>
       </div>
 
@@ -86,9 +86,9 @@ export default function RechargePage() {
           className="bg-destructive/10 border-destructive/20"
         >
           <AlertCircle className="h-4 w-4" />
-          <AlertTitle>System Notice</AlertTitle>
+          <AlertTitle>{t('systemNotice', { ns: 'Services' })}</AlertTitle>
           <AlertDescription className="flex items-center justify-between">
-            <span>System abnormalities, please try later!</span>
+            <span>{t('systemAbnormalities', { ns: 'Services' })}</span>
             <Button
               variant="outline"
               size="sm"
@@ -108,7 +108,7 @@ export default function RechargePage() {
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
                 <RefreshCw className="h-5 w-5 text-primary" />
-                Select Amount
+                {t('selectAmount')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -139,11 +139,11 @@ export default function RechargePage() {
 
               {/* Custom Amount */}
               <div className="space-y-2">
-                <Label>Or enter custom amount</Label>
+                <Label>{t('orEnterCustomAmount')}</Label>
                 <div className="flex gap-2">
                   <Input
                     type="number"
-                    placeholder="Enter amount"
+                    placeholder={t('enterAmount')}
                     value={customAmount}
                     onChange={(e) => {
                       setCustomAmount(e.target.value);
@@ -164,7 +164,7 @@ export default function RechargePage() {
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
                 <CreditCard className="h-5 w-5 text-primary" />
-                Payment Method
+                {t('paymentMethod')}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -209,23 +209,25 @@ export default function RechargePage() {
           {paymentMethod === 'mobile-money' && (
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Mobile Money Details</CardTitle>
+                <CardTitle className="text-lg">
+                  {t('mobileMoneyDetails')}
+                </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <Label>Provider</Label>
+                  <Label>{t('provider')}</Label>
                   <Select>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select provider" />
+                      <SelectValue placeholder={t('selectProvider')} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="mtn">MTN Mobile Money</SelectItem>
-                      <SelectItem value="orange">Orange Money</SelectItem>
+                      <SelectItem value="mtn">{t('mtnMobileMoney')}</SelectItem>
+                      <SelectItem value="orange">{t('orangeMoney')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label>Phone Number</Label>
+                  <Label>{t('phoneNumber')}</Label>
                   <Input type="tel" placeholder="+237 6XX XXX XXX" />
                 </div>
               </CardContent>
@@ -236,12 +238,12 @@ export default function RechargePage() {
           {paymentMethod === 'voucher' && (
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Voucher Details</CardTitle>
+                <CardTitle className="text-lg">{t('voucherDetails')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <Label>Voucher Code</Label>
-                  <Input placeholder="Enter your 14-digit voucher code" />
+                  <Label>{t('voucherCode')}</Label>
+                  <Input placeholder={t('enterVoucherCode')} />
                 </div>
               </CardContent>
             </Card>
@@ -252,56 +254,62 @@ export default function RechargePage() {
         <div className="space-y-6">
           <Card className="sticky top-24">
             <CardHeader className="bg-primary text-primary-foreground rounded-t-lg">
-              <CardTitle className="text-lg">Order Summary</CardTitle>
+              <CardTitle className="text-lg">{t('orderSummary')}</CardTitle>
             </CardHeader>
             <CardContent className="p-6 space-y-4">
               <div className="space-y-3">
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Service No</span>
+                  <span className="text-muted-foreground">
+                    {t('serviceNo')}
+                  </span>
                   <span className="font-medium">620779967</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Recharge Amount</span>
+                  <span className="text-muted-foreground">
+                    {t('rechargeAmount')}
+                  </span>
                   <span className="font-medium">
                     {selectedAmount
                       ? `${parseInt(selectedAmount).toLocaleString()} FCFA`
                       : customAmount
-                      ? `${parseInt(customAmount).toLocaleString()} FCFA`
-                      : 'Not selected'}
+                        ? `${parseInt(customAmount).toLocaleString()} FCFA`
+                        : t('notSelected')}
                   </span>
                 </div>
                 {selectedAmount &&
                   rechargeOptions.find((o) => o.value === selectedAmount)
                     ?.bonus && (
                     <div className="flex justify-between text-green-600">
-                      <span>Bonus</span>
+                      <span>{t('bonus')}</span>
                       <span>
                         {
                           rechargeOptions.find(
-                            (o) => o.value === selectedAmount
+                            (o) => o.value === selectedAmount,
                           )?.bonus
                         }
                       </span>
                     </div>
                   )}
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Payment Method</span>
+                  <span className="text-muted-foreground">
+                    {t('paymentMethod')}
+                  </span>
                   <span className="font-medium">
                     {paymentMethod
                       ? paymentMethods.find((m) => m.id === paymentMethod)?.name
-                      : 'Not selected'}
+                      : t('notSelected')}
                   </span>
                 </div>
               </div>
               <hr className="border-border" />
               <div className="flex justify-between text-lg font-bold">
-                <span>Total</span>
+                <span>{t('total')}</span>
                 <span className="text-primary">
                   {selectedAmount
                     ? `${parseInt(selectedAmount).toLocaleString()} FCFA`
                     : customAmount
-                    ? `${parseInt(customAmount).toLocaleString()} FCFA`
-                    : '0 FCFA'}
+                      ? `${parseInt(customAmount).toLocaleString()} FCFA`
+                      : '0 FCFA'}
                 </span>
               </div>
               <Button
@@ -309,12 +317,12 @@ export default function RechargePage() {
                 size="lg"
                 disabled={(!selectedAmount && !customAmount) || !paymentMethod}
               >
-                Proceed to Pay
+                {t('proceedToPay')}
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
               <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
                 <Shield className="h-3 w-3" />
-                <span>Secure payment</span>
+                <span>{t('securePayment')}</span>
               </div>
             </CardContent>
           </Card>
@@ -322,10 +330,9 @@ export default function RechargePage() {
           {/* Help Card */}
           <Card className="bg-secondary/50">
             <CardContent className="p-4">
-              <h4 className="font-semibold mb-2">Need Help?</h4>
+              <h4 className="font-semibold mb-2">{t('needHelp')}</h4>
               <p className="text-sm text-muted-foreground">
-                Contact our support team if you have any issues with recharging
-                your account.
+                {t('contactSupportRecharge')}
               </p>
             </CardContent>
           </Card>

@@ -26,68 +26,70 @@ import {
   CheckCircle,
   RefreshCw,
 } from 'lucide-react';
-
-const accountInfo = {
-  serviceNo: '620779967',
-  lifeCycleState: 'Active',
-  fraudState: 'Not blacklisted',
-  accountHolder: 'KUM JUDE THADDEUS TEM',
-  email: 'kum.thaddeus@email.com',
-  phone: '+237 620 779 967',
-};
-
-const balanceData = [
-  {
-    accountType: 'Bonus for all call',
-    currentBalance: '50.00 FCFA',
-    effectiveTime: '01/09/2025 20:47:27',
-    expirationTime: '22/09/2025 00:00:00',
-  },
-  {
-    accountType: 'PrepaidBalanceSubaccount',
-    currentBalance: '0.00 FCFA',
-    effectiveTime: '01/09/2022 15:22:12',
-    expirationTime: '01/01/2037 00:00:00',
-  },
-  {
-    accountType: 'Bonus for all call',
-    currentBalance: '100.00 FCFA',
-    effectiveTime: '08/08/2025 19:18:57',
-    expirationTime: '07/09/2025 00:00:00',
-  },
-  {
-    accountType: 'Bonus for all call',
-    currentBalance: '100.00 FCFA',
-    effectiveTime: '11/08/2025 10:26:58',
-    expirationTime: '10/09/2025 00:00:00',
-  },
-  {
-    accountType: 'Bonus for all call',
-    currentBalance: '300.00 FCFA',
-    effectiveTime: '14/08/2025 10:42:35',
-    expirationTime: '13/10/2025 00:00:00',
-  },
-  {
-    accountType: 'DATA',
-    currentBalance: '0.336 GB',
-    effectiveTime: '01/09/2025 20:48:03',
-    expirationTime: '03/09/2025 20:48:03',
-  },
-];
-
-const activeOffers = [
-  {
-    name: 'LTE Standard',
-    data: '15 GB',
-    used: '14.664 GB',
-    remaining: '0.336 GB',
-    expiresIn: '2 days',
-    percentage: 97.76,
-  },
-];
+import { useTranslations } from 'next-intl';
 
 export default function AccountPage() {
+  const t = useTranslations('Account');
   const [activeTab, setActiveTab] = useState('account');
+
+  const accountInfo = {
+    serviceNo: '620779967',
+    lifeCycleState: 'Active',
+    fraudState: 'Not blacklisted',
+    accountHolder: 'KUM JUDE THADDEUS TEM',
+    email: 'kum.thaddeus@email.com',
+    phone: '+237 620 779 967',
+  };
+
+  const balanceData = [
+    {
+      accountType: 'Bonus for all call',
+      currentBalance: '50.00 FCFA',
+      effectiveTime: '01/09/2025 20:47:27',
+      expirationTime: '22/09/2025 00:00:00',
+    },
+    {
+      accountType: 'PrepaidBalanceSubaccount',
+      currentBalance: '0.00 FCFA',
+      effectiveTime: '01/09/2022 15:22:12',
+      expirationTime: '01/01/2037 00:00:00',
+    },
+    {
+      accountType: 'Bonus for all call',
+      currentBalance: '100.00 FCFA',
+      effectiveTime: '08/08/2025 19:18:57',
+      expirationTime: '07/09/2025 00:00:00',
+    },
+    {
+      accountType: 'Bonus for all call',
+      currentBalance: '100.00 FCFA',
+      effectiveTime: '11/08/2025 10:26:58',
+      expirationTime: '10/09/2025 00:00:00',
+    },
+    {
+      accountType: 'Bonus for all call',
+      currentBalance: '300.00 FCFA',
+      effectiveTime: '14/08/2025 10:42:35',
+      expirationTime: '13/10/2025 00:00:00',
+    },
+    {
+      accountType: 'DATA',
+      currentBalance: '0.336 GB',
+      effectiveTime: '01/09/2025 20:48:03',
+      expirationTime: '03/09/2025 20:48:03',
+    },
+  ];
+
+  const activeOffers = [
+    {
+      name: 'LTE Standard',
+      data: '15 GB',
+      used: '14.664 GB',
+      remaining: '0.336 GB',
+      expiresIn: '2 days',
+      percentage: 97.76,
+    },
+  ];
 
   return (
     <div className="container mx-auto px-4 py-6 space-y-6">
@@ -95,15 +97,13 @@ export default function AccountPage() {
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-foreground">
-            Account Information
+            {t('accountInformation')}
           </h1>
-          <p className="text-muted-foreground">
-            Manage your account and view billing details
-          </p>
+          <p className="text-muted-foreground">{t('manageAccountBilling')}</p>
         </div>
         <Button>
           <RefreshCw className="h-4 w-4 mr-2" />
-          Refresh Data
+          {t('refreshData')}
         </Button>
       </div>
 
@@ -132,7 +132,7 @@ export default function AccountPage() {
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">
-                  Life Cycle State
+                  {t('lifeCycleState')}
                 </p>
                 <Badge className="bg-green-100 text-green-700 hover:bg-green-100">
                   {accountInfo.lifeCycleState}
@@ -148,7 +148,9 @@ export default function AccountPage() {
                 <ShieldCheck className="h-5 w-5 text-blue-600" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Fraud State</p>
+                <p className="text-sm text-muted-foreground">
+                  {t('fraudState')}
+                </p>
                 <Badge
                   variant="outline"
                   className="text-green-600 border-green-200"
@@ -166,7 +168,9 @@ export default function AccountPage() {
                 <CreditCard className="h-5 w-5 text-purple-600" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Total Balance</p>
+                <p className="text-sm text-muted-foreground">
+                  {t('totalBalance')}
+                </p>
                 <p className="font-bold">550.00 FCFA</p>
               </div>
             </div>
@@ -193,29 +197,29 @@ export default function AccountPage() {
               <div className="flex items-center gap-2">
                 <Clock className="h-4 w-4 text-muted-foreground" />
                 <span className="text-sm text-muted-foreground">
-                  Expires in {offer.expiresIn}
+                  {t('expiresIn', { time: offer.expiresIn })}
                 </span>
               </div>
             </div>
             <div className="space-y-2">
               <div className="flex items-center justify-between text-sm">
-                <span>Data Usage</span>
+                <span>{t('dataUsage')}</span>
                 <span className="font-medium">
                   {offer.used} / {offer.data}
                 </span>
               </div>
               <Progress value={offer.percentage} className="h-3" />
               <div className="flex items-center justify-between text-sm text-muted-foreground">
-                <span>Used: {offer.percentage.toFixed(1)}%</span>
-                <span>Remaining: {offer.remaining}</span>
+                <span>
+                  {t('used', { percentage: offer.percentage.toFixed(1) })}
+                </span>
+                <span>{t('remaining', { amount: offer.remaining })}</span>
               </div>
             </div>
             {offer.percentage > 90 && (
               <div className="mt-4 flex items-center gap-2 text-amber-600 bg-amber-50 p-3 rounded-lg">
                 <AlertCircle className="h-4 w-4" />
-                <span className="text-sm">
-                  Your data is running low. Consider recharging soon.
-                </span>
+                <span className="text-sm">{t('dataRunningLow')}</span>
               </div>
             )}
           </CardContent>
@@ -229,11 +233,11 @@ export default function AccountPage() {
             <TabsList className="w-1/2 justify-start">
               <TabsTrigger value="account" className="flex items-center gap-2">
                 <User className="h-4 w-4" />
-                Account Information
+                {t('accountInformationTab')}
               </TabsTrigger>
               <TabsTrigger value="offers" className="flex items-center gap-2">
                 <Package className="h-4 w-4" />
-                Offer Information
+                {t('offerInformation')}
               </TabsTrigger>
             </TabsList>
           </CardHeader>
@@ -243,10 +247,10 @@ export default function AccountPage() {
                 <Table>
                   <TableHeader>
                     <TableRow className="bg-secondary/50">
-                      <TableHead>Account Type</TableHead>
-                      <TableHead>Current Balance</TableHead>
-                      <TableHead>Effective Time</TableHead>
-                      <TableHead>Expiration Time</TableHead>
+                      <TableHead>{t('accountType')}</TableHead>
+                      <TableHead>{t('currentBalance')}</TableHead>
+                      <TableHead>{t('effectiveTime')}</TableHead>
+                      <TableHead>{t('expirationTime')}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -284,19 +288,21 @@ export default function AccountPage() {
                         <div>
                           <h4 className="font-semibold">{offer.name}</h4>
                           <p className="text-sm text-muted-foreground">
-                            {offer.data} package
+                            {t('package', { data: offer.data })}
                           </p>
                         </div>
                       </div>
                       <div className="space-y-2 text-sm">
                         <div className="flex justify-between">
                           <span className="text-muted-foreground">
-                            Remaining
+                            {t('remaining')}
                           </span>
                           <span className="font-medium">{offer.remaining}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-muted-foreground">Expires</span>
+                          <span className="text-muted-foreground">
+                            {t('expiresIn', { time: offer.expiresIn })}
+                          </span>
                           <span className="font-medium">{offer.expiresIn}</span>
                         </div>
                       </div>
@@ -317,9 +323,9 @@ export default function AccountPage() {
               <RefreshCw className="h-5 w-5 text-green-600" />
             </div>
             <div>
-              <h4 className="font-semibold">Recharge Account</h4>
+              <h4 className="font-semibold">{t('rechargeAccount')}</h4>
               <p className="text-sm text-muted-foreground">
-                Top up your balance
+                {t('topUpBalance')}
               </p>
             </div>
           </CardContent>
@@ -330,9 +336,9 @@ export default function AccountPage() {
               <Package className="h-5 w-5 text-blue-600" />
             </div>
             <div>
-              <h4 className="font-semibold">Change Plan</h4>
+              <h4 className="font-semibold">{t('changePlan')}</h4>
               <p className="text-sm text-muted-foreground">
-                Upgrade or change your offer
+                {t('upgradeChangeOffer')}
               </p>
             </div>
           </CardContent>
@@ -343,9 +349,9 @@ export default function AccountPage() {
               <Calendar className="h-5 w-5 text-purple-600" />
             </div>
             <div>
-              <h4 className="font-semibold">View History</h4>
+              <h4 className="font-semibold">{t('viewHistory')}</h4>
               <p className="text-sm text-muted-foreground">
-                Check past transactions
+                {t('checkPastTransactions')}
               </p>
             </div>
           </CardContent>

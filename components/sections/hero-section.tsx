@@ -62,15 +62,17 @@ export function HeroSection() {
             <div className="flex flex-wrap gap-8 pt-4">
               <div className="space-y-1">
                 <p className="text-3xl font-bold text-primary">500K+</p>
-                <p className="text-sm text-muted-foreground">Active Users</p>
+                <p className="text-sm text-muted-foreground">
+                  {t('activeUsers')}
+                </p>
               </div>
               <div className="space-y-1">
                 <p className="text-3xl font-bold text-primary">99.9%</p>
-                <p className="text-sm text-muted-foreground">Uptime</p>
+                <p className="text-sm text-muted-foreground">{t('uptime')}</p>
               </div>
               <div className="space-y-1">
                 <p className="text-3xl font-bold text-primary">24/7</p>
-                <p className="text-sm text-muted-foreground">Support</p>
+                <p className="text-sm text-muted-foreground">{t('support')}</p>
               </div>
             </div>
           </div>

@@ -17,132 +17,134 @@ import {
   AlertCircle,
   Package,
 } from 'lucide-react';
-
-const serviceCategories = [
-  {
-    id: 'lte',
-    name: 'LTE SERVICE',
-    icon: Radio,
-    description: 'High-speed mobile data with nationwide coverage',
-    offers: [
-      {
-        name: 'LTE Basic',
-        data: '5 GB',
-        price: 2500,
-        validity: '7 days',
-        popular: false,
-      },
-      {
-        name: 'LTE Standard',
-        data: '15 GB',
-        price: 5000,
-        validity: '30 days',
-        popular: true,
-      },
-      {
-        name: 'LTE Premium',
-        data: '50 GB',
-        price: 15000,
-        validity: '30 days',
-        popular: false,
-      },
-      {
-        name: 'LTE Unlimited',
-        data: 'Unlimited',
-        price: 25000,
-        validity: '30 days',
-        popular: false,
-      },
-    ],
-  },
-  {
-    id: 'wttx-outdoor',
-    name: 'WTTx Outdoor',
-    icon: Satellite,
-    description: 'Wireless-to-the-X outdoor connectivity solutions',
-    offers: [
-      {
-        name: 'Outdoor Basic',
-        data: '20 GB',
-        price: 8000,
-        validity: '30 days',
-        popular: false,
-      },
-      {
-        name: 'Outdoor Standard',
-        data: '50 GB',
-        price: 15000,
-        validity: '30 days',
-        popular: true,
-      },
-      {
-        name: 'Outdoor Premium',
-        data: '100 GB',
-        price: 25000,
-        validity: '30 days',
-        popular: false,
-      },
-    ],
-  },
-  {
-    id: 'wttx-indoor',
-    name: 'WTTx Indoor',
-    icon: Router,
-    description: 'Indoor wireless broadband for home and office',
-    offers: [
-      {
-        name: 'Indoor Home',
-        data: '30 GB',
-        price: 10000,
-        validity: '30 days',
-        popular: false,
-      },
-      {
-        name: 'Indoor Business',
-        data: '75 GB',
-        price: 20000,
-        validity: '30 days',
-        popular: true,
-      },
-      {
-        name: 'Indoor Enterprise',
-        data: '150 GB',
-        price: 35000,
-        validity: '30 days',
-        popular: false,
-      },
-    ],
-  },
-  {
-    id: 'ul',
-    name: 'UL Service',
-    icon: Wifi,
-    description: 'Ultra-low latency service for demanding applications',
-    offers: [
-      {
-        name: 'UL Basic',
-        data: '10 GB',
-        price: 5000,
-        validity: '30 days',
-        popular: false,
-      },
-      {
-        name: 'UL Pro',
-        data: '40 GB',
-        price: 12000,
-        validity: '30 days',
-        popular: true,
-      },
-    ],
-  },
-];
+import { useTranslations } from 'next-intl';
 
 export default function ServicesPage() {
+  const t = useTranslations('Services');
   const [selectedService, setSelectedService] = useState('lte');
   const [showAlert, setShowAlert] = useState(true);
 
+  const serviceCategories = [
+    {
+      id: 'lte',
+      name: t('lteService'),
+      icon: Radio,
+      description: t('lteServiceDesc'),
+      offers: [
+        {
+          name: 'LTE Basic',
+          data: '5 GB',
+          price: 2500,
+          validity: '7 days',
+          popular: false,
+        },
+        {
+          name: 'LTE Standard',
+          data: '15 GB',
+          price: 5000,
+          validity: '30 days',
+          popular: true,
+        },
+        {
+          name: 'LTE Premium',
+          data: '50 GB',
+          price: 15000,
+          validity: '30 days',
+          popular: false,
+        },
+        {
+          name: 'LTE Unlimited',
+          data: 'Unlimited',
+          price: 25000,
+          validity: '30 days',
+          popular: false,
+        },
+      ],
+    },
+    {
+      id: 'wttx-outdoor',
+      name: t('wttxOutdoor'),
+      icon: Satellite,
+      description: t('wttxOutdoorDesc'),
+      offers: [
+        {
+          name: 'Outdoor Basic',
+          data: '20 GB',
+          price: 8000,
+          validity: '30 days',
+          popular: false,
+        },
+        {
+          name: 'Outdoor Standard',
+          data: '50 GB',
+          price: 15000,
+          validity: '30 days',
+          popular: true,
+        },
+        {
+          name: 'Outdoor Premium',
+          data: '100 GB',
+          price: 25000,
+          validity: '30 days',
+          popular: false,
+        },
+      ],
+    },
+    {
+      id: 'wttx-indoor',
+      name: t('wttxIndoor'),
+      icon: Router,
+      description: t('wttxIndoorDesc'),
+      offers: [
+        {
+          name: 'Indoor Home',
+          data: '30 GB',
+          price: 10000,
+          validity: '30 days',
+          popular: false,
+        },
+        {
+          name: 'Indoor Business',
+          data: '75 GB',
+          price: 20000,
+          validity: '30 days',
+          popular: true,
+        },
+        {
+          name: 'Indoor Enterprise',
+          data: '150 GB',
+          price: 35000,
+          validity: '30 days',
+          popular: false,
+        },
+      ],
+    },
+    {
+      id: 'ul',
+      name: t('ulService'),
+      icon: Wifi,
+      description: t('ulServiceDesc'),
+      offers: [
+        {
+          name: 'UL Basic',
+          data: '10 GB',
+          price: 5000,
+          validity: '30 days',
+          popular: false,
+        },
+        {
+          name: 'UL Pro',
+          data: '40 GB',
+          price: 12000,
+          validity: '30 days',
+          popular: true,
+        },
+      ],
+    },
+  ];
+
   const currentService = serviceCategories.find(
-    (s) => s.id === selectedService
+    (s) => s.id === selectedService,
   );
 
   return (
@@ -151,16 +153,14 @@ export default function ServicesPage() {
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-foreground">
-            Services & Offers
+            {t('servicesAndOffers')}
           </h1>
-          <p className="text-muted-foreground">
-            Browse and subscribe to our internet packages
-          </p>
+          <p className="text-muted-foreground">{t('browseSubscribe')}</p>
         </div>
         <div className="flex items-center gap-2">
           <Badge variant="outline" className="text-primary border-primary">
             <Package className="h-3 w-3 mr-1" />
-            Active Plan: LTE Standard
+            {t('activePlan', { planName: 'LTE Standard' })}
           </Badge>
         </div>
       </div>
@@ -172,9 +172,9 @@ export default function ServicesPage() {
           className="bg-destructive/10 border-destructive/20"
         >
           <AlertCircle className="h-4 w-4" />
-          <AlertTitle>System Notice</AlertTitle>
+          <AlertTitle>{t('systemNotice')}</AlertTitle>
           <AlertDescription className="flex items-center justify-between">
-            <span>System abnormalities, please try later!</span>
+            <span>{t('systemAbnormalities')}</span>
             <Button
               variant="outline"
               size="sm"
@@ -233,8 +233,8 @@ export default function ServicesPage() {
           <CardContent className="p-6">
             <Tabs defaultValue="offers" className="w-full">
               <TabsList className="mb-6">
-                <TabsTrigger value="offers">Available Offers</TabsTrigger>
-                <TabsTrigger value="packages">Packages</TabsTrigger>
+                <TabsTrigger value="offers">{t('availableOffers')}</TabsTrigger>
+                <TabsTrigger value="packages">{t('packages')}</TabsTrigger>
               </TabsList>
               <TabsContent value="offers">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -247,7 +247,7 @@ export default function ServicesPage() {
                     >
                       {offer.popular && (
                         <div className="absolute top-0 right-0 bg-primary text-primary-foreground text-xs px-2 py-1 rounded-bl-lg">
-                          Popular
+                          {t('popular')}
                         </div>
                       )}
                       <CardContent className="p-5">
@@ -256,12 +256,14 @@ export default function ServicesPage() {
                         </h4>
                         <div className="space-y-2 mb-4">
                           <div className="flex items-center justify-between text-sm">
-                            <span className="text-muted-foreground">Data</span>
+                            <span className="text-muted-foreground">
+                              {t('data')}
+                            </span>
                             <span className="font-medium">{offer.data}</span>
                           </div>
                           <div className="flex items-center justify-between text-sm">
                             <span className="text-muted-foreground">
-                              Validity
+                              {t('validity')}
                             </span>
                             <span className="font-medium">
                               {offer.validity}
@@ -278,7 +280,7 @@ export default function ServicesPage() {
                           className="w-full"
                           variant={offer.popular ? 'default' : 'outline'}
                         >
-                          Subscribe
+                          {t('subscribe')}
                         </Button>
                       </CardContent>
                     </Card>
@@ -288,7 +290,7 @@ export default function ServicesPage() {
               <TabsContent value="packages">
                 <div className="text-center py-12 text-muted-foreground">
                   <Package className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                  <p>Package bundles coming soon</p>
+                  <p>{t('packageBundlesComingSoon')}</p>
                 </div>
               </TabsContent>
             </Tabs>
@@ -304,9 +306,9 @@ export default function ServicesPage() {
               <Check className="h-5 w-5 text-green-600" />
             </div>
             <div>
-              <h4 className="font-semibold">Instant Activation</h4>
+              <h4 className="font-semibold">{t('instantActivation')}</h4>
               <p className="text-sm text-muted-foreground">
-                Get connected immediately
+                {t('instantActivationDesc')}
               </p>
             </div>
           </CardContent>
@@ -317,9 +319,9 @@ export default function ServicesPage() {
               <Wifi className="h-5 w-5 text-blue-600" />
             </div>
             <div>
-              <h4 className="font-semibold">Nationwide Coverage</h4>
+              <h4 className="font-semibold">{t('nationwideCoverage')}</h4>
               <p className="text-sm text-muted-foreground">
-                Connect anywhere in Cameroon
+                {t('nationwideCoverageDesc')}
               </p>
             </div>
           </CardContent>
@@ -330,9 +332,9 @@ export default function ServicesPage() {
               <Package className="h-5 w-5 text-purple-600" />
             </div>
             <div>
-              <h4 className="font-semibold">Flexible Plans</h4>
+              <h4 className="font-semibold">{t('flexiblePlans')}</h4>
               <p className="text-sm text-muted-foreground">
-                Choose what suits you best
+                {t('flexiblePlansDesc')}
               </p>
             </div>
           </CardContent>

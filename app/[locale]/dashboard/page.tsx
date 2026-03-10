@@ -21,77 +21,80 @@ import {
   MessageSquare,
   Phone,
 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { LanguageProvider } from '@/lib/language-context';
 
-const offerCategories = [
-  {
-    name: 'LTE SERVICE',
-    href: '/dashboard/services/lte',
-    icon: Radio,
-    badge: 'Popular',
-  },
-  {
-    name: 'WTTx Outdoor',
-    href: '/dashboard/services/wttx-outdoor',
-    icon: Satellite,
-  },
-  {
-    name: 'WTTx Indoor',
-    href: '/dashboard/services/wttx-indoor',
-    icon: Router,
-  },
-  { name: 'UL Service', href: '/dashboard/services/ul', icon: Wifi },
-];
-
-const packageCategories = [
-  { name: 'LTE SERVICE', href: '/dashboard/packages/lte', icon: Radio },
-  {
-    name: 'WTTx Outdoor',
-    href: '/dashboard/packages/wttx-outdoor',
-    icon: Satellite,
-  },
-  {
-    name: 'WTTx Indoor',
-    href: '/dashboard/packages/wttx-indoor',
-    icon: Router,
-  },
-  { name: 'UL Service', href: '/dashboard/packages/ul', icon: Wifi },
-];
-
-const quickActions = [
-  {
-    name: 'Account Info',
-    href: '/dashboard/account',
-    icon: CreditCard,
-    description: 'View your balance and account details',
-  },
-  {
-    name: 'Bundles',
-    href: '/dashboard/bundles',
-    icon: RefreshCw,
-    description: 'Subscribe to Data bundles',
-  },
-  {
-    name: 'Recharge',
-    href: '/dashboard/recharge',
-    icon: RefreshCw,
-    description: 'Top up your account',
-  },
-  {
-    name: 'Order History',
-    href: '/dashboard/orders',
-    icon: History,
-    description: 'Check your past orders',
-  },
-];
-
-const supportLinks = [
-  { name: 'FAQ', href: '/dashboard/faq', icon: HelpCircle },
-  { name: 'Feedback', href: '/dashboard/support', icon: MessageSquare },
-  { name: 'Contact Us', href: '/dashboard/contact', icon: Phone },
-];
-
 export default function DashboardPage() {
+  const t = useTranslations('Dashboard');
+
+  const offerCategories = [
+    {
+      name: t('lteService'),
+      href: '/dashboard/services/lte',
+      icon: Radio,
+      badge: t('popular'),
+    },
+    {
+      name: t('wttxOutdoor'),
+      href: '/dashboard/services/wttx-outdoor',
+      icon: Satellite,
+    },
+    {
+      name: t('wttxIndoor'),
+      href: '/dashboard/services/wttx-indoor',
+      icon: Router,
+    },
+    { name: t('ulService'), href: '/dashboard/services/ul', icon: Wifi },
+  ];
+
+  const packageCategories = [
+    { name: t('lteService'), href: '/dashboard/packages/lte', icon: Radio },
+    {
+      name: t('wttxOutdoor'),
+      href: '/dashboard/packages/wttx-outdoor',
+      icon: Satellite,
+    },
+    {
+      name: t('wttxIndoor'),
+      href: '/dashboard/packages/wttx-indoor',
+      icon: Router,
+    },
+    { name: t('ulService'), href: '/dashboard/packages/ul', icon: Wifi },
+  ];
+
+  const quickActions = [
+    {
+      name: t('accountInfo'),
+      href: '/dashboard/account',
+      icon: CreditCard,
+      description: t('accountInfoDesc'),
+    },
+    {
+      name: t('bundles'),
+      href: '/dashboard/bundles',
+      icon: RefreshCw,
+      description: t('bundlesDesc'),
+    },
+    {
+      name: t('recharge'),
+      href: '/dashboard/recharge',
+      icon: RefreshCw,
+      description: t('rechargeDesc'),
+    },
+    {
+      name: t('orderHistory'),
+      href: '/dashboard/orders',
+      icon: History,
+      description: t('orderHistoryDesc'),
+    },
+  ];
+
+  const supportLinks = [
+    { name: 'FAQ', href: '/dashboard/faq', icon: HelpCircle },
+    { name: 'Feedback', href: '/dashboard/support', icon: MessageSquare },
+    { name: 'Contact Us', href: '/dashboard/contact', icon: Phone },
+  ];
+
   return (
     <LanguageProvider>
       <div className="container mx-auto px-4 py-6 space-y-6">
@@ -141,7 +144,7 @@ export default function DashboardPage() {
               <CardHeader className="flex flex-row items-center justify-between py-4 border-b border-border">
                 <div className="flex items-center gap-2">
                   <div className="h-1 w-4 bg-primary rounded-full" />
-                  <CardTitle className="text-lg">Offers</CardTitle>
+                  <CardTitle className="text-lg">{t('offers')}</CardTitle>
                 </div>
               </CardHeader>
               <CardContent className="p-0">
@@ -157,7 +160,7 @@ export default function DashboardPage() {
                           <category.icon className="h-4 w-4 text-primary" />
                         </div>
                         <span className="font-medium">
-                          Offers - {category.name}
+                          {t('offers')} - {category.name}
                         </span>
                         {category.badge && (
                           <Badge variant="secondary" className="ml-2">
@@ -166,7 +169,7 @@ export default function DashboardPage() {
                         )}
                       </div>
                       <div className="flex items-center gap-2 text-muted-foreground">
-                        <span className="text-sm">more</span>
+                        <span className="text-sm">{t('more')}</span>
                         <ChevronRight className="h-4 w-4" />
                       </div>
                     </Link>
@@ -180,7 +183,7 @@ export default function DashboardPage() {
               <CardHeader className="flex flex-row items-center justify-between py-4 border-b border-border">
                 <div className="flex items-center gap-2">
                   <div className="h-1 w-4 bg-accent rounded-full" />
-                  <CardTitle className="text-lg">Packages</CardTitle>
+                  <CardTitle className="text-lg">{t('packages')}</CardTitle>
                 </div>
               </CardHeader>
               <CardContent className="p-0">
@@ -196,11 +199,11 @@ export default function DashboardPage() {
                           <category.icon className="h-4 w-4 text-accent" />
                         </div>
                         <span className="font-medium">
-                          Packages - {category.name}
+                          {t('packages')} - {category.name}
                         </span>
                       </div>
                       <div className="flex items-center gap-2 text-muted-foreground">
-                        <span className="text-sm">more</span>
+                        <span className="text-sm">{t('more')}</span>
                         <ChevronRight className="h-4 w-4" />
                       </div>
                     </Link>
@@ -223,7 +226,9 @@ export default function DashboardPage() {
             {/* Support Links */}
             <Card>
               <CardHeader className="py-3 px-4 border-b border-border">
-                <CardTitle className="text-sm font-semibold">Support</CardTitle>
+                <CardTitle className="text-sm font-semibold">
+                  {t('support')}
+                </CardTitle>
               </CardHeader>
               <CardContent className="p-0">
                 <div className="divide-y divide-border">
@@ -247,13 +252,12 @@ export default function DashboardPage() {
             {/* Help Notice */}
             <Card className="bg-secondary/50">
               <CardContent className="p-4">
-                <h4 className="font-semibold mb-2">Need Help?</h4>
+                <h4 className="font-semibold mb-2">{t('needHelp')}</h4>
                 <p className="text-sm text-muted-foreground mb-3">
-                  Our support team is available 24/7 to assist you with any
-                  questions.
+                  {t('needHelpDesc')}
                 </p>
                 <Button asChild className="w-full">
-                  <Link href="/dashboard/contact">Contact Support</Link>
+                  <Link href="/dashboard/contact">{t('contactSupport')}</Link>
                 </Button>
               </CardContent>
             </Card>

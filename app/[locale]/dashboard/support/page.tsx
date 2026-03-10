@@ -41,103 +41,106 @@ import {
   CheckCircle,
   Clock,
 } from 'lucide-react';
-
-const feedbackData = [
-  {
-    id: 1,
-    title: 'Difficulte',
-    detail: "Salut! Je n'arrive plus a...",
-    status: 'Answered',
-    date: '01/09/2025',
-    fullDetail:
-      "Salut! Je n'arrive plus a me connecter a mon compte. J'ai essaye plusieurs fois mais ca ne marche pas.",
-    response:
-      'Bonjour, veuillez verifier votre mot de passe et reessayer. Si le probleme persiste, contactez notre support.',
-  },
-  {
-    id: 2,
-    title: 'Pas de Da...',
-    detail: 'Bonjour...',
-    status: 'Answered',
-    date: '28/08/2025',
-    fullDetail: "Bonjour, je n'ai pas de donnees malgre mon abonnement actif.",
-    response:
-      'Bonjour, nous avons verifie votre compte. Le probleme a ete resolu. Veuillez redemarer votre appareil.',
-  },
-  {
-    id: 3,
-    title: 'Pas de C...',
-    detail: "Bonjour Camtel, J'aimerais...",
-    status: 'Answered',
-    date: '25/08/2025',
-    fullDetail:
-      "Bonjour Camtel, J'aimerais savoir comment je peux verifier ma consommation de donnees.",
-    response:
-      "Bonjour, vous pouvez consulter votre consommation dans la section 'Account Information' de votre portail.",
-  },
-  {
-    id: 4,
-    title: 'AIDE',
-    detail: 'Bonjour comment consulter sa consommation...',
-    status: 'Answered',
-    date: '20/08/2025',
-    fullDetail:
-      'Bonjour comment consulter sa consommation de donnees sur le portail?',
-    response:
-      'Bonjour, connectez-vous a votre compte et allez dans Service > Account Information pour voir votre consommation.',
-  },
-  {
-    id: 5,
-    title: 'Comment...',
-    detail: 'Svp je voulais changer mon mot de passe...',
-    status: 'Answered',
-    date: '15/08/2025',
-    fullDetail:
-      "Svp je voulais changer mon mot de passe mais je ne trouve pas l'option.",
-    response:
-      "Bonjour, allez dans votre profil en haut a droite et cliquez sur 'Change Password'.",
-  },
-  {
-    id: 6,
-    title: 'Manque d...',
-    detail: "Lorsqu'on veut activer une offre dans...",
-    status: 'Answered',
-    date: '10/08/2025',
-    fullDetail:
-      "Lorsqu'on veut activer une offre dans l'application, ca affiche une erreur.",
-    response:
-      'Bonjour, nous avons identifie un probleme technique. Il a ete corrige. Veuillez reessayer.',
-  },
-  {
-    id: 7,
-    title: 'Transfert...',
-    detail: 'Comment transferer le credit de son solde...',
-    status: 'Answered',
-    date: '05/08/2025',
-    fullDetail:
-      'Comment transferer le credit de son solde vers un autre numero Camtel?',
-    response:
-      "Bonjour, le transfert de credit n'est pas disponible pour le moment sur les comptes X-tremNet.",
-  },
-  {
-    id: 8,
-    title: 'bloquer',
-    detail: 'Mon compte myxtremnet a ete bloque...',
-    status: 'Answered',
-    date: '01/08/2025',
-    fullDetail:
-      'Mon compte myxtremnet a ete bloque apres plusieurs tentatives de connexion echouees.',
-    response:
-      'Bonjour, votre compte a ete debloque. Veuillez utiliser le mot de passe par defaut et le changer ensuite.',
-  },
-];
+import { useTranslations } from 'next-intl';
 
 export default function SupportPage() {
+  const t = useTranslations('Support');
   const [filter, setFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedFeedback, setSelectedFeedback] = useState<
     (typeof feedbackData)[0] | null
   >(null);
+
+  const feedbackData = [
+    {
+      id: 1,
+      title: 'Difficulte',
+      detail: "Salut! Je n'arrive plus a...",
+      status: 'Answered',
+      date: '01/09/2025',
+      fullDetail:
+        "Salut! Je n'arrive plus a me connecter a mon compte. J'ai essaye plusieurs fois mais ca ne marche pas.",
+      response:
+        'Bonjour, veuillez verifier votre mot de passe et reessayer. Si le probleme persiste, contactez notre support.',
+    },
+    {
+      id: 2,
+      title: 'Pas de Da...',
+      detail: 'Bonjour...',
+      status: 'Answered',
+      date: '28/08/2025',
+      fullDetail:
+        "Bonjour, je n'ai pas de donnees malgre mon abonnement actif.",
+      response:
+        'Bonjour, nous avons verifie votre compte. Le probleme a ete resolu. Veuillez redemarer votre appareil.',
+    },
+    {
+      id: 3,
+      title: 'Pas de C...',
+      detail: "Bonjour Camtel, J'aimerais...",
+      status: 'Answered',
+      date: '25/08/2025',
+      fullDetail:
+        "Bonjour Camtel, J'aimerais savoir comment je peux verifier ma consommation de donnees.",
+      response:
+        "Bonjour, vous pouvez consulter votre consommation dans la section 'Account Information' de votre portail.",
+    },
+    {
+      id: 4,
+      title: 'AIDE',
+      detail: 'Bonjour comment consulter sa consommation...',
+      status: 'Answered',
+      date: '20/08/2025',
+      fullDetail:
+        'Bonjour comment consulter sa consommation de donnees sur le portail?',
+      response:
+        'Bonjour, connectez-vous a votre compte et allez dans Service > Account Information pour voir votre consommation.',
+    },
+    {
+      id: 5,
+      title: 'Comment...',
+      detail: 'Svp je voulais changer mon mot de passe...',
+      status: 'Answered',
+      date: '15/08/2025',
+      fullDetail:
+        "Svp je voulais changer mon mot de passe mais je ne trouve pas l'option.",
+      response:
+        "Bonjour, allez dans votre profil en haut a droite et cliquez sur 'Change Password'.",
+    },
+    {
+      id: 6,
+      title: 'Manque d...',
+      detail: "Lorsqu'on veut activer une offre dans...",
+      status: 'Answered',
+      date: '10/08/2025',
+      fullDetail:
+        "Lorsqu'on veut activer une offre dans l'application, ca affiche une erreur.",
+      response:
+        'Bonjour, nous avons identifie un probleme technique. Il a ete corrige. Veuillez reessayer.',
+    },
+    {
+      id: 7,
+      title: 'Transfert...',
+      detail: 'Comment transferer le credit de son solde...',
+      status: 'Answered',
+      date: '05/08/2025',
+      fullDetail:
+        'Comment transferer le credit de son solde vers un autre numero Camtel?',
+      response:
+        "Bonjour, le transfert de credit n'est pas disponible pour le moment sur les comptes X-tremNet.",
+    },
+    {
+      id: 8,
+      title: 'bloquer',
+      detail: 'Mon compte myxtremnet a ete bloque...',
+      status: 'Answered',
+      date: '01/08/2025',
+      fullDetail:
+        'Mon compte myxtremnet a ete bloque apres plusieurs tentatives de connexion echouees.',
+      response:
+        'Bonjour, votre compte a ete debloque. Veuillez utiliser le mot de passe par defaut et le changer ensuite.',
+    },
+  ];
 
   const getStatusBadge = (status: string) => {
     switch (status.toLowerCase()) {
@@ -145,14 +148,14 @@ export default function SupportPage() {
         return (
           <Badge className="bg-green-100 text-green-700 hover:bg-green-100">
             <CheckCircle className="h-3 w-3 mr-1" />
-            Answered
+            {t('answered')}
           </Badge>
         );
       case 'pending':
         return (
           <Badge className="bg-yellow-100 text-yellow-700 hover:bg-yellow-100">
             <Clock className="h-3 w-3 mr-1" />
-            Pending
+            {t('pending')}
           </Badge>
         );
       default:
@@ -166,54 +169,58 @@ export default function SupportPage() {
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-foreground">
-            Feedback & Support
+            {t('feedbackSupport')}
           </h1>
-          <p className="text-muted-foreground">
-            Submit and track your support requests
-          </p>
+          <p className="text-muted-foreground">{t('submitTrackRequests')}</p>
         </div>
         <Dialog>
           <DialogTrigger asChild>
             <Button>
               <Plus className="h-4 w-4 mr-2" />
-              New Message
+              {t('newMessage')}
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[500px]">
             <DialogHeader>
-              <DialogTitle>Submit Feedback</DialogTitle>
+              <DialogTitle>{t('submitFeedback')}</DialogTitle>
               <DialogDescription>
-                Send us your questions, suggestions, or report an issue.
+                {t('sendQuestionsSuggestions')}
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4 py-4">
               <div className="space-y-2">
-                <Label>Category</Label>
+                <Label>{t('category')}</Label>
                 <Select>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select category" />
+                    <SelectValue placeholder={t('selectCategory')} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="technical">Technical Issue</SelectItem>
-                    <SelectItem value="billing">Billing Question</SelectItem>
-                    <SelectItem value="suggestion">Suggestion</SelectItem>
-                    <SelectItem value="complaint">Complaint</SelectItem>
-                    <SelectItem value="other">Other</SelectItem>
+                    <SelectItem value="technical">
+                      {t('technicalIssue')}
+                    </SelectItem>
+                    <SelectItem value="billing">
+                      {t('billingQuestion')}
+                    </SelectItem>
+                    <SelectItem value="suggestion">
+                      {t('suggestion')}
+                    </SelectItem>
+                    <SelectItem value="complaint">{t('complaint')}</SelectItem>
+                    <SelectItem value="other">{t('other')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label>Title</Label>
-                <Input placeholder="Brief description of your issue" />
+                <Label>{t('title')}</Label>
+                <Input placeholder={t('briefDescription')} />
               </div>
               <div className="space-y-2">
-                <Label>Message</Label>
+                <Label>{t('message')}</Label>
                 <Textarea
-                  placeholder="Describe your issue or feedback in detail..."
+                  placeholder={t('describeIssueFeedback')}
                   className="min-h-[120px]"
                 />
               </div>
-              <Button className="w-full">Submit Feedback</Button>
+              <Button className="w-full">{t('submitFeedback')}</Button>
             </div>
           </DialogContent>
         </Dialog>
@@ -228,7 +235,9 @@ export default function SupportPage() {
                 <MessageSquare className="h-5 w-5 text-primary" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Total Messages</p>
+                <p className="text-sm text-muted-foreground">
+                  {t('totalMessages')}
+                </p>
                 <p className="text-xl font-bold">{feedbackData.length}</p>
               </div>
             </div>
@@ -241,7 +250,7 @@ export default function SupportPage() {
                 <CheckCircle className="h-5 w-5 text-green-600" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Answered</p>
+                <p className="text-sm text-muted-foreground">{t('answered')}</p>
                 <p className="text-xl font-bold">
                   {feedbackData.filter((f) => f.status === 'Answered').length}
                 </p>
@@ -256,7 +265,7 @@ export default function SupportPage() {
                 <Clock className="h-5 w-5 text-yellow-600" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Pending</p>
+                <p className="text-sm text-muted-foreground">{t('pending')}</p>
                 <p className="text-xl font-bold">0</p>
               </div>
             </div>
@@ -269,7 +278,9 @@ export default function SupportPage() {
                 <MessageSquare className="h-5 w-5 text-blue-600" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">This Month</p>
+                <p className="text-sm text-muted-foreground">
+                  {t('thisMonth')}
+                </p>
                 <p className="text-xl font-bold">3</p>
               </div>
             </div>
@@ -284,7 +295,7 @@ export default function SupportPage() {
             <div className="flex-1 relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Search messages..."
+                placeholder={t('searchMessages')}
                 className="pl-10"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -293,17 +304,17 @@ export default function SupportPage() {
             <Select value={filter} onValueChange={setFilter}>
               <SelectTrigger className="w-full md:w-48">
                 <Filter className="h-4 w-4 mr-2" />
-                <SelectValue placeholder="Filter by type" />
+                <SelectValue placeholder={t('filterByType')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Messages</SelectItem>
-                <SelectItem value="public">Public Message</SelectItem>
-                <SelectItem value="private">Private Message</SelectItem>
+                <SelectItem value="all">{t('allMessages')}</SelectItem>
+                <SelectItem value="public">{t('publicMessage')}</SelectItem>
+                <SelectItem value="private">{t('privateMessage')}</SelectItem>
               </SelectContent>
             </Select>
             <Button variant="outline">
               <Search className="h-4 w-4 mr-2" />
-              Enquiry
+              {t('enquiry')}
             </Button>
           </div>
         </CardContent>
@@ -316,9 +327,9 @@ export default function SupportPage() {
             <MessageSquare className="h-8 w-8 text-primary" />
           </div>
           <div>
-            <CardTitle className="text-lg">Feedback Messages</CardTitle>
+            <CardTitle className="text-lg">{t('feedbackMessages')}</CardTitle>
             <p className="text-sm text-muted-foreground">
-              Your submitted support requests
+              {t('submittedRequests')}
             </p>
           </div>
         </CardHeader>
@@ -327,10 +338,10 @@ export default function SupportPage() {
             <Table>
               <TableHeader>
                 <TableRow className="bg-secondary/50">
-                  <TableHead className="w-32">Title</TableHead>
+                  <TableHead className="w-32">{t('title')}</TableHead>
                   <TableHead>Detail</TableHead>
-                  <TableHead className="w-28">Status</TableHead>
-                  <TableHead className="w-20">Action</TableHead>
+                  <TableHead className="w-28">{t('status')}</TableHead>
+                  <TableHead className="w-20">{t('action')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -358,13 +369,13 @@ export default function SupportPage() {
                           <DialogHeader>
                             <DialogTitle>{feedback.title}</DialogTitle>
                             <DialogDescription>
-                              Submitted on {feedback.date}
+                              {t('submittedOn', { date: feedback.date })}
                             </DialogDescription>
                           </DialogHeader>
                           <div className="space-y-4 py-4">
                             <div>
                               <Label className="text-muted-foreground">
-                                Your Message
+                                {t('yourMessage')}
                               </Label>
                               <p className="mt-1 p-3 bg-secondary rounded-lg">
                                 {feedback.fullDetail}
@@ -373,7 +384,7 @@ export default function SupportPage() {
                             {feedback.response && (
                               <div>
                                 <Label className="text-muted-foreground">
-                                  Response from Camtel
+                                  {t('responseFromCamtel')}
                                 </Label>
                                 <p className="mt-1 p-3 bg-primary/10 rounded-lg border-l-4 border-primary">
                                   {feedback.response}
@@ -399,10 +410,10 @@ export default function SupportPage() {
       <div className="flex items-center justify-center gap-2">
         <Button variant="outline" size="sm" disabled>
           <ChevronLeft className="h-4 w-4 mr-1" />
-          First
+          {t('first')}
         </Button>
         <Button variant="outline" size="sm" disabled>
-          Prev
+          {t('prev')}
         </Button>
         <Button variant="default" size="sm">
           1
@@ -411,10 +422,10 @@ export default function SupportPage() {
           2
         </Button>
         <Button variant="outline" size="sm">
-          Next
+          {t('next')}
         </Button>
         <Button variant="outline" size="sm">
-          Last
+          {t('last')}
           <ChevronRight className="h-4 w-4 ml-1" />
         </Button>
       </div>
