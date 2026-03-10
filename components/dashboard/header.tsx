@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -25,23 +24,48 @@ import {
   ChevronDown,
   Rss,
 } from 'lucide-react';
-import { useLanguage } from '@/lib/language-context';
+import { useTranslations, useLocale } from 'next-intl';
+import {
+  Link,
+  redirect,
+  usePathname as useNextIntlPathname,
+  useRouter,
+} from '@/src/i18n/navigation';
 import { useActivePath } from '@/hooks/use-active-path';
 import { useAuth } from '@/lib/auth-context';
 
-const navigation = [
-  { name: 'Dashboard', href: '/dashboard', icon: Home },
-  { name: 'Bundles', href: '/dashboard/bundles', icon: Rss },
-  { name: 'Product', href: '/dashboard/services', icon: Package },
-  { name: 'Account', href: '/dashboard/account', icon: Settings },
-  { name: 'Support', href: '/dashboard/support', icon: HelpCircle },
-];
-
 export function DashboardHeader() {
   const pathname = usePathname();
-  const { language, setLanguage, t } = useLanguage();
+  const nextIntlPathname = useNextIntlPathname();
+  const locale = useLocale();
+  const router = useRouter();
+  const t = useTranslations();
   const { checkActive } = useActivePath();
   const { user, logout } = useAuth();
+
+  const navigation = [
+    { name: t('Navigation.home'), href: '/dashboard', icon: Home },
+    { name: t('Navigation.bundles'), href: '/dashboard/bundles', icon: Rss },
+    {
+      name: t('Navigation.product'),
+      href: '/dashboard/services',
+      icon: Package,
+    },
+    {
+      name: t('Navigation.account'),
+      href: '/dashboard/account',
+      icon: Settings,
+    },
+    {
+      name: t('Navigation.support'),
+      href: '/dashboard/support',
+      icon: HelpCircle,
+    },
+  ];
+
+  const handleLanguageChange = (newLocale: string) => {
+    router.replace(nextIntlPathname, { locale: newLocale });
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-card shadow-sm">
@@ -56,7 +80,7 @@ export function DashboardHeader() {
           <div className="hidden md:block">
             <span className="text-xl font-bold text-primary">Camtel</span>
             <p className="text-xs text-muted-foreground">
-              ...Et ce n'est pas fini!
+              {t('Footer.tagline')}
             </p>
           </div>
         </Link>
@@ -92,7 +116,9 @@ export function DashboardHeader() {
                 >
                   <Globe className="h-4 w-4" />
                   <span className="hidden sm:inline">
-                    {language === 'en' ? 'English' : 'Francais'}
+                    {locale === 'en'
+                      ? t('Language.english')
+                      : t('Language.french')}
                   </span>
                   <ChevronDown className="h-3 w-3" />
                 </Button>
@@ -102,24 +128,24 @@ export function DashboardHeader() {
                 className="animate-in fade-in-0 zoom-in-95"
               >
                 <DropdownMenuItem
-                  onClick={() => setLanguage('en')}
+                  onClick={() => handleLanguageChange('en')}
                   className={
-                    language === 'en'
+                    locale === 'en'
                       ? 'bg-secondary cursor-pointer mb-1'
                       : 'cursor-pointer'
                   }
                 >
-                  English
+                  {t('Language.english')}
                 </DropdownMenuItem>
                 <DropdownMenuItem
-                  onClick={() => setLanguage('fr')}
+                  onClick={() => handleLanguageChange('fr')}
                   className={
-                    language === 'fr'
+                    locale === 'fr'
                       ? 'bg-secondary cursor-pointer mb-1'
                       : 'cursor-pointer'
                   }
                 >
-                  Francais
+                  {t('Language.french')}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -131,7 +157,7 @@ export function DashboardHeader() {
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="rounded-full">
                   <User className="h-5 w-5" />
-                  <span className="sr-only">User menu</span>
+                  <span className="sr-only">{t('Auth.userMenu')}</span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
@@ -145,25 +171,25 @@ export function DashboardHeader() {
                 <DropdownMenuItem asChild>
                   <Link href="/dashboard/account">
                     <User className="mr-2 h-4 w-4" />
-                    Profile
+                    {t('User.profile')}
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <Link href="/dashboard/settings">
                     <Key className="mr-2 h-4 w-4" />
-                    Change Password
+                    {t('User.changePassword')}
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem className="text-destructive" onClick={logout}>
                   <LogOut className="mr-2 h-4 w-4" />
-                  Logout
+                  {t('Auth.logout')}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
             <Button asChild>
-              <Link href="/login">Login</Link>
+              <Link href="/login">{t('Auth.login')}</Link>
             </Button>
           )}
 
@@ -172,7 +198,7 @@ export function DashboardHeader() {
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="md:hidden">
                 <Menu className="h-5 w-5" />
-                <span className="sr-only">Toggle menu</span>
+                <span className="sr-only">{t('Auth.toggleMenu')}</span>
               </Button>
             </SheetTrigger>
             <SheetContent side="right" className="w-72">
@@ -187,7 +213,7 @@ export function DashboardHeader() {
                 ) : (
                   <div className="px-2 py-4 border-b border-border">
                     <Button asChild className="w-full">
-                      <Link href="/login">Login</Link>
+                      <Link href="/login">{t('Auth.login')}</Link>
                     </Button>
                   </div>
                 )}
@@ -217,17 +243,22 @@ export function DashboardHeader() {
                 <div className="mt-auto pt-4 border-t border-border">
                   <div className="flex items-center gap-2 px-3 text-sm">
                     <button
-                      onClick={() => setLanguage('fr')}
+                      onClick={() => handleLanguageChange('fr')}
                       className={
-                        language === 'fr'
+                        locale === 'fr'
                           ? 'text-blue-500 hover:text-primary'
                           : ''
                       }
                     >
-                      English
+                      {t('Language.english')}
                     </button>
                     <span>|</span>
-                    <button className="hover:text-primary">French</button>
+                    <button
+                      onClick={() => handleLanguageChange('fr')}
+                      className="hover:text-primary"
+                    >
+                      {t('Language.french')}
+                    </button>
                   </div>
                 </div>
               </div>

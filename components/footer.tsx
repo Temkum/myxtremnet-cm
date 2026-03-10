@@ -1,10 +1,10 @@
 'use client';
 
-import { useLanguage } from '@/lib/language-context';
-import Link from 'next/link';
+import { useTranslations } from 'next-intl';
+import { Link } from '@/src/i18n/navigation';
 
 export function Footer() {
-  const { t } = useLanguage();
+  const t = useTranslations();
   const currentYear = new Date().getFullYear();
 
   return (
@@ -20,7 +20,7 @@ export function Footer() {
             />
             <div>
               <span className="ml-2 text-xs text-muted-foreground">
-                {t('tagline')}
+                {t('Footer.tagline')}
               </span>
             </div>
           </div>
@@ -28,17 +28,17 @@ export function Footer() {
           {/* links */}
           <div className="flex items-center gap-6 text-sm text-muted-foreground">
             <Link href="#" className="transition-colors hover:text-foreground">
-              {t('privacyPolicy')}
+              {t('Footer.privacyPolicy')}
             </Link>
             <Link href="#" className="transition-colors hover:text-foreground">
-              {t('termsOfService')}
+              {t('Footer.termsOfService')}
             </Link>
           </div>
         </div>
 
         <div className="mt-6 flex flex-col items-center justify-between gap-2 border-t border-border/50 pt-6 text-center text-xs text-muted-foreground sm:flex-row">
           <p>
-            &copy; 2005-{currentYear} {t('copyright')}
+            &copy; 2005-{currentYear} {t('Footer.copyright')}
           </p>
           <p>Visits: 696,424,502</p>
         </div>

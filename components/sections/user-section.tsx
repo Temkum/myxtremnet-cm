@@ -13,19 +13,19 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useLanguage } from '@/lib/language-context';
+import { useTranslations } from 'next-intl';
 import { useAuth } from '@/lib/auth-context';
-import LoginModal from '@/app/login-modal/page';
+import LoginModal from '@/app/[locale]/login-modal/page';
 
 export function UserSection() {
-  const { t } = useLanguage();
+  const t = useTranslations();
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const { user, logout } = useAuth();
 
   const quickActions = [
-    { icon: Receipt, label: 'viewBills', color: 'text-primary' },
-    { icon: RefreshCw, label: 'recharge', color: 'text-accent' },
-    { icon: BarChart3, label: 'dataUsage', color: 'text-primary' },
+    { icon: Receipt, label: 'QuickActions.viewBills', color: 'text-primary' },
+    { icon: RefreshCw, label: 'QuickActions.recharge', color: 'text-accent' },
+    { icon: BarChart3, label: 'QuickActions.dataUsage', color: 'text-primary' },
   ];
 
   return (
@@ -43,7 +43,9 @@ export function UserSection() {
                         <User className="h-6 w-6" />
                       </div>
                       <div>
-                        <p className="text-sm opacity-90">{t('welcome')},</p>
+                        <p className="text-sm opacity-90">
+                          {t('User.welcome')},
+                        </p>
                         <CardTitle className="text-lg uppercase">
                           {user?.name}
                         </CardTitle>
@@ -57,18 +59,18 @@ export function UserSection() {
                     <div className="flex flex-col">
                       <button className="flex items-center gap-3 px-6 py-4 text-left text-sm font-medium text-muted-foreground transition-all duration-200 hover:bg-secondary hover:text-foreground">
                         <FileText className="h-4 w-4" />
-                        {t('customerInfo')}
+                        {t('User.customerInfo')}
                       </button>
                       <button className="flex items-center gap-3 border-t border-border/50 px-6 py-4 text-left text-sm font-medium text-muted-foreground transition-all duration-200 hover:bg-secondary hover:text-foreground">
                         <Lock className="h-4 w-4" />
-                        {t('changePassword')}
+                        {t('User.changePassword')}
                       </button>
                       <button
                         onClick={logout}
                         className="flex items-center gap-3 border-t border-border/50 px-6 py-4 text-left text-sm font-medium text-destructive transition-all duration-200 hover:bg-destructive/10"
                       >
                         <LogOut className="h-4 w-4" />
-                        {t('logout')}
+                        {t('User.logout')}
                       </button>
                     </div>
                   </CardContent>
@@ -80,7 +82,7 @@ export function UserSection() {
                   </div>
                   <div className="space-y-2">
                     <h3 className="font-semibold text-lg">
-                      {t('notLoggedIn')}
+                      {t('User.notLoggedIn')}
                     </h3>
                     <p className="text-sm text-muted-foreground">
                       Access your account to manage services
@@ -92,7 +94,7 @@ export function UserSection() {
                     onClick={() => setIsLoginOpen(true)}
                   >
                     <LogIn className="h-4 w-4" />
-                    {t('login')}
+                    {t('Auth.login')}
                   </Button>
                 </div>
               )}
@@ -102,7 +104,7 @@ export function UserSection() {
             <Card className="border-border/50 bg-card shadow-sm transition-all duration-300 hover:shadow-md lg:col-span-2">
               <CardHeader>
                 <CardTitle className="text-lg font-semibold text-foreground">
-                  {t('quickActions')}
+                  {t('QuickActions.quickActions')}
                 </CardTitle>
               </CardHeader>
               <CardContent>

@@ -1,0 +1,70 @@
+{
+  "Navigation": {
+    "home": "Dashboard",
+    "products": "Products",
+    "services": "Services",
+    "support": "Support",
+    "bundles": "Bundles",
+    "account": "Account",
+    "product": "Product"
+  },
+  "Hero": {
+    "title": "Stay Connected, Stay Ahead",
+    "subtitle": "Experience seamless connectivity with Camtel - Cameroon's leading telecommunications provider. Fast, reliable, and always there for you.",
+    "exploreProducts": "Explore Products",
+    "contactUs": "Contact Us",
+    "camtelTelecommunications": "Camtel Telecommunications"
+  },
+  "User": {
+    "welcome": "Welcome",
+    "customerInfo": "Profile",
+    "changePassword": "Change Password",
+    "logout": "Logout",
+    "notLoggedIn": "Not Logged In",
+    "profile": "Profile"
+  },
+  "Products": {
+    "featuredOffer": "Featured Offer",
+    "xtremNetDongle": "X-tremNet Dongle",
+    "xtremNetDesc": "High-speed internet on the go with our 4G dongle. Perfect for work, study, or entertainment anywhere.",
+    "perMonth": "per month",
+    "learnMore": "Learn More"
+  },
+  "QuickActions": {
+    "quickActions": "Quick Actions",
+    "viewBills": "View Bills",
+    "recharge": "Recharge",
+    "dataUsage": "Data Usage"
+  },
+  "Contact": {
+    "contactDetails": "Contact Details",
+    "address": "Address",
+    "addressValue": "B.P. Box: 1571 Yaounde, Cameroon",
+    "phone": "Phone",
+    "fax": "Fax",
+    "website": "Website",
+    "email": "Email",
+    "followUs": "Follow Us"
+  },
+  "Footer": {
+    "copyright": "Telecom Camtel. All rights reserved.",
+    "tagline": "...Et ce n'est pas fini!",
+    "privacyPolicy": "Privacy Policy",
+    "termsOfService": "Terms of Service"
+  },
+  "Stats": {
+    "activeUsers": "Active Users",
+    "uptime": "Uptime",
+    "support": "Support"
+  },
+  "Auth": {
+    "login": "Login",
+    "logout": "Logout",
+    "userMenu": "User menu",
+    "toggleMenu": "Toggle menu"
+  },
+  "Language": {
+    "english": "English",
+    "french": "Francais"
+  }
+}

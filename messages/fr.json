@@ -1,0 +1,70 @@
+{
+  "Navigation": {
+    "home": "Accueil",
+    "products": "Produits",
+    "services": "Services",
+    "support": "Support",
+    "bundles": "Bundles",
+    "account": "Compte",
+    "product": "Produit"
+  },
+  "Hero": {
+    "title": "Restez Connecte, Gardez l'Avance",
+    "subtitle": "Decouvrez une connectivite sans faille avec Camtel - le principal fournisseur de telecommunications du Cameroun. Rapide, fiable et toujours la pour vous.",
+    "exploreProducts": "Decouvrir les Produits",
+    "contactUs": "Nous Contacter",
+    "camtelTelecommunications": "Camtel Telecommunications"
+  },
+  "User": {
+    "welcome": "Bienvenue",
+    "customerInfo": "Informations Client",
+    "changePassword": "Changer le Mot de Passe",
+    "logout": "Deconnexion",
+    "notLoggedIn": "Non Connecte",
+    "profile": "Profil"
+  },
+  "Products": {
+    "featuredOffer": "Offre Vedette",
+    "xtremNetDongle": "Cle X-tremNet",
+    "xtremNetDesc": "Internet haut debit en deplacement avec notre cle 4G. Parfait pour le travail, les etudes ou le divertissement partout.",
+    "perMonth": "par mois",
+    "learnMore": "En Savoir Plus"
+  },
+  "QuickActions": {
+    "quickActions": "Actions Rapides",
+    "viewBills": "Voir les Factures",
+    "recharge": "Recharger",
+    "dataUsage": "Utilisation des Donnees"
+  },
+  "Contact": {
+    "contactDetails": "Coordonnees",
+    "address": "Adresse",
+    "addressValue": "B.P. Box: 1571 Yaounde, Cameroun",
+    "phone": "Telephone",
+    "fax": "Fax",
+    "website": "Site Web",
+    "email": "Email",
+    "followUs": "Suivez-nous"
+  },
+  "Footer": {
+    "copyright": "Telecom Camtel. Tous droits reserves.",
+    "tagline": "...Et ce n'est pas fini!",
+    "privacyPolicy": "Politique de Confidentialite",
+    "termsOfService": "Conditions d'Utilisation"
+  },
+  "Stats": {
+    "activeUsers": "Utilisateurs Actifs",
+    "uptime": "Temps de disponibilité",
+    "support": "Support"
+  },
+  "Auth": {
+    "login": "Connexion",
+    "logout": "Deconnexion",
+    "userMenu": "Menu utilisateur",
+    "toggleMenu": "Basculer le menu"
+  },
+  "Language": {
+    "english": "English",
+    "french": "Francais"
+  }
+}
