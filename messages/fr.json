@@ -6,7 +6,8 @@
     "support": "Support",
     "bundles": "Bundles",
     "account": "Compte",
-    "product": "Produit"
+    "product": "Article",
+    "menu": "Menu"
   },
   "Hero": {
     "title": "Restez Connecte, Gardez l'Avance",

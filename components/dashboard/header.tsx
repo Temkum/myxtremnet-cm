@@ -10,7 +10,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import {
+  Sheet,
+  SheetContent,
+  SheetTitle,
+  SheetTrigger,
+} from '@/components/ui/sheet';
+import { VisuallyHidden } from '@/components/ui/visually-hidden';
 import {
   Home,
   Package,
@@ -33,6 +39,7 @@ import {
 } from '@/src/i18n/navigation';
 import { useActivePath } from '@/hooks/use-active-path';
 import { useAuth } from '@/lib/auth-context';
+import { useState } from 'react';
 
 export function DashboardHeader() {
   const pathname = usePathname();
@@ -42,6 +49,7 @@ export function DashboardHeader() {
   const t = useTranslations();
   const { checkActive } = useActivePath();
   const { user, logout } = useAuth();
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
 
   const navigation = [
     { name: t('Navigation.home'), href: '/dashboard', icon: Home },
@@ -202,7 +210,7 @@ export function DashboardHeader() {
           )}
 
           {/* Mobile Menu */}
-          <Sheet>
+          <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="md:hidden">
                 <Menu className="h-5 w-5" />
@@ -210,6 +218,9 @@ export function DashboardHeader() {
               </Button>
             </SheetTrigger>
             <SheetContent side="right" className="w-72">
+              <VisuallyHidden>
+                <SheetTitle>{t('Navigation.menu')}</SheetTitle>
+              </VisuallyHidden>
               <div className="flex flex-col gap-4 mt-6">
                 {user ? (
                   <div className="px-2 py-4 border-b border-border">
@@ -221,7 +232,9 @@ export function DashboardHeader() {
                 ) : (
                   <div className="px-2 py-4 border-b border-border">
                     <Button asChild className="w-full">
-                      <Link href="/login">{t('Auth.login')}</Link>
+                      <Link href="/login" onClick={() => setIsSheetOpen(false)}>
+                        {t('Auth.login')}
+                      </Link>
                     </Button>
                   </div>
                 )}
@@ -237,6 +250,7 @@ export function DashboardHeader() {
                       <Link
                         key={item.name}
                         href={item.href}
+                        onClick={() => setIsSheetOpen(false)}
                         className={cn(
                           'flex items-center gap-3 px-3 py-2 rounded-md transition-colors',
                           isActive
