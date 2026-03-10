@@ -20,9 +20,23 @@ import { eq } from 'drizzle-orm';
 
 const profileSchema = z.object({
   name: z.string().min(2).max(100),
-  email: z.string().email(),
-  serviceId: z.string().min(9).max(20).regex(/^\d+$/),
+  email: z.string().email().optional(),
+  phoneNumber: z.string().min(1),
 });
+
+function deriveServiceIdFromPhoneNumber(phoneNumber: string) {
+  // Expect E.164 Cameroon number, e.g. +237650000000
+  // Business rule: serviceId is the local 9-digit number (without +237)
+  const normalized = phoneNumber.trim();
+  const local = normalized.startsWith('+237')
+    ? normalized.slice(4)
+    : normalized.startsWith('237')
+      ? normalized.slice(3)
+      : normalized;
+
+  if (!/^\d{9}$/.test(local)) return null;
+  return local;
+}
 
 export async function PATCH(request: NextRequest) {
   // Validate session
@@ -47,7 +61,15 @@ export async function PATCH(request: NextRequest) {
     );
   }
 
-  const { name, email, serviceId } = result.data;
+  const { name, email, phoneNumber } = result.data;
+  const serviceId = deriveServiceIdFromPhoneNumber(phoneNumber);
+
+  if (!serviceId) {
+    return NextResponse.json(
+      { message: 'Invalid phone number for service ID derivation' },
+      { status: 422 },
+    );
+  }
 
   try {
     // Check serviceId is not already taken by another user
@@ -63,15 +85,19 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
-    await db
-      .update(user)
-      .set({
-        name,
-        email,
-        serviceId,
-        updatedAt: new Date(),
-      })
-      .where(eq(user.id, session.user.id));
+    const updateData: Partial<typeof user.$inferInsert> = {
+      name,
+      serviceId,
+      updatedAt: new Date(),
+    };
+
+    if (typeof email === 'string' && email.length > 0) {
+      updateData.email = email;
+    }
+
+    updateData.phoneNumber = phoneNumber;
+
+    await db.update(user).set(updateData).where(eq(user.id, session.user.id));
 
     return NextResponse.json({ success: true });
   } catch (err) {

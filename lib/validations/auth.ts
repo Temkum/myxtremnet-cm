@@ -1,5 +1,4 @@
 /**
- * lib/validations/auth.ts
  *
  * Zod v4 compatible schemas.
  *
@@ -52,9 +51,22 @@ export const otpSchema = z.object({
 export type OtpInput = z.infer<typeof otpSchema>;
 
 // ---------------------------------------------------------------------------
+// Phone + Password Login
+// ---------------------------------------------------------------------------
+export const phonePasswordSchema = z.object({
+  phoneNumber: phoneSchema,
+  password: z
+    .string()
+    .min(1, 'Password is required')
+    .min(6, 'Password must be at least 6 characters'),
+});
+
+export type PhonePasswordInput = z.infer<typeof phonePasswordSchema>;
+
+// ---------------------------------------------------------------------------
 // Registration
 // ---------------------------------------------------------------------------
-export const registerSchema = z.object({
+const registerShape = {
   phoneNumber: phoneSchema,
   // Zod v4: z.string().email() still works; z.email() also valid standalone
   email: z
@@ -65,11 +77,23 @@ export const registerSchema = z.object({
     .string()
     .min(2, 'Full name must be at least 2 characters')
     .max(100, 'Full name is too long'),
-  serviceId: z
-    .string()
-    .min(9, 'Service ID must be at least 9 digits')
-    .max(20, 'Service ID is too long')
-    .regex(/^\d+$/, 'Service ID must contain only digits'),
-});
+};
+
+export const registerSchema = z.object(registerShape);
 
 export type RegisterInput = z.infer<typeof registerSchema>;
+
+// ---------------------------------------------------------------------------
+// Phone + Password Registration
+// ---------------------------------------------------------------------------
+export const phonePasswordRegisterSchema = z.object({
+  ...registerShape,
+  password: z
+    .string()
+    .min(1, 'Password is required')
+    .min(6, 'Password must be at least 6 characters'),
+});
+
+export type PhonePasswordRegisterInput = z.infer<
+  typeof phonePasswordRegisterSchema
+>;
