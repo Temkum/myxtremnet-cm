@@ -41,9 +41,11 @@ export default async function LocaleLayout({
   return (
     <NextIntlClientProvider messages={messages}>
       <AuthProvider>
-        <DashboardHeader />
-        {children}
-        <Analytics />
+        <div className="min-h-screen font-sans">
+          <DashboardHeader />
+          {children}
+          <Analytics />
+        </div>
       </AuthProvider>
     </NextIntlClientProvider>
   );
