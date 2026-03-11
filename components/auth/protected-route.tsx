@@ -1,8 +1,17 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 import { useAuth } from '@/lib/auth-context';
-import { Loader2 } from 'lucide-react';
+import { Loader2, ShieldAlert } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -14,8 +23,13 @@ export function ProtectedRoute({ children, fallback }: ProtectedRouteProps) {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin" />
+      <div className="min-h-[80vh] flex items-center justify-center">
+        <div className="flex flex-col items-center gap-2">
+          <Loader2 className="h-10 w-10 animate-spin text-primary" />
+          <p className="text-sm font-medium text-muted-foreground animate-pulse">
+            Verifying session...
+          </p>
+        </div>
       </div>
     );
   }
@@ -23,16 +37,31 @@ export function ProtectedRoute({ children, fallback }: ProtectedRouteProps) {
   if (!user) {
     return (
       fallback || (
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="text-center">
-            <h1 className="text-2xl font-bold mb-4">Access Denied</h1>
-            <p className="text-muted-foreground mb-4">
-              Please sign in to access this page.
-            </p>
-            <a href="/" className="text-primary hover:underline">
-              Go to Home
-            </a>
-          </div>
+        <div className="min-h-[80vh] flex items-center justify-center p-4">
+          <Card className="max-w-md w-full border-border/50 shadow-lg">
+            <CardHeader className="text-center">
+              <div className="mx-auto bg-destructive/10 w-12 h-12 rounded-full flex items-center justify-center mb-4">
+                <ShieldAlert className="h-6 w-6 text-destructive" />
+              </div>
+              <CardTitle className="text-2xl font-bold tracking-tight">
+                Access Restricted
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="text-center">
+              <p className="text-muted-foreground">
+                You need to be authenticated to view this dashboard content.
+                Please sign in with your Camtel account.
+              </p>
+            </CardContent>
+            <CardFooter className="flex flex-col gap-2">
+              <Button asChild className="w-full" size="lg">
+                <Link href="/login">Sign In</Link>
+              </Button>
+              <Button asChild variant="ghost" className="w-full">
+                <Link href="/">Back to Home</Link>
+              </Button>
+            </CardFooter>
+          </Card>
         </div>
       )
     );

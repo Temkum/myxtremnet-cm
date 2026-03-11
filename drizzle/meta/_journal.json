@@ -8,6 +8,13 @@
       "when": 1772241874346,
       "tag": "0000_nasty_omega_sentinel",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1773158516757,
+      "tag": "0001_medical_obadiah_stane",
+      "breakpoints": true
     }
   ]
 }

@@ -9,10 +9,10 @@ import {
   Car,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useLanguage } from '@/lib/language-context';
+import { useTranslations } from 'next-intl';
 
 export function HeroSection() {
-  const { t } = useLanguage();
+  const t = useTranslations('Hero');
 
   return (
     <section className="relative overflow-hidden bg-gradient-to-br from-primary/5 via-background to-accent/5 py-16 sm:py-24 lg:py-32">
@@ -30,15 +30,15 @@ export function HeroSection() {
           {/* Text Content */}
           <div className="animate-fade-in space-y-8">
             <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm font-medium text-primary">
-              <span>Camtel Telecommunications</span>
+              <span>{t('camtelTelecommunications')}</span>
             </div>
 
             <h1 className="text-balance text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
-              {t('heroTitle')}
+              {t('title')}
             </h1>
 
             <p className="max-w-lg text-pretty text-lg leading-relaxed text-muted-foreground">
-              {t('heroSubtitle')}
+              {t('subtitle')}
             </p>
 
             <div className="flex flex-col gap-4 sm:flex-row">
@@ -62,15 +62,17 @@ export function HeroSection() {
             <div className="flex flex-wrap gap-8 pt-4">
               <div className="space-y-1">
                 <p className="text-3xl font-bold text-primary">500K+</p>
-                <p className="text-sm text-muted-foreground">Active Users</p>
+                <p className="text-sm text-muted-foreground">
+                  {t('activeUsers')}
+                </p>
               </div>
               <div className="space-y-1">
                 <p className="text-3xl font-bold text-primary">99.9%</p>
-                <p className="text-sm text-muted-foreground">Uptime</p>
+                <p className="text-sm text-muted-foreground">{t('uptime')}</p>
               </div>
               <div className="space-y-1">
                 <p className="text-3xl font-bold text-primary">24/7</p>
-                <p className="text-sm text-muted-foreground">Support</p>
+                <p className="text-sm text-muted-foreground">{t('support')}</p>
               </div>
             </div>
           </div>

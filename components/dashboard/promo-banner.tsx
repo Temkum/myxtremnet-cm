@@ -12,6 +12,7 @@ import {
   ChevronLeft,
   ChevronRight,
 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 const promos = [
   {
@@ -88,14 +89,14 @@ export function PromoBanner() {
   return (
     <div className="relative group">
       <Card
-        className={`overflow-hidden bg-gradient-to-r ${promo.gradient} text-white shadow-lg transition-all duration-500`}
+        className={`overflow-hidden bg-linear-to-r ${promo.gradient} text-white shadow-lg transition-all duration-500`}
       >
         <CardContent className="p-6">
           <div
             className={`flex flex-col md:flex-row items-center justify-between gap-6 transition-all duration-350 ease-out ${slideClass}`}
           >
             {/* Left side */}
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-4 min-h-38">
               <div className="h-16 w-16 rounded-full bg-white/20 flex items-center justify-center shrink-0 backdrop-blur-sm">
                 <Icon className="h-8 w-8" />
               </div>
@@ -164,21 +165,23 @@ export function PromoBanner() {
 }
 
 export function ServiceHighlights() {
+  const t = useTranslations('Dashboard');
+
   const highlights = [
     {
       icon: Wifi,
-      title: 'High Speed Internet',
-      description: 'Up to 100 Mbps download speed',
+      title: t('highSpeedInternet'),
+      description: t('highSpeedInternetDesc'),
     },
     {
       icon: Package,
-      title: 'Flexible Packages',
-      description: 'Choose from various data plans',
+      title: t('flexiblePackages'),
+      description: t('flexiblePackagesDesc'),
     },
     {
       icon: Smartphone,
-      title: 'Mobile Ready',
-      description: 'Use with any compatible device',
+      title: t('mobileReady'),
+      description: t('mobileReadyDesc'),
     },
   ];
 

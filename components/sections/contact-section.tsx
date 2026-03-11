@@ -1,26 +1,57 @@
-"use client"
+'use client';
 
-import { MapPin, Phone, Printer, Globe, Mail, Facebook, Twitter, Youtube } from "lucide-react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { useLanguage } from "@/lib/language-context"
+import {
+  MapPin,
+  Phone,
+  Printer,
+  Globe,
+  Mail,
+  Facebook,
+  Twitter,
+  Youtube,
+} from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { useTranslations } from 'next-intl';
 
 export function ContactSection() {
-  const { t } = useLanguage()
+  const t = useTranslations();
 
   const contactInfo = [
-    { icon: MapPin, label: "address", value: t("addressValue") },
-    { icon: Phone, label: "phone", value: "222 23 40 65" },
-    { icon: Printer, label: "fax", value: "222 23 03 03" },
-    { icon: Globe, label: "website", value: "www.camtel.cm", href: "https://www.camtel.cm" },
-    { icon: Mail, label: "email", value: "contact@camtel.cm", href: "mailto:contact@camtel.cm" },
-  ]
+    { icon: MapPin, label: 'address', value: t('Contact.addressValue') },
+    { icon: Phone, label: 'phone', value: '222 23 40 65' },
+    { icon: Printer, label: 'fax', value: '222 23 03 03' },
+    {
+      icon: Globe,
+      label: 'website',
+      value: 'www.camtel.cm',
+      href: 'https://www.camtel.cm',
+    },
+    {
+      icon: Mail,
+      label: 'email',
+      value: 'contact@camtel.cm',
+      href: 'mailto:contact@camtel.cm',
+    },
+  ];
 
   const socialLinks = [
-    { icon: Facebook, href: "https://facebook.com/Camtelonline", label: "Facebook" },
-    { icon: Twitter, href: "https://twitter.com/Camtelonline", label: "Twitter" },
-    { icon: Youtube, href: "https://youtube.com/Camtelonline", label: "YouTube" },
-  ]
+    {
+      icon: Facebook,
+      href: 'https://facebook.com/Camtelonline',
+      label: 'Facebook',
+    },
+    {
+      icon: Twitter,
+      href: 'https://twitter.com/Camtelonline',
+      label: 'Twitter',
+    },
+    {
+      icon: Youtube,
+      href: 'https://youtube.com/Camtelonline',
+      label: 'YouTube',
+    },
+  ];
 
   return (
     <section id="contact" className="py-12 sm:py-16">
@@ -29,7 +60,7 @@ export function ContactSection() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-xl font-semibold text-foreground">
               <div className="h-1 w-8 rounded-full bg-primary" />
-              {t("contactDetails")}
+              {t('Contact.contactDetails')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -46,19 +77,27 @@ export function ContactSection() {
                     </div>
                     <div className="min-w-0">
                       <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                        {t(item.label)}
+                        {t(`Contact.${item.label}`)}
                       </p>
                       {item.href ? (
                         <a
                           href={item.href}
                           className="text-sm font-medium text-foreground transition-colors hover:text-primary"
-                          target={item.href.startsWith("http") ? "_blank" : undefined}
-                          rel={item.href.startsWith("http") ? "noopener noreferrer" : undefined}
+                          target={
+                            item.href.startsWith('http') ? '_blank' : undefined
+                          }
+                          rel={
+                            item.href.startsWith('http')
+                              ? 'noopener noreferrer'
+                              : undefined
+                          }
                         >
                           {item.value}
                         </a>
                       ) : (
-                        <p className="text-sm font-medium text-foreground">{item.value}</p>
+                        <p className="text-sm font-medium text-foreground">
+                          {item.value}
+                        </p>
                       )}
                     </div>
                   </div>
@@ -68,7 +107,7 @@ export function ContactSection() {
               {/* Social Links */}
               <div className="flex flex-col justify-center">
                 <h3 className="mb-4 text-sm font-medium uppercase tracking-wide text-muted-foreground">
-                  {t("followUs")}
+                  {t('Contact.followUs')}
                 </h3>
                 <div className="flex flex-wrap gap-3">
                   {socialLinks.map((social) => (
@@ -97,5 +136,5 @@ export function ContactSection() {
         </Card>
       </div>
     </section>
-  )
+  );
 }

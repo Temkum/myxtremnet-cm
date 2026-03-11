@@ -4,17 +4,17 @@ import { Wifi, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { useLanguage } from '@/lib/language-context';
+import { useTranslations } from 'next-intl';
 
 export function ProductSection() {
-  const { t } = useLanguage();
+  const t = useTranslations();
 
   return (
     <section id="products" className="bg-secondary/30 py-12 sm:py-16">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mb-8 flex items-center gap-2">
           <h2 className="text-2xl font-bold text-foreground">
-            {t('featuredOffer')}
+            {t('Products.featuredOffer')}
           </h2>
         </div>
 
@@ -51,18 +51,18 @@ export function ProductSection() {
                 </Badge>
 
                 <h3 className="mb-3 text-2xl font-bold text-foreground sm:text-3xl">
-                  {t('xtremNetDongle')}
+                  {t('Products.xtremNetDongle')}
                 </h3>
 
                 <p className="mb-6 text-pretty leading-relaxed text-muted-foreground">
-                  {t('xtremNetDesc')}
+                  {t('Products.xtremNetDesc')}
                 </p>
 
                 <div className="mb-6 flex items-baseline gap-1">
                   <span className="text-4xl font-bold text-primary">5,900</span>
                   <span className="text-xl text-muted-foreground">FCFA</span>
                   <span className="text-sm text-muted-foreground">
-                    /{t('perMonth')}
+                    /{t('Products.perMonth')}
                   </span>
                 </div>
 
@@ -82,7 +82,7 @@ export function ProductSection() {
                 </ul>
 
                 <Button className="group/btn w-fit gap-2 bg-primary px-8 text-primary-foreground transition-all duration-300 hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/25">
-                  {t('learnMore')}
+                  {t('Products.learnMore')}
                   <ArrowRight className="h-4 w-4 transition-transform group-hover/btn:translate-x-1" />
                 </Button>
               </div>

@@ -1,0 +1,416 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { phoneNumber as phoneNumberClient, signIn } from '@/lib/auth-client';
+import { useTranslations } from 'next-intl';
+import {
+  loginSchema,
+  otpSchema,
+  phonePasswordSchema,
+} from '@/lib/validations/auth';
+import type {
+  LoginInput,
+  OtpInput,
+  PhonePasswordInput,
+} from '@/lib/validations/auth';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Link } from '@/src/i18n/navigation';
+
+type Step = 'phone' | 'otp' | 'password';
+type AuthMode = 'otp' | 'password';
+
+export function LoginComponent() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const t = useTranslations('Auth');
+  const callbackUrl = searchParams.get('callbackUrl') ?? '/dashboard';
+
+  const [step, setStep] = useState<Step>('phone');
+  const [mode, setMode] = useState<AuthMode>('otp');
+  const [submittedPhone, setSubmittedPhone] = useState('');
+  const [serverError, setServerError] = useState('');
+  const [resendCooldown, setResendCooldown] = useState(0);
+  const [devOtp, setDevOtp] = useState('');
+
+  // Step 3: phone + password form
+  const passwordForm = useForm<PhonePasswordInput>({
+    resolver: zodResolver(phonePasswordSchema),
+    mode: 'onTouched',
+    criteriaMode: 'firstError',
+    defaultValues: { phoneNumber: '', password: '' },
+  });
+
+  // Step 1: phone form
+  const phoneForm = useForm<LoginInput>({
+    resolver: zodResolver(loginSchema),
+    mode: 'onTouched', // validate on blur, not just submit
+    criteriaMode: 'firstError', // show only the first Zod error per field
+    defaultValues: { phoneNumber: '' },
+  });
+
+  // Step 2: OTP form
+  const otpForm = useForm<OtpInput>({
+    resolver: zodResolver(otpSchema),
+    mode: 'onTouched',
+    criteriaMode: 'firstError',
+    defaultValues: { phoneNumber: '', code: '' },
+  });
+
+  // capture OTP from console logs
+  useEffect(() => {
+    if (step !== 'otp' || !submittedPhone) return;
+
+    let cancelled = false;
+
+    const fetchOtp = async () => {
+      try {
+        const res = await fetch(
+          `/api/otp/display?phone=${encodeURIComponent(submittedPhone)}`,
+        );
+
+        if (!res.ok) return;
+
+        const data = await res.json();
+        if (!cancelled && data.code) {
+          setDevOtp(data.code);
+        }
+      } catch {
+        // Non-critical — UI still works, user just doesn't see the code
+      }
+    };
+
+    fetchOtp();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [step, submittedPhone]);
+
+  const handleSendOtp = async (values: LoginInput) => {
+    setServerError('');
+    setDevOtp('');
+    const { error } = await phoneNumberClient.sendOtp({
+      phoneNumber: values.phoneNumber,
+    });
+
+    if (error) {
+      setServerError(error.message ?? 'Failed to send OTP. Try again.');
+      return;
+    }
+
+    setSubmittedPhone(values.phoneNumber);
+    otpForm.setValue('phoneNumber', values.phoneNumber);
+    setStep('otp');
+    startCooldown();
+  };
+
+  const handlePhonePassword = async (values: PhonePasswordInput) => {
+    setServerError('');
+    const { error } = await signIn.phoneNumber({
+      phoneNumber: values.phoneNumber,
+      password: values.password,
+      rememberMe: true,
+    });
+
+    if (error) {
+      setServerError(error.message ?? 'Invalid phone number or password.');
+      return;
+    }
+
+    router.push(callbackUrl);
+    router.refresh();
+  };
+
+  const handleVerifyOtp = async (values: OtpInput) => {
+    setServerError('');
+    const { error } = await phoneNumberClient.verify({
+      phoneNumber: values.phoneNumber,
+      code: values.code,
+    });
+
+    if (error) {
+      setServerError(error.message ?? 'Invalid or expired code.');
+      return;
+    }
+
+    router.push(callbackUrl);
+    router.refresh();
+  };
+
+  const handleResend = async () => {
+    if (resendCooldown > 0) return;
+    setServerError('');
+    const { error } = await phoneNumberClient.sendOtp({
+      phoneNumber: submittedPhone,
+    });
+    if (error) {
+      setServerError(error.message ?? 'Failed to resend OTP.');
+      return;
+    }
+    startCooldown();
+  };
+
+  const startCooldown = () => {
+    setResendCooldown(60);
+    const interval = setInterval(() => {
+      setResendCooldown((prev) => {
+        if (prev <= 1) {
+          clearInterval(interval);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  };
+
+  return (
+    <div className="min-h-screen flex items-center justify-center p-4 bg-background">
+      <div className="w-full max-w-sm space-y-8">
+        {/* Header */}
+        <div className="text-center">
+          <h1 className="text-2xl font-bold tracking-tight">
+            <Link href="/">{t('loginText')}</Link>
+          </h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            {step === 'phone' && mode === 'otp'
+              ? t('loginOtp')
+              : step === 'phone' && mode === 'password'
+                ? t('loginPassword')
+                : step === 'otp'
+                  ? t('optReq', { phoneNumber: submittedPhone })
+                  : t('loginPassword')}
+          </p>
+          {step === 'phone' && (
+            <div className="mt-3 flex justify-center gap-2">
+              <Button
+                type="button"
+                variant={mode === 'otp' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setMode('otp')}
+              >
+                OTP
+              </Button>
+              <Button
+                type="button"
+                variant={mode === 'password' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setMode('password')}
+              >
+                {t('pwd')}
+              </Button>
+            </div>
+          )}
+        </div>
+
+        {/* Step 1 — Phone number */}
+        {step === 'phone' && mode === 'otp' && (
+          <form
+            onSubmit={phoneForm.handleSubmit(handleSendOtp)}
+            className="space-y-4"
+          >
+            <Label htmlFor="phoneNumber">{t('phone')}</Label>
+            <div className="flex">
+              <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-input bg-muted text-sm text-muted-foreground select-none">
+                +237
+              </span>
+              <Input
+                id="phoneNumber"
+                type="tel"
+                inputMode="numeric"
+                placeholder="620 000 000"
+                autoComplete="tel"
+                maxLength={9}
+                className="rounded-l-none"
+                onChange={(e) => {
+                  const digits = e.target.value.replace(/\D/g, '').slice(0, 9);
+                  e.target.value = digits;
+                  phoneForm.setValue(
+                    'phoneNumber',
+                    digits ? `+237${digits}` : '',
+                    {
+                      shouldValidate: true,
+                    },
+                  );
+                }}
+                onBlur={() => phoneForm.trigger('phoneNumber')}
+              />
+            </div>
+
+            {serverError && (
+              <p className="text-sm text-destructive">{serverError}</p>
+            )}
+
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={phoneForm.formState.isSubmitting}
+            >
+              {phoneForm.formState.isSubmitting
+                ? 'Sending code...'
+                : t('sendCode')}
+            </Button>
+
+            <p className="text-center text-sm text-muted-foreground">
+              {t('noAccount')}{' '}
+              <a href="/register" className="underline font-medium">
+                {t('register')}
+              </a>
+            </p>
+          </form>
+        )}
+
+        {/* Step 1 — Phone + Password */}
+        {step === 'phone' && mode === 'password' && (
+          <form
+            onSubmit={passwordForm.handleSubmit(handlePhonePassword)}
+            className="space-y-4"
+          >
+            <Label htmlFor="phoneNumberPassword">{t('phone')}</Label>
+            <div className="flex">
+              <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-input bg-muted text-sm text-muted-foreground select-none">
+                +237
+              </span>
+              <Input
+                id="phoneNumberPassword"
+                type="tel"
+                inputMode="numeric"
+                placeholder="620 000 000"
+                autoComplete="tel"
+                maxLength={9}
+                className="rounded-l-none"
+                onChange={(e) => {
+                  const digits = e.target.value.replace(/\D/g, '').slice(0, 9);
+                  e.target.value = digits;
+                  passwordForm.setValue(
+                    'phoneNumber',
+                    digits ? `+237${digits}` : '',
+                    {
+                      shouldValidate: true,
+                    },
+                  );
+                }}
+                onBlur={() => passwordForm.trigger('phoneNumber')}
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="password">{t('pwd')}</Label>
+              <Input
+                id="password"
+                type="password"
+                placeholder="Enter your password"
+                autoComplete="current-password"
+                {...passwordForm.register('password')}
+              />
+              {passwordForm.formState.errors.password && (
+                <p className="text-xs text-destructive">
+                  {passwordForm.formState.errors.password.message}
+                </p>
+              )}
+            </div>
+
+            {serverError && (
+              <p className="text-sm text-destructive">{serverError}</p>
+            )}
+
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={passwordForm.formState.isSubmitting}
+            >
+              {passwordForm.formState.isSubmitting ? t('loading') : t('signIn')}
+            </Button>
+
+            <p className="text-center text-sm text-muted-foreground">
+              {t('noAccount')}{' '}
+              <a href="/register" className="underline font-medium">
+                {t('register')}
+              </a>
+            </p>
+          </form>
+        )}
+
+        {/* Step 2 — OTP */}
+        {step === 'otp' && (
+          <form
+            onSubmit={otpForm.handleSubmit(handleVerifyOtp)}
+            className="space-y-4"
+          >
+            <div className="space-y-1.5">
+              <Label htmlFor="code">{t('verificationCode')}</Label>
+              <Input
+                id="code"
+                type="text"
+                inputMode="numeric"
+                maxLength={6}
+                placeholder="123456"
+                autoComplete="one-time-code"
+                className="text-center tracking-[0.5em] text-lg font-mono"
+                {...otpForm.register('code')}
+              />
+              {otpForm.formState.errors.code && (
+                <p className="text-xs text-destructive">
+                  {otpForm.formState.errors.code.message}
+                </p>
+              )}
+
+              {/* display OTP code here */}
+              {devOtp && (
+                <div className="rounded-md border border-border bg-muted px-4 py-3 text-center">
+                  <p className="text-xs text-muted-foreground mb-1">
+                    {t('verificationCode')}
+                  </p>
+                  <p className="text-2xl font-mono font-bold tracking-[0.4em]">
+                    {devOtp}
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {serverError && (
+              <p className="text-sm text-destructive">{serverError}</p>
+            )}
+
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={otpForm.formState.isSubmitting}
+            >
+              {otpForm.formState.isSubmitting ? t('loading') : t('verify')}
+            </Button>
+
+            <div className="flex items-center justify-between text-sm">
+              <button
+                type="button"
+                onClick={() => {
+                  setStep('phone');
+                  setServerError('');
+                  setDevOtp('');
+                  otpForm.reset();
+                }}
+                className="text-muted-foreground underline"
+              >
+                {t('numChange')}
+              </button>
+              <button
+                type="button"
+                onClick={handleResend}
+                disabled={resendCooldown > 0}
+                className="text-muted-foreground underline disabled:opacity-40"
+              >
+                {resendCooldown > 0
+                  ? `${t('resendCode')} in ${resendCooldown}s`
+                  : t('resendCode')}
+              </button>
+            </div>
+          </form>
+        )}
+      </div>
+    </div>
+  );
+}

@@ -9,20 +9,27 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { useLanguage } from '@/lib/language-context';
+import { useTranslations, useLocale } from 'next-intl';
 import { AuthButton } from '@/components/auth/auth-button';
-import Link from 'next/link';
+import { Link, useRouter, usePathname } from '@/src/i18n/navigation';
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { language, setLanguage, t } = useLanguage();
+  const locale = useLocale();
+  const router = useRouter();
+  const pathname = usePathname();
+  const t = useTranslations();
 
   const navItems = [
-    { key: 'dashboard', href: '/dashboard' },
-    { key: 'products', href: '#products' },
-    { key: 'services', href: '#services' },
-    { key: 'support', href: '#contact' },
+    { key: 'Navigation.home', href: '/dashboard' },
+    { key: 'Navigation.products', href: '#products' },
+    { key: 'Navigation.services', href: '#services' },
+    { key: 'Navigation.support', href: '#contact' },
   ];
+
+  const handleLanguageChange = (newLocale: string) => {
+    router.replace(pathname, { locale: newLocale });
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-card/80 backdrop-blur-xl transition-all duration-300">
@@ -40,7 +47,7 @@ export function Header() {
           <div className="flex flex-col">
             <span className="text-xl font-bold text-foreground">camtel</span>
             <span className="text-[10px] text-muted-foreground">
-              {t('tagline')}
+              {t('Footer.tagline')}
             </span>
           </div>
         </Link>
@@ -73,7 +80,9 @@ export function Header() {
               >
                 <Globe className="h-4 w-4" />
                 <span className="hidden sm:inline">
-                  {language === 'en' ? 'English' : 'Francais'}
+                  {locale === 'en'
+                    ? t('Language.english')
+                    : t('Language.french')}
                 </span>
                 <ChevronDown className="h-3 w-3" />
               </Button>
@@ -83,16 +92,16 @@ export function Header() {
               className="animate-in fade-in-0 zoom-in-95"
             >
               <DropdownMenuItem
-                onClick={() => setLanguage('en')}
-                className={language === 'en' ? 'bg-secondary' : ''}
+                onClick={() => handleLanguageChange('en')}
+                className={locale === 'en' ? 'bg-secondary' : ''}
               >
-                English
+                {t('Language.english')}
               </DropdownMenuItem>
               <DropdownMenuItem
-                onClick={() => setLanguage('fr')}
-                className={language === 'fr' ? 'bg-secondary' : ''}
+                onClick={() => handleLanguageChange('fr')}
+                className={locale === 'fr' ? 'bg-secondary' : ''}
               >
-                Francais
+                {t('Language.french')}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

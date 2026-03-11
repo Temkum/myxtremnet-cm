@@ -5,9 +5,11 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { User, LogOut, Wifi } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
+import { useTranslations } from 'next-intl';
 
 export function UserWelcome() {
   const { user, logout } = useAuth();
+  const t = useTranslations('Dashboard');
 
   return (
     <Card className="bg-primary text-primary-foreground overflow-hidden">
@@ -17,10 +19,10 @@ export function UserWelcome() {
             <Wifi className="h-6 w-6" />
           </div>
           <div className="flex-1">
-            <p className="text-sm opacity-80">Welcome,</p>
+            <p className="text-sm opacity-80">{t('welcome')},</p>
             <h2 className="text-lg font-bold">{user?.name || 'User'}</h2>
             <p className="text-sm opacity-80 mt-1">
-              {user?.phoneNumber || '620000000'}
+              {t('service')}: {user?.phoneNumber || '620000000'}
             </p>
           </div>
         </div>
@@ -32,7 +34,7 @@ export function UserWelcome() {
           >
             <Link href="/dashboard/account">
               <User className="mr-2 h-4 w-4" />
-              Profile
+              {t('profile')}
             </Link>
           </Button>
           <Button
@@ -41,7 +43,7 @@ export function UserWelcome() {
             onClick={logout}
           >
             <LogOut className="mr-2 h-4 w-4" />
-            Logout
+            {t('logout')}
           </Button>
         </div>
       </CardContent>

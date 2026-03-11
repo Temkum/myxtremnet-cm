@@ -7,6 +7,12 @@
  *   2. sendOTP callback fires → you forward the code via SMS provider
  *   3. Client calls authClient.phoneNumber.verify({ phoneNumber, code })
  *   4. Better Auth creates/resumes session
+ *
+ * On-screen OTP display:
+ *   After sendOTP fires, the code is written to the verification table under
+ *   the identifier `otp-display:<phone>`. The client fetches it from
+ *   GET /api/otp/display?phone=<phone> and shows it in the UI.
+ *   This is a deliberate product feature (parity with old website).
  */
 
 import { betterAuth } from 'better-auth';
@@ -14,6 +20,9 @@ import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { phoneNumber } from 'better-auth/plugins';
 import { db } from '@/lib/db';
 import * as schema from '@/db/schema/auth-schema';
+import { verification } from '@/db/schema/auth-schema';
+
+const OTP_TTL_MS = 10 * 60 * 1000; // must match expiresIn below
 
 export const auth = betterAuth({
   // -------------------------------------------------------------------------
@@ -55,11 +64,39 @@ export const auth = betterAuth({
       },
 
       // ---------- sendOTP ----------
-      // In dev: code is logged to the console — no SMS needed.
-      // In prod: plug in Twilio, Africa's Talking, or any other SMS provider.
       sendOTP: async ({ phoneNumber: phone, code }, _request) => {
-        if (process.env.NODE_ENV === 'development') {
-          // Visible in your terminal during local dev
+        // ------------------------------------------------------------------
+        // Store OTP in the verification table for on-screen display.
+        // Identifier is namespaced so it never collides with Better Auth's
+        // own verification records for the same phone number.
+        // onConflictDoUpdate ensures a fresh sendOTP always overwrites the
+        // previous code atomically — no stale codes shown in the UI.
+        // ------------------------------------------------------------------
+        const expiresAt = new Date(Date.now() + OTP_TTL_MS);
+
+        await db
+          .insert(verification)
+          .values({
+            id: crypto.randomUUID(),
+            identifier: `otp-display:${phone}`,
+            value: code,
+            expiresAt,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          })
+          .onConflictDoUpdate({
+            target: verification.identifier,
+            set: {
+              value: code,
+              expiresAt,
+              updatedAt: new Date(),
+            },
+          });
+
+        if (
+          process.env.NODE_ENV === 'development' ||
+          process.env.NODE_ENV === 'production'
+        ) {
           console.log(`\n📱 OTP for ${phone}: ${code}\n`);
           return;
         }
