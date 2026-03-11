@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { phoneNumber as phoneNumberClient, signIn } from '@/lib/auth-client';
+import { useTranslations } from 'next-intl';
 import {
   loginSchema,
   otpSchema,
@@ -18,6 +19,7 @@ import type {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Link } from '@/src/i18n/navigation';
 
 type Step = 'phone' | 'otp' | 'password';
 type AuthMode = 'otp' | 'password';
@@ -25,6 +27,7 @@ type AuthMode = 'otp' | 'password';
 export function LoginComponent() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const t = useTranslations('Auth');
   const callbackUrl = searchParams.get('callbackUrl') ?? '/dashboard';
 
   const [step, setStep] = useState<Step>('phone');
@@ -171,16 +174,16 @@ export function LoginComponent() {
         {/* Header */}
         <div className="text-center">
           <h1 className="text-2xl font-bold tracking-tight">
-            Sign in to Camtel
+            <Link href="/">{t('loginText')}</Link>
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
             {step === 'phone' && mode === 'otp'
-              ? 'Enter your phone number to receive a one-time code'
+              ? t('loginOtp')
               : step === 'phone' && mode === 'password'
-                ? 'Enter your phone number and password'
+                ? t('loginPassword')
                 : step === 'otp'
-                  ? `Enter the 6-digit code sent to ${submittedPhone}`
-                  : 'Enter your phone number and password'}
+                  ? t('optReq', { phoneNumber: submittedPhone })
+                  : t('loginPassword')}
           </p>
           {step === 'phone' && (
             <div className="mt-3 flex justify-center gap-2">
@@ -198,7 +201,7 @@ export function LoginComponent() {
                 size="sm"
                 onClick={() => setMode('password')}
               >
-                Password
+                {t('pwd')}
               </Button>
             </div>
           )}
@@ -210,6 +213,7 @@ export function LoginComponent() {
             onSubmit={phoneForm.handleSubmit(handleSendOtp)}
             className="space-y-4"
           >
+            <Label htmlFor="phoneNumber">{t('phone')}</Label>
             <div className="flex">
               <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-input bg-muted text-sm text-muted-foreground select-none">
                 +237
@@ -248,13 +252,13 @@ export function LoginComponent() {
             >
               {phoneForm.formState.isSubmitting
                 ? 'Sending code...'
-                : 'Send verification code'}
+                : t('sendCode')}
             </Button>
 
             <p className="text-center text-sm text-muted-foreground">
-              Don't have an account?{' '}
+              {t('noAccount')}{' '}
               <a href="/register" className="underline font-medium">
-                Register
+                {t('register')}
               </a>
             </p>
           </form>
@@ -266,6 +270,7 @@ export function LoginComponent() {
             onSubmit={passwordForm.handleSubmit(handlePhonePassword)}
             className="space-y-4"
           >
+            <Label htmlFor="phoneNumberPassword">{t('phone')}</Label>
             <div className="flex">
               <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-input bg-muted text-sm text-muted-foreground select-none">
                 +237
@@ -294,7 +299,7 @@ export function LoginComponent() {
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">{t('pwd')}</Label>
               <Input
                 id="password"
                 type="password"
@@ -318,15 +323,13 @@ export function LoginComponent() {
               className="w-full"
               disabled={passwordForm.formState.isSubmitting}
             >
-              {passwordForm.formState.isSubmitting
-                ? 'Signing in...'
-                : 'Sign in'}
+              {passwordForm.formState.isSubmitting ? t('loading') : t('signIn')}
             </Button>
 
             <p className="text-center text-sm text-muted-foreground">
-              Don't have an account?{' '}
+              {t('noAccount')}{' '}
               <a href="/register" className="underline font-medium">
-                Register
+                {t('register')}
               </a>
             </p>
           </form>
@@ -339,7 +342,7 @@ export function LoginComponent() {
             className="space-y-4"
           >
             <div className="space-y-1.5">
-              <Label htmlFor="code">Verification Code</Label>
+              <Label htmlFor="code">{t('verificationCode')}</Label>
               <Input
                 id="code"
                 type="text"
@@ -360,7 +363,7 @@ export function LoginComponent() {
               {devOtp && (
                 <div className="rounded-md border border-border bg-muted px-4 py-3 text-center">
                   <p className="text-xs text-muted-foreground mb-1">
-                    Your verification code
+                    {t('verificationCode')}
                   </p>
                   <p className="text-2xl font-mono font-bold tracking-[0.4em]">
                     {devOtp}
@@ -378,9 +381,7 @@ export function LoginComponent() {
               className="w-full"
               disabled={otpForm.formState.isSubmitting}
             >
-              {otpForm.formState.isSubmitting
-                ? 'Verifying...'
-                : 'Verify & sign in'}
+              {otpForm.formState.isSubmitting ? t('loading') : t('verify')}
             </Button>
 
             <div className="flex items-center justify-between text-sm">
@@ -394,7 +395,7 @@ export function LoginComponent() {
                 }}
                 className="text-muted-foreground underline"
               >
-                Change number
+                {t('numChange')}
               </button>
               <button
                 type="button"
@@ -403,8 +404,8 @@ export function LoginComponent() {
                 className="text-muted-foreground underline disabled:opacity-40"
               >
                 {resendCooldown > 0
-                  ? `Resend in ${resendCooldown}s`
-                  : 'Resend code'}
+                  ? `${t('resendCode')} in ${resendCooldown}s`
+                  : t('resendCode')}
               </button>
             </div>
           </form>
