@@ -12,6 +12,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import { useTranslations } from 'next-intl';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -20,6 +21,7 @@ interface ProtectedRouteProps {
 
 export function ProtectedRoute({ children, fallback }: ProtectedRouteProps) {
   const { user, isLoading } = useAuth();
+  const t = useTranslations('Restricted');
 
   if (isLoading) {
     return (
@@ -27,7 +29,7 @@ export function ProtectedRoute({ children, fallback }: ProtectedRouteProps) {
         <div className="flex flex-col items-center gap-2">
           <Loader2 className="h-10 w-10 animate-spin text-primary" />
           <p className="text-sm font-medium text-muted-foreground animate-pulse">
-            Verifying session...
+            {t('loading')}
           </p>
         </div>
       </div>
@@ -44,21 +46,18 @@ export function ProtectedRoute({ children, fallback }: ProtectedRouteProps) {
                 <ShieldAlert className="h-6 w-6 text-destructive" />
               </div>
               <CardTitle className="text-2xl font-bold tracking-tight">
-                Access Restricted
+                {t('accessRestricted')}
               </CardTitle>
             </CardHeader>
             <CardContent className="text-center">
-              <p className="text-muted-foreground">
-                You need to be authenticated to view this dashboard content.
-                Please sign in with your Camtel account.
-              </p>
+              <p className="text-muted-foreground">{t('signInText')}</p>
             </CardContent>
             <CardFooter className="flex flex-col gap-2">
               <Button asChild className="w-full" size="lg">
-                <Link href="/login">Sign In</Link>
+                <Link href="/login">{t('signIn')}</Link>
               </Button>
               <Button asChild variant="ghost" className="w-full">
-                <Link href="/">Back to Home</Link>
+                <Link href="/">{t('backToHome')}</Link>
               </Button>
             </CardFooter>
           </Card>

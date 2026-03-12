@@ -88,7 +88,9 @@
     "createPwd": "Create a password",
     "creatingAccount": "Creating account...",
     "autoFillVerify": "Auto-fill & verify",
-    "resendIn": "Resend in {seconds} seconds"
+    "resendIn": "Resend in {seconds} seconds",
+    "serviceId": "Service ID",
+    "loading": "Loading..."
   },
   "Language": {
     "english": "English",
@@ -271,5 +273,13 @@
     "pwdCharacter": "Password must be at least 6 characters.",
     "pwdMatch": "Passwords do not match.",
     "pwdSuccess": "Password changed successfully!"
+  },
+  "Restricted": {
+    "accessRestricted": "Access Restricted",
+    "needAuth": "Authentication Required",
+    "signInText": "You need to be authenticated to view this dashboard content. Please sign in with your Camtel account.",
+    "signIn": "Sign In",
+    "backToHome": "Back to Home",
+    "loading": "Loading..."
   }
 }

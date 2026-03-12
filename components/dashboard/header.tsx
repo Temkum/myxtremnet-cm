@@ -33,23 +33,21 @@ import {
 import { useTranslations, useLocale } from 'next-intl';
 import {
   Link,
-  redirect,
   usePathname as useNextIntlPathname,
   useRouter,
 } from '@/src/i18n/navigation';
-import { useActivePath } from '@/hooks/use-active-path';
 import { useAuth } from '@/lib/auth-context';
 import { useState } from 'react';
+import Image from 'next/image';
 
 export function DashboardHeader() {
-  const pathname = usePathname();
   const nextIntlPathname = useNextIntlPathname();
   const locale = useLocale();
   const router = useRouter();
   const t = useTranslations();
-  const { checkActive } = useActivePath();
   const { user, logout } = useAuth();
   const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const Logo = '/camtel.png';
 
   const navigation = [
     { name: t('Navigation.home'), href: '/dashboard', icon: Home },
@@ -80,9 +78,11 @@ export function DashboardHeader() {
       <div className="flex h-16 items-center justify-between px-4 md:px-6">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-3">
-          <img
-            src="/camtel.png"
+          <Image
+            src={Logo}
             alt="Camtel"
+            width={48}
+            height={48}
             className="h-12 w-12 object-contain"
           />
           <div className="hidden md:block">

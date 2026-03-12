@@ -12,6 +12,7 @@ import {
 import { useTranslations, useLocale } from 'next-intl';
 import { AuthButton } from '@/components/auth/auth-button';
 import { Link, useRouter, usePathname } from '@/src/i18n/navigation';
+import Image from 'next/image';
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -19,6 +20,7 @@ export function Header() {
   const router = useRouter();
   const pathname = usePathname();
   const t = useTranslations();
+  const logo = '/camtel.png';
 
   const navItems = [
     { key: 'Navigation.home', href: '/dashboard' },
@@ -39,9 +41,11 @@ export function Header() {
           href="/"
           className="flex items-center gap-2 transition-transform duration-200 hover:scale-105"
         >
-          <img
-            src="/camtel.png"
+          <Image
+            src={logo}
             alt="Camtel"
+            width={40}
+            height={40}
             className="h-10 w-10 rounded-full"
           />
           <div className="flex flex-col">

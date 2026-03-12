@@ -88,7 +88,9 @@
     "createPwd": "Creer votre mot de passe",
     "creatingAccount": "Creation du compte...",
     "autoFillVerify": "Auto-fill & verify",
-    "resendIn": "Renvoyer dans {seconds} secondes"
+    "resendIn": "Renvoyer dans {seconds} secondes",
+    "serviceId": "Service ID",
+    "loading": "Chargement..."
   },
   "Language": {
     "english": "English",
@@ -273,5 +275,13 @@
     "pwdCharacter": "Mot de passe doit etre moins de six characters",
     "pwdMatch": "Le mot de passe ne correspond pas!",
     "pwdSuccess": "Mot de passe modifié avec succès!"
+  },
+  "Restricted": {
+    "accessRestricted": "Accès Restreint",
+    "needAuth": "Authentification Requise",
+    "signInText": "Vous devez être authentifié pour voir ce contenu. Veuillez vous connecter avec votre compte Camtel.",
+    "signIn": "Se connecter",
+    "backToHome": "Retour à l'accueil",
+    "loading": "Chargement..."
   }
 }

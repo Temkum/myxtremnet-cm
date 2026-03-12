@@ -1,13 +1,5 @@
 'use client';
 
-/**
- * components/auth/auth-button.tsx
- *
- * Drop-in replacement for the old AuthButton.
- * Reads session from Better Auth instead of the old context.
- */
-
-import React from 'react';
 import { useAuth } from '@/lib/auth-context';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -20,9 +12,11 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { User, LogOut, Settings, Phone } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 export function AuthButton() {
   const { user, isLoading, logout } = useAuth();
+  const t = useTranslations();
 
   if (isLoading) {
     return <div className="h-8 w-8 rounded-full bg-muted animate-pulse" />;
@@ -32,10 +26,10 @@ export function AuthButton() {
     return (
       <div className="flex gap-2">
         <Button variant="outline" asChild>
-          <a href="/login">Sign In</a>
+          <a href="/login">{t('Auth.signIn')}</a>
         </Button>
         <Button asChild>
-          <a href="/register">Register</a>
+          <a href="/register">{t('Auth.register')}</a>
         </Button>
       </div>
     );
@@ -70,7 +64,7 @@ export function AuthButton() {
             )}
             {user.serviceId && (
               <p className="text-xs leading-none text-muted-foreground">
-                Service ID: {user.serviceId}
+                {t('Auth.serviceId')}: {user.serviceId}
               </p>
             )}
           </div>
@@ -81,13 +75,13 @@ export function AuthButton() {
         <DropdownMenuItem asChild>
           <a href="/dashboard/account" className="flex items-center">
             <User className="mr-2 h-4 w-4" />
-            <span>Account</span>
+            <span>{t('Auth.account')}</span>
           </a>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
           <a href="/dashboard/settings" className="flex items-center">
             <Settings className="mr-2 h-4 w-4" />
-            <span>Settings</span>
+            <span>{t('Auth.settings')}</span>
           </a>
         </DropdownMenuItem>
 
@@ -98,7 +92,7 @@ export function AuthButton() {
           className="cursor-pointer text-destructive focus:text-destructive"
         >
           <LogOut className="mr-2 h-4 w-4" />
-          <span>Log out</span>
+          <span>{t('Auth.logout')}</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
