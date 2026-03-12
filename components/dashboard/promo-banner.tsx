@@ -12,41 +12,43 @@ import {
   ChevronLeft,
   ChevronRight,
 } from 'lucide-react';
-
-const promos = [
-  {
-    badge: 'X-tremNet+',
-    title: '01 SIM CARD (data only+) To Go',
-    subtitle: '1 DONGLE | PACK SINGLE',
-    price: '5,900',
-    period: '/ 30 jours',
-    icon: Smartphone,
-    gradient: 'from-blue-600 to-blue-500',
-    highlight: '4G LTE',
-  },
-  {
-    badge: 'CamFibre',
-    title: 'Fibre Optique Haut Débit',
-    subtitle: 'PACK FAMILLE | UP TO 100 MBPS',
-    price: '19,900',
-    period: '/ mois',
-    icon: Globe,
-    gradient: 'from-blue-600 to-blue-500',
-    highlight: 'FIBRE',
-  },
-  {
-    badge: 'CamTV+',
-    title: 'Télévision Numérique Premium',
-    subtitle: '200+ CHAÎNES | HD & 4K',
-    price: '9,500',
-    period: '/ mois',
-    icon: Tv,
-    gradient: 'from-blue-600 to-blue-500',
-    highlight: 'NOUVEAU',
-  },
-];
+import { useLanguage } from '@/lib/language-context';
 
 export function PromoBanner() {
+  const { t } = useLanguage();
+
+  const promos = [
+    {
+      badge: t('xtremNetPlus'),
+      title: t('simCardTitle'),
+      subtitle: t('simCardSubtitle'),
+      price: '5,900',
+      period: t('days30'),
+      icon: Smartphone,
+      gradient: 'from-blue-600 to-blue-500',
+      highlight: t('lte4g'),
+    },
+    {
+      badge: t('camFibre'),
+      title: t('fibreTitle'),
+      subtitle: t('fibreSubtitle'),
+      price: '19,900',
+      period: t('month'),
+      icon: Globe,
+      gradient: 'from-blue-600 to-blue-500',
+      highlight: t('fibre_badge'),
+    },
+    {
+      badge: t('camTV'),
+      title: t('tvTitle'),
+      subtitle: t('tvSubtitle'),
+      price: '9,500',
+      period: t('month'),
+      icon: Tv,
+      gradient: 'from-blue-600 to-blue-500',
+      highlight: t('new_badge'),
+    },
+  ];
   const [current, setCurrent] = useState(0);
   const [animating, setAnimating] = useState(false);
   const [direction, setDirection] = useState<'left' | 'right'>('right');
@@ -81,8 +83,8 @@ export function PromoBanner() {
 
   const slideClass = animating
     ? direction === 'right'
-      ? 'translate-x-4 opacity-0'
-      : '-translate-x-4 opacity-0'
+    ? 'translate-x-4 opacity-0'
+    : '-translate-x-4 opacity-0'
     : 'translate-x-0 opacity-100';
 
   return (
@@ -137,8 +139,8 @@ export function PromoBanner() {
                 onClick={() => goTo(i, i > current ? 'right' : 'left')}
                 className={`rounded-full transition-all duration-300 ${
                   i === current
-                    ? 'w-6 h-2 bg-white'
-                    : 'w-2 h-2 bg-white/40 hover:bg-white/60'
+                  ? 'w-6 h-2 bg-white'
+                  : 'w-2 h-2 bg-white/40 hover:bg-white/60'
                 }`}
               />
             ))}
@@ -164,21 +166,22 @@ export function PromoBanner() {
 }
 
 export function ServiceHighlights() {
+  const { t } = useLanguage();
   const highlights = [
     {
       icon: Wifi,
-      title: 'High Speed Internet',
-      description: 'Up to 100 Mbps download speed',
+      title: t('highSpeedInternet'),
+      description: t('highSpeedInternetDesc'),
     },
     {
       icon: Package,
-      title: 'Flexible Packages',
-      description: 'Choose from various data plans',
+      title: t('flexiblePackages'),
+      description: t('flexiblePackagesDesc'),
     },
     {
       icon: Smartphone,
-      title: 'Mobile Ready',
-      description: 'Use with any compatible device',
+      title: t('mobileReady'),
+      description: t('mobileReadyDesc'),
     },
   ];
 

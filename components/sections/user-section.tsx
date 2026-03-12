@@ -24,7 +24,7 @@ export function UserSection() {
 
   const quickActions = [
     { icon: Receipt, label: 'viewBills', color: 'text-primary' },
-    { icon: RefreshCw, label: 'recharge', color: 'text-accent' },
+    { icon: RefreshCw, label: 'recharge_action', color: 'text-accent' },
     { icon: BarChart3, label: 'dataUsage', color: 'text-primary' },
   ];
 
@@ -43,12 +43,12 @@ export function UserSection() {
                         <User className="h-6 w-6" />
                       </div>
                       <div>
-                        <p className="text-sm opacity-90">{t('welcome')},</p>
+                        <p className="text-sm opacity-90">{t('welcome_simple')},</p>
                         <CardTitle className="text-lg uppercase">
                           {user?.name}
                         </CardTitle>
                         <p className="text-xs opacity-80">
-                          Ref: {user?.phoneNumber}
+                          ID: {user?.phoneNumber}
                         </p>
                       </div>
                     </div>
@@ -83,7 +83,7 @@ export function UserSection() {
                       {t('notLoggedIn')}
                     </h3>
                     <p className="text-sm text-muted-foreground">
-                      Access your account to manage services
+                      {t('manageServicesDesc')}
                     </p>
                   </div>
                   <Button

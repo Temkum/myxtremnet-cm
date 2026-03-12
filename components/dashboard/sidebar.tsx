@@ -21,51 +21,57 @@ import {
   ChevronRight,
 } from 'lucide-react';
 
+import { useTranslations } from 'next-intl';
+
 const offerLinks = [
-  { name: 'LTE SERVICE', href: '/dashboard/services/lte', icon: Radio },
+  { id: 'lte', name: 'LTE SERVICE', href: '/dashboard/services/lte', icon: Radio },
   {
+    id: 'wttx-outdoor',
     name: 'WTTx Outdoor',
     href: '/dashboard/services/wttx-outdoor',
     icon: Satellite,
   },
   {
+    id: 'wttx-indoor',
     name: 'WTTx Indoor',
     href: '/dashboard/services/wttx-indoor',
     icon: Router,
   },
-  { name: 'UL Service', href: '/dashboard/services/ul', icon: Wifi },
+  { id: 'ul', name: 'UL Service', href: '/dashboard/services/ul', icon: Wifi },
 ];
 
 const packageLinks = [
-  { name: 'LTE SERVICE', href: '/dashboard/packages/lte', icon: Radio },
+  { id: 'lte', name: 'LTE SERVICE', href: '/dashboard/packages/lte', icon: Radio },
   {
+    id: 'wttx-outdoor',
     name: 'WTTx Outdoor',
     href: '/dashboard/packages/wttx-outdoor',
     icon: Satellite,
   },
   {
+    id: 'wttx-indoor',
     name: 'WTTx Indoor',
     href: '/dashboard/packages/wttx-indoor',
     icon: Router,
   },
-  { name: 'UL Service', href: '/dashboard/packages/ul', icon: Wifi },
+  { id: 'ul', name: 'UL Service', href: '/dashboard/packages/ul', icon: Wifi },
 ];
 
 const serviceLinks = [
-  { name: 'Account Information', href: '/dashboard/account', icon: CreditCard },
-  { name: 'Order History', href: '/dashboard/orders', icon: History },
-  { name: 'Recharge', href: '/dashboard/recharge', icon: RefreshCw },
+  { id: 'accountInfo', name: 'Account Information', href: '/dashboard/account', icon: CreditCard },
+  { id: 'orderHistory', name: 'Order History', href: '/dashboard/orders', icon: History },
+  { id: 'recharge', name: 'Recharge', href: '/dashboard/recharge', icon: RefreshCw },
 ];
 
 const supportLinks = [
-  { name: 'FAQ', href: '/dashboard/faq', icon: HelpCircle },
-  { name: 'Feedback', href: '/dashboard/support', icon: MessageSquare },
-  { name: 'Contact Us', href: '/dashboard/contact', icon: Phone },
+  { id: 'faq', name: 'FAQ', href: '/dashboard/faq', icon: HelpCircle },
+  { id: 'feedback', name: 'Feedback', href: '/dashboard/support', icon: MessageSquare },
+  { id: 'contactUs', name: 'Contact Us', href: '/dashboard/contact', icon: Phone },
 ];
 
 interface SidebarSectionProps {
   title: string;
-  links: { name: string; href: string; icon: React.ElementType }[];
+  links: { id: string; name: string; href: string; icon: React.ElementType }[];
   variant?: 'offers' | 'packages' | 'service' | 'support';
 }
 
@@ -75,6 +81,7 @@ function SidebarSection({
   variant = 'offers',
 }: SidebarSectionProps) {
   const pathname = usePathname();
+  const t = useTranslations('sidebar');
 
   const variantColors = {
     offers: 'border-l-primary',
@@ -97,7 +104,7 @@ function SidebarSection({
             const Icon = item.icon;
             return (
               <Link
-                key={item.name}
+                key={item.id}
                 href={item.href}
                 className={cn(
                   'flex items-center justify-between px-4 py-2.5 text-sm transition-colors border-b border-border last:border-b-0',
@@ -108,7 +115,7 @@ function SidebarSection({
               >
                 <div className="flex items-center gap-2">
                   <Icon className="h-4 w-4" />
-                  <span>{item.name}</span>
+                  <span>{variant === 'offers' || variant === 'packages' ? `${t(variant)} - ${t(item.id)}` : t(item.id)}</span>
                 </div>
                 <ChevronRight className="h-4 w-4 text-muted-foreground" />
               </Link>
@@ -121,45 +128,49 @@ function SidebarSection({
 }
 
 export function DashboardSidebar() {
+  const t = useTranslations('sidebar');
   return (
     <aside className="w-full lg:w-72 space-y-4">
-      <SidebarSection title="Offers" links={offerLinks} variant="offers" />
+      <SidebarSection title={t('offers')} links={offerLinks} variant="offers" />
       <SidebarSection
-        title="Packages"
+        title={t('packages')}
         links={packageLinks}
         variant="packages"
       />
-      <SidebarSection title="Service" links={serviceLinks} variant="service" />
-      <SidebarSection title="Support" links={supportLinks} variant="support" />
+      <SidebarSection title={t('service')} links={serviceLinks} variant="service" />
+      <SidebarSection title={t('support')} links={supportLinks} variant="support" />
     </aside>
   );
 }
 
 export function QuickFAQ() {
+  const t = useTranslations('sidebar');
+  const tFaq = useTranslations('faq.q');
+  
   const faqs = [
-    'How do I change my default password?',
-    "What's to do if I've forgot my password?",
-    'How do I pay for my X-tremNet services?',
-    'How do I monitor my consumption?',
+    { id: 'q1', text: tFaq('q1') },
+    { id: 'q2', text: tFaq('q2') },
+    { id: 'q3', text: tFaq('q3') },
+    { id: 'q4', text: tFaq('q4') },
   ];
 
   return (
     <Card>
       <CardHeader className="py-3 px-4 border-l-4 border-l-accent">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-sm font-semibold">FAQ</CardTitle>
+          <CardTitle className="text-sm font-semibold">{t('faq')}</CardTitle>
           <Link
             href="/dashboard/faq"
             className="text-xs text-primary hover:underline"
           >
-            more {'>>'}
+            {t('more')} {'>>'}
           </Link>
         </div>
       </CardHeader>
       <CardContent className="p-4">
         <ul className="space-y-2">
           {faqs.map((faq, index) => (
-            <li key={index} className="flex items-start gap-2 text-sm">
+            <li key={faq.id} className="flex items-start gap-2 text-sm">
               <Badge
                 variant="outline"
                 className="h-5 min-w-5 flex items-center justify-center text-xs"
@@ -170,7 +181,7 @@ export function QuickFAQ() {
                 href="/dashboard/faq"
                 className="text-muted-foreground hover:text-primary"
               >
-                {faq}
+                {faq.text}
               </Link>
             </li>
           ))}

@@ -40,7 +40,7 @@ export function Footer() {
           <p>
             &copy; 2005-{currentYear} {t('copyright')}
           </p>
-          <p>Visits: 696,424,502</p>
+          <p>{t('visits')}: 696,424,502</p>
         </div>
       </div>
     </footer>

@@ -23,6 +23,8 @@ import { Label } from '@/components/ui/label';
 
 type Step = 'phone' | 'otp';
 
+import { useTranslations } from 'next-intl';
+
 export function LoginModal({
   isOpen,
   onClose,
@@ -30,6 +32,7 @@ export function LoginModal({
   isOpen: boolean;
   onClose: () => void;
 }) {
+  const t = useTranslations('login');
   const [step, setStep] = useState<Step>('phone');
   const [submittedPhone, setSubmittedPhone] = useState('');
   const [serverError, setServerError] = useState('');
@@ -59,7 +62,7 @@ export function LoginModal({
     });
 
     if (error) {
-      setServerError(error.message ?? 'Failed to send OTP. Try again.');
+      setServerError(error.message ?? (t('failedSendOtp') || 'Failed to send OTP. Try again.'));
       return;
     }
 
@@ -78,7 +81,7 @@ export function LoginModal({
     });
 
     if (error) {
-      setServerError(error.message ?? 'Invalid or expired code.');
+      setServerError(error.message ?? (t('invalidCode') || 'Invalid or expired code.'));
       return;
     }
 
@@ -92,7 +95,7 @@ export function LoginModal({
       phoneNumber: submittedPhone,
     });
     if (error) {
-      setServerError(error.message ?? 'Failed to resend OTP.');
+      setServerError(error.message ?? (t('failedResendOtp') || 'Failed to resend OTP.'));
       return;
     }
     startCooldown();
@@ -128,11 +131,11 @@ export function LoginModal({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold">Sign In</DialogTitle>
+          <DialogTitle className="text-2xl font-bold">{t('title')}</DialogTitle>
           <DialogDescription>
             {step === 'phone'
-              ? 'Enter your phone number to receive a one-time code'
-              : `Enter the 6-digit code sent to ${submittedPhone}`}
+              ? t('phoneStep')
+              : t('otpStep', { phone: submittedPhone })}
           </DialogDescription>
         </DialogHeader>
 
@@ -143,11 +146,11 @@ export function LoginModal({
             className="space-y-4 pt-4"
           >
             <div className="space-y-1.5">
-              <Label htmlFor="phoneNumber">Phone Number</Label>
+              <Label htmlFor="phoneNumber">{t('phoneLabel')}</Label>
               <Input
                 id="phoneNumber"
                 type="tel"
-                placeholder="+237 650 000 000"
+                placeholder={t('phonePlaceholder')}
                 autoComplete="tel"
                 {...phoneForm.register('phoneNumber')}
               />
@@ -168,10 +171,10 @@ export function LoginModal({
               disabled={phoneForm.formState.isSubmitting || sendCooldown > 0}
             >
               {sendCooldown > 0
-                ? `Retry in ${sendCooldown}s`
+                ? t('resendIn', { seconds: sendCooldown })
                 : phoneForm.formState.isSubmitting
-                  ? 'Sending code...'
-                  : 'Send verification code'}
+                  ? t('sending')
+                  : t('sendCode')}
             </Button>
           </form>
         )}
@@ -183,7 +186,7 @@ export function LoginModal({
             className="space-y-4 pt-4"
           >
             <div className="space-y-1.5">
-              <Label htmlFor="code">Verification Code</Label>
+              <Label htmlFor="code">{t('codeLabel')}</Label>
               <Input
                 id="code"
                 type="text"
@@ -211,8 +214,8 @@ export function LoginModal({
               disabled={otpForm.formState.isSubmitting}
             >
               {otpForm.formState.isSubmitting
-                ? 'Verifying...'
-                : 'Verify & sign in'}
+                ? t('verifying')
+                : t('verifySignIn')}
             </Button>
 
             <div className="flex items-center justify-between text-sm">
@@ -225,7 +228,7 @@ export function LoginModal({
                 }}
                 className="text-muted-foreground underline"
               >
-                Change number
+                {t('changeNumber')}
               </button>
               <button
                 type="button"
@@ -234,8 +237,8 @@ export function LoginModal({
                 className="text-muted-foreground underline disabled:opacity-40"
               >
                 {resendCooldown > 0
-                  ? `Resend in ${resendCooldown}s`
-                  : 'Resend code'}
+                  ? t('resendIn', { seconds: resendCooldown })
+                  : t('resendCode')}
               </button>
             </div>
           </form>

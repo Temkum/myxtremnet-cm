@@ -40,14 +40,14 @@ export function ProductSection() {
                 </div>
 
                 <Badge className="absolute left-4 top-4 bg-accent text-accent-foreground hover:bg-accent">
-                  X-tremNet
+                  {t('xtremNetBadge')}
                 </Badge>
               </div>
 
               {/* Product Details */}
               <div className="flex flex-col justify-center p-6 lg:p-12">
                 <Badge variant="secondary" className="mb-4 w-fit">
-                  4G LTE
+                  {t('lte4g')}
                 </Badge>
 
                 <h3 className="mb-3 text-2xl font-bold text-foreground sm:text-3xl">
@@ -69,15 +69,15 @@ export function ProductSection() {
                 <ul className="mb-8 space-y-2 text-sm text-muted-foreground">
                   <li className="flex items-center gap-2">
                     <div className="h-1.5 w-1.5 rounded-full bg-primary" />
-                    30 Days Validity
+                    {t('daysValidity')}
                   </li>
                   <li className="flex items-center gap-2">
                     <div className="h-1.5 w-1.5 rounded-full bg-primary" />
-                    Plug & Play USB
+                    {t('plugPlay')}
                   </li>
                   <li className="flex items-center gap-2">
                     <div className="h-1.5 w-1.5 rounded-full bg-primary" />
-                    Nationwide Coverage
+                    {t('nationwide')}
                   </li>
                 </ul>
 

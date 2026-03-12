@@ -1,3 +1,5 @@
+'use client';
+
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -8,6 +10,9 @@ import {
 } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Link } from '@/i18n/navigation';
+import { useState } from 'react';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useTranslations } from 'next-intl';
 
 const offers = [
   {
@@ -121,20 +126,41 @@ const offers = [
 ];
 
 export default function ServiceListing() {
+  const [activeTab, setActiveTab] = useState('Blue');
+  const t = useTranslations('bundles');
+  const filteredOffers = offers.filter((offer) => offer.category === activeTab);
+
   return (
     <div className="container mx-auto py-10 px-4">
       <div className="flex justify-between items-center mb-8">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Subscribe Offer</h1>
+          <h1 className="text-3xl font-bold tracking-tight">{t('title')}</h1>
           <p className="text-muted-foreground">
-            Select a service for your number: 620779967
+            {t('subtitle', { number: '620779967' })}
           </p>
         </div>
-        <Button variant="outline">Change Number</Button>
+        <Button variant="outline">{t('changeNumber')}</Button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {offers.map((offer) => (
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-6">
+        <TabsList>
+          <TabsTrigger
+            value="Blue"
+            className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+          >
+            Blue
+          </TabsTrigger>
+          <TabsTrigger
+            value="Toli"
+            className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+          >
+            Toli
+          </TabsTrigger>
+        </TabsList>
+      </Tabs>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {filteredOffers.map((offer) => (
           <Card
             key={offer.id}
             className="hover:border-primary transition-colors cursor-pointer group"
@@ -151,7 +177,7 @@ export default function ServiceListing() {
             <CardFooter>
               <Link href={`/dashboard/bundles/${offer.id}`}>
                 <Button className="w-full group-hover:bg-primary">
-                  Subscribe
+                  {t('subscribe')}
                 </Button>
               </Link>
             </CardFooter>

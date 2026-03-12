@@ -25,134 +25,43 @@ import {
   Settings,
   MessageSquare,
 } from 'lucide-react';
-
-const faqCategories = [
-  { id: 'all', name: 'All', icon: HelpCircle, count: 16 },
-  { id: 'account', name: 'Account', icon: Key, count: 4 },
-  { id: 'billing', name: 'Billing', icon: CreditCard, count: 3 },
-  { id: 'connectivity', name: 'Connectivity', icon: Wifi, count: 3 },
-  { id: 'subscription', name: 'Subscription', icon: Package, count: 3 },
-  { id: 'technical', name: 'Technical', icon: Settings, count: 3 },
-];
-
-const faqData = [
-  {
-    id: 1,
-    question: 'How do I change my default password?',
-    answer:
-      "To change your default password, log in to your account and click on your profile icon in the top right corner. Select 'Change Password' from the dropdown menu. Enter your current password, then enter your new password twice to confirm. Click 'Save' to update your password.",
-    category: 'account',
-  },
-  {
-    id: 2,
-    question: "What's to do if I've forgot my password?",
-    answer:
-      "If you've forgotten your password, click on the 'Forgot Password' link on the login page. Enter your registered email address or phone number, and we'll send you a password reset link. Follow the instructions in the email to create a new password.",
-    category: 'account',
-  },
-  {
-    id: 3,
-    question: 'How do I pay for my X-tremNet services?',
-    answer:
-      "You can pay for your X-tremNet services through multiple methods: Mobile Money (MTN or Orange Money), credit/debit cards (Visa, Mastercard), or recharge vouchers. Go to the 'Recharge' section in your dashboard to add funds to your account.",
-    category: 'billing',
-  },
-  {
-    id: 4,
-    question: 'How do I monitor my consumption?',
-    answer:
-      "To monitor your data consumption, go to 'Service' > 'Account Information' in your dashboard. You'll see a detailed breakdown of your data usage, including remaining data, usage history, and expiration dates for your current plan.",
-    category: 'billing',
-  },
-  {
-    id: 5,
-    question: 'How do I check my account balance?',
-    answer:
-      'Your account balance is displayed on the Account Information page. You can also see a quick summary in the header of your dashboard. The balance shows your prepaid credit and any bonus amounts with their respective expiration dates.',
-    category: 'billing',
-  },
-  {
-    id: 6,
-    question: 'How can I recharge my X-tremNet account?',
-    answer:
-      "Navigate to the 'Recharge' section from your dashboard. Select your preferred recharge amount or enter a custom amount. Choose your payment method (Mobile Money, card, or voucher) and complete the transaction. Your account will be credited immediately.",
-    category: 'subscription',
-  },
-  {
-    id: 7,
-    question: 'How do I renew my subscription?',
-    answer:
-      "To renew your subscription, ensure you have sufficient balance in your account. Go to 'Services' and select your current plan or choose a new one. Click 'Subscribe' to activate the plan. The cost will be deducted from your prepaid balance.",
-    category: 'subscription',
-  },
-  {
-    id: 8,
-    question: 'Can I cumulate my offers?',
-    answer:
-      'Yes, you can have multiple active offers on your account. Each offer will run independently with its own data allocation and validity period. Your device will consume data from the offer that was activated first or has the nearest expiration date.',
-    category: 'subscription',
-  },
-  {
-    id: 9,
-    question: 'Why is my internet connection slow?',
-    answer:
-      'Slow internet can be caused by several factors: network congestion during peak hours, distance from the nearest tower, interference from physical obstacles, or reaching your data cap. Try restarting your device, checking your signal strength, or contacting support if the issue persists.',
-    category: 'connectivity',
-  },
-  {
-    id: 10,
-    question: 'How do I configure my device for X-tremNet?',
-    answer:
-      "Insert your X-tremNet SIM card into a compatible device. The APN settings should configure automatically. If not, go to your device's network settings and manually enter: APN: camtel, Username: (leave blank), Password: (leave blank). Contact support if you need assistance.",
-    category: 'technical',
-  },
-  {
-    id: 11,
-    question: 'What devices are compatible with X-tremNet?',
-    answer:
-      "X-tremNet works with any LTE-enabled device including smartphones, tablets, USB dongles, and MiFi devices. For WTTx services, you'll need specific outdoor or indoor equipment provided by Camtel. Check our Products page for compatible devices.",
-    category: 'technical',
-  },
-  {
-    id: 12,
-    question: "Why can't I access certain websites?",
-    answer:
-      "If you're unable to access certain websites, it could be due to: exhausted data balance, DNS issues, or network restrictions. First, check your data balance. Try clearing your browser cache or using a different browser. Contact support if the problem continues.",
-    category: 'connectivity',
-  },
-  {
-    id: 13,
-    question: 'How do I check my signal strength?',
-    answer:
-      'On most devices, you can check signal strength in the status bar (bars icon) or in Settings > Network. For more detailed information, dial *#*#4636#*#* on Android or check Settings > Cellular on iPhone. Optimal signal is above -80 dBm.',
-    category: 'connectivity',
-  },
-  {
-    id: 14,
-    question: 'How do I update my account information?',
-    answer:
-      "To update your account information, go to your profile settings by clicking on your name in the top right corner. Select 'Profile' to view and edit your personal details. Some changes may require verification.",
-    category: 'account',
-  },
-  {
-    id: 15,
-    question: 'What should I do if my SIM card is lost or stolen?',
-    answer:
-      "If your SIM card is lost or stolen, contact Camtel support immediately at 8200 or visit the nearest Camtel service center. We'll block your SIM to prevent unauthorized use and help you get a replacement SIM with your existing number.",
-    category: 'account',
-  },
-  {
-    id: 16,
-    question: 'How do I troubleshoot no network issues?',
-    answer:
-      'If you have no network: 1) Restart your device, 2) Check if the SIM is properly inserted, 3) Ensure airplane mode is off, 4) Check if your account is active and has balance, 5) Try the SIM in another device. If issues persist, contact support.',
-    category: 'technical',
-  },
-];
+import { useTranslations } from 'next-intl';
 
 export default function FAQPage() {
+  const t = useTranslations('faq');
+  const tCat = useTranslations('faq.cat');
+  const tQ = useTranslations('faq.q');
+
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
+
+  const faqCategories = [
+    { id: 'all', name: tCat('all'), icon: HelpCircle, count: 16 },
+    { id: 'account', name: tCat('account'), icon: Key, count: 4 },
+    { id: 'billing', name: tCat('billing'), icon: CreditCard, count: 3 },
+    { id: 'connectivity', name: tCat('connectivity'), icon: Wifi, count: 3 },
+    { id: 'subscription', name: tCat('subscription'), icon: Package, count: 3 },
+    { id: 'technical', name: tCat('technical'), icon: Settings, count: 3 },
+  ];
+
+  const faqData = [
+    { id: 1, question: tQ('q1'), answer: tQ('a1'), category: 'account' },
+    { id: 2, question: tQ('q2'), answer: tQ('a2'), category: 'account' },
+    { id: 3, question: tQ('q3'), answer: tQ('a3'), category: 'billing' },
+    { id: 4, question: tQ('q4'), answer: tQ('a4'), category: 'billing' },
+    { id: 5, question: tQ('q5'), answer: tQ('a5'), category: 'billing' },
+    { id: 6, question: tQ('q6'), answer: tQ('a6'), category: 'subscription' },
+    { id: 7, question: tQ('q7'), answer: tQ('a7'), category: 'subscription' },
+    { id: 8, question: tQ('q8'), answer: tQ('a8'), category: 'subscription' },
+    { id: 9, question: tQ('q9'), answer: tQ('a9'), category: 'connectivity' },
+    { id: 10, question: tQ('q10'), answer: tQ('a10'), category: 'technical' },
+    { id: 11, question: tQ('q11'), answer: tQ('a11'), category: 'technical' },
+    { id: 12, question: tQ('q12'), answer: tQ('a12'), category: 'connectivity' },
+    { id: 13, question: tQ('q13'), answer: tQ('a13'), category: 'connectivity' },
+    { id: 14, question: tQ('q14'), answer: tQ('a14'), category: 'account' },
+    { id: 15, question: tQ('q15'), answer: tQ('a15'), category: 'account' },
+    { id: 16, question: tQ('q16'), answer: tQ('a16'), category: 'technical' },
+  ];
 
   const filteredFAQs = faqData.filter((faq) => {
     const matchesSearch =
@@ -169,16 +78,16 @@ export default function FAQPage() {
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-foreground">
-            Frequently Asked Questions
+            {t('title')}
           </h1>
           <p className="text-muted-foreground">
-            Find answers to common questions about X-tremNet services
+            {t('subtitle')}
           </p>
         </div>
         <Button variant="outline" asChild>
           <Link href="/dashboard/support">
             <MessageSquare className="h-4 w-4 mr-2" />
-            Contact Support
+            {t('contactSupport')}
           </Link>
         </Button>
       </div>
@@ -190,7 +99,7 @@ export default function FAQPage() {
             <div className="flex-1 relative w-full">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
               <Input
-                placeholder="Search for answers..."
+                placeholder={t('searchPlaceholder')}
                 className="pl-10 h-12 text-lg"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -206,7 +115,7 @@ export default function FAQPage() {
           <Card className="sticky top-24">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
-                Categories
+                {t('categories')}
               </CardTitle>
             </CardHeader>
             <CardContent className="p-2">
@@ -257,7 +166,7 @@ export default function FAQPage() {
               <div>
                 <CardTitle className="text-lg">FAQ</CardTitle>
                 <p className="text-sm text-muted-foreground">
-                  {filteredFAQs.length} questions found
+                  {t('questionsFound', { count: filteredFAQs.length })}
                 </p>
               </div>
             </CardHeader>
@@ -285,10 +194,10 @@ export default function FAQPage() {
                           </p>
                           <div className="mt-4 flex items-center gap-2">
                             <span className="text-xs text-muted-foreground">
-                              Category:
+                              {t('categoryLabel')}
                             </span>
                             <Badge variant="secondary" className="capitalize">
-                              {faq.category}
+                              {tCat(faq.category)}
                             </Badge>
                           </div>
                         </div>
@@ -299,10 +208,9 @@ export default function FAQPage() {
               ) : (
                 <div className="p-12 text-center">
                   <HelpCircle className="h-12 w-12 mx-auto text-muted-foreground/50 mb-4" />
-                  <h3 className="font-semibold mb-2">No results found</h3>
+                  <h3 className="font-semibold mb-2">{t('noResults')}</h3>
                   <p className="text-muted-foreground">
-                    Try adjusting your search or filter to find what you're
-                    looking for.
+                    {t('noResultsDesc')}
                   </p>
                 </div>
               )}
@@ -313,10 +221,10 @@ export default function FAQPage() {
           <div className="flex items-center justify-center gap-2">
             <Button variant="outline" size="sm" disabled>
               <ChevronLeft className="h-4 w-4 mr-1" />
-              First
+              {t('first')}
             </Button>
             <Button variant="outline" size="sm" disabled>
-              Prev
+              {t('prev')}
             </Button>
             <Button variant="default" size="sm">
               1
@@ -325,10 +233,10 @@ export default function FAQPage() {
               2
             </Button>
             <Button variant="outline" size="sm">
-              Next
+              {t('next')}
             </Button>
             <Button variant="outline" size="sm">
-              Last
+              {t('last')}
               <ChevronRight className="h-4 w-4 ml-1" />
             </Button>
           </div>
@@ -336,15 +244,14 @@ export default function FAQPage() {
           {/* Still Need Help */}
           <Card className="bg-primary text-primary-foreground">
             <CardContent className="p-6 text-center">
-              <h3 className="text-xl font-bold mb-2">Still have questions?</h3>
+              <h3 className="text-xl font-bold mb-2">{t('stillHaveQuestions')}</h3>
               <p className="opacity-90 mb-4">
-                Can't find the answer you're looking for? Our support team is
-                here to help.
+                {t('stillHaveQuestionsDesc')}
               </p>
               <Button variant="secondary" asChild>
                 <Link href="/dashboard/support">
                   <MessageSquare className="h-4 w-4 mr-2" />
-                  Submit a Request
+                  {t('submitRequest')}
                 </Link>
               </Button>
             </CardContent>

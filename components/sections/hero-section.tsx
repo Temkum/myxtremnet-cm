@@ -30,7 +30,7 @@ export function HeroSection() {
           {/* Text Content */}
           <div className="animate-fade-in space-y-8">
             <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm font-medium text-primary">
-              <span>Camtel Telecommunications</span>
+              <span>{t('camtelTelecommunications')}</span>
             </div>
 
             <h1 className="text-balance text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
@@ -62,15 +62,19 @@ export function HeroSection() {
             <div className="flex flex-wrap gap-8 pt-4">
               <div className="space-y-1">
                 <p className="text-3xl font-bold text-primary">500K+</p>
-                <p className="text-sm text-muted-foreground">Active Users</p>
+                <p className="text-sm text-muted-foreground">
+                  {t('activeUsers')}
+                </p>
               </div>
               <div className="space-y-1">
                 <p className="text-3xl font-bold text-primary">99.9%</p>
-                <p className="text-sm text-muted-foreground">Uptime</p>
+                <p className="text-sm text-muted-foreground">{t('uptime')}</p>
               </div>
               <div className="space-y-1">
                 <p className="text-3xl font-bold text-primary">24/7</p>
-                <p className="text-sm text-muted-foreground">Support</p>
+                <p className="text-sm text-muted-foreground">
+                  {t('statsSupport')}
+                </p>
               </div>
             </div>
           </div>

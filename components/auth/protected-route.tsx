@@ -4,6 +4,7 @@ import React from 'react';
 import { useAuth } from '@/lib/auth-context';
 import { Loader2 } from 'lucide-react';
 import { Link } from '@/i18n/navigation';
+import { useLanguage } from '@/lib/language-context';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -12,6 +13,7 @@ interface ProtectedRouteProps {
 
 export function ProtectedRoute({ children, fallback }: ProtectedRouteProps) {
   const { user, isLoading } = useAuth();
+  const { t } = useLanguage();
 
   if (isLoading) {
     return (
@@ -26,12 +28,12 @@ export function ProtectedRoute({ children, fallback }: ProtectedRouteProps) {
       fallback || (
         <div className="min-h-screen flex items-center justify-center">
           <div className="text-center">
-            <h1 className="text-2xl font-bold mb-4">Access Denied</h1>
+            <h1 className="text-2xl font-bold mb-4">{t('accessDenied')}</h1>
             <p className="text-muted-foreground mb-4">
-              Please sign in to access this page.
+              {t('pleaseSignInToAccess')}
             </p>
             <Link href="/login" className="text-primary hover:underline">
-              Go to Login
+              {t('goToLogin')}
             </Link>
           </div>
         </div>
