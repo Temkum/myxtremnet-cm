@@ -74,6 +74,7 @@ export function LoginComponent() {
         }
       } catch {
         // silent fail
+        console.error('Failed to fetch OTP');
       }
     };
 

@@ -21,6 +21,7 @@ import { phoneNumber } from 'better-auth/plugins';
 import { db } from '@/lib/db';
 import * as schema from '@/db/schema/auth-schema';
 import { verification } from '@/db/schema/auth-schema';
+import { eq, and, lt } from 'drizzle-orm';
 
 const OTP_TTL_MS = 10 * 60 * 1000; // must match expiresIn below
 
@@ -66,6 +67,12 @@ export const auth = betterAuth({
       // ---------- sendOTP ----------
       sendOTP: async ({ phoneNumber: phone, code }, _request) => {
         // ------------------------------------------------------------------
+        // Clean up any existing OTP display records for this phone to prevent
+        // conflicts with our display feature, but leave Better Auth's verification
+        // records untouched.
+        // ------------------------------------------------------------------
+
+        // ------------------------------------------------------------------
         // Store OTP in the verification table for on-screen display.
         // Identifier is namespaced so it never collides with Better Auth's
         // own verification records for the same phone number.
@@ -73,6 +80,16 @@ export const auth = betterAuth({
         // previous code atomically — no stale codes shown in the UI.
         // ------------------------------------------------------------------
         const expiresAt = new Date(Date.now() + OTP_TTL_MS);
+
+        // Clean up expired OTP display records for this phone
+        await db
+          .delete(verification)
+          .where(
+            and(
+              eq(verification.identifier, `otp-display:${phone}`),
+              lt(verification.expiresAt, new Date()),
+            ),
+          );
 
         await db
           .insert(verification)
@@ -149,14 +166,14 @@ export const auth = betterAuth({
   // Rate limiting
   // -------------------------------------------------------------------------
   rateLimit: {
-    enabled: true,
+    enabled: process.env.NODE_ENV === 'production', // Only enable in production
     window: 300,
     max: 10,
     customRules: {
-      // Max 1 OTP send per 5 minutes per IP
+      // Max 5 OTP sends per minute in development, 1 per 5 minutes in production
       '/phone-number/send-otp': {
-        window: 300,
-        max: 1,
+        window: process.env.NODE_ENV === 'production' ? 300 : 60,
+        max: process.env.NODE_ENV === 'production' ? 1 : 5,
       },
       // Max 5 verify attempts per 2 minutes
       '/phone-number/verify': {
