@@ -22,21 +22,6 @@ import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Link } from '@/src/i18n/navigation';
 
-/**
- * Registration flow:
- * 1. User fills in details (phone, email, name)
- * 2. We send OTP to the phone number
- * 3. User enters OTP → Better Auth creates account via signUpOnVerification
- *
- * After account creation, the user's name, email are updated
- * via a PATCH to /api/user/profile (you implement that endpoint separately
- * using auth.api.getSession + db.update).
- *
- * Why this approach: Better Auth's phoneNumber plugin creates the user on
- * OTP verification. There's no built-in "register with extra fields" endpoint
- * for the phone plugin, so we store extra fields after verification.
- */
-
 type Step = 'details' | 'otp' | 'password';
 type AuthMode = 'otp' | 'password';
 
@@ -50,11 +35,9 @@ export default function RegisterComponent() {
   const [resendCooldown, setResendCooldown] = useState(0);
   const [devOtp, setDevOtp] = useState('');
 
-  // Step 3: phone + password registration
   const passwordForm = useForm<PhonePasswordRegisterInput>({
     resolver: zodResolver(phonePasswordRegisterSchema),
     mode: 'onTouched',
-    criteriaMode: 'firstError',
     defaultValues: {
       fullName: '',
       phoneNumber: '',
@@ -63,11 +46,9 @@ export default function RegisterComponent() {
     },
   });
 
-  // Step 1: registration details
   const detailsForm = useForm<RegisterInput>({
     resolver: zodResolver(registerSchema),
     mode: 'onTouched',
-    criteriaMode: 'firstError',
     defaultValues: {
       phoneNumber: '',
       email: '',
@@ -75,15 +56,12 @@ export default function RegisterComponent() {
     },
   });
 
-  // Step 2: OTP
   const otpForm = useForm<OtpInput>({
     resolver: zodResolver(otpSchema),
     mode: 'onTouched',
-    criteriaMode: 'firstError',
     defaultValues: { phoneNumber: '', code: '' },
   });
 
-  // Dev mode: capture OTP from console logs
   useEffect(() => {
     if (process.env.NODE_ENV === 'development' && step === 'otp') {
       const originalLog = console.log;
@@ -104,8 +82,11 @@ export default function RegisterComponent() {
   const handleSendOtp = async (values: RegisterInput) => {
     setServerError('');
     setDevOtp('');
+
+    const fullPhone = `+237${values.phoneNumber}`;
+
     const { error } = await phoneNumberClient.sendOtp({
-      phoneNumber: values.phoneNumber,
+      phoneNumber: fullPhone,
     });
 
     if (error) {
@@ -124,58 +105,33 @@ export default function RegisterComponent() {
   ) => {
     setServerError('');
 
+    const fullPhone = `+237${values.phoneNumber}`;
+    const fakeEmail = `${values.phoneNumber}@phone.camtel.local`;
+
     const { error: signUpError } = await signUp.email({
-      email: `${values.phoneNumber.replace(/[^0-9]/g, '')}@phone.camtel.local`,
+      email: fakeEmail,
       password: values.password,
       name: values.fullName,
     });
 
-    const { error: signUpError2 } = await signUp.email({
-      email: `${values.phoneNumber.replace(/[^0-9]/g, '')}@phone.camtel.local`,
-      password: values.password,
-      name: values.fullName, // Better Auth accepts name at signup
-    });
-
     if (signUpError) {
-      const status = (signUpError as { status?: number } | null)?.status;
-      const message =
-        (signUpError as { message?: string } | null)?.message?.toLowerCase() ??
-        '';
+      const status = (signUpError as any)?.status;
+      const msg = (signUpError as any)?.message?.toLowerCase() ?? '';
 
       if (
         status === 409 ||
         status === 422 ||
-        message.includes('already exists') ||
-        message.includes('use another email')
+        msg.includes('already exists') ||
+        msg.includes('use another email')
       ) {
         setServerError('Phone number is already registered. Please sign in.');
         return;
       }
 
-      setServerError(
-        (signUpError as { message?: string } | null)?.message ??
-          'Registration failed. Try again.',
-      );
+      setServerError(signUpError.message ?? 'Registration failed. Try again.');
       return;
     }
 
-    if (signUpError2) {
-      // Catch duplicate phone — unique constraint on the generated email means
-      // this phone number already has an account.
-      if (
-        signUpError2.status === 409 ||
-        signUpError2.message?.toLowerCase().includes('already')
-      ) {
-        setServerError(
-          'This phone number is already registered. Sign in instead.',
-        );
-        return;
-      }
-      setServerError(signUpError2.message ?? 'Registration failed. Try again.');
-      return;
-    }
-
-    // Update profile with phone, email, and serviceId
     const res = await fetch('/api/user/profile', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
@@ -183,7 +139,7 @@ export default function RegisterComponent() {
       body: JSON.stringify({
         name: values.fullName,
         email: values.email,
-        phoneNumber: values.phoneNumber,
+        phoneNumber: fullPhone,
       }),
     });
 
@@ -198,9 +154,12 @@ export default function RegisterComponent() {
   const handleVerifyOtp = async (values: OtpInput) => {
     setServerError('');
 
-    // Verify OTP — Better Auth creates the user via signUpOnVerification
+    const fullPhone = pendingData
+      ? `+237${pendingData.phoneNumber}`
+      : `+237${values.phoneNumber}`;
+
     const { error } = await phoneNumberClient.verify({
-      phoneNumber: values.phoneNumber,
+      phoneNumber: fullPhone,
       code: values.code,
     });
 
@@ -209,7 +168,6 @@ export default function RegisterComponent() {
       return;
     }
 
-    // Update user profile with the extra fields collected at registration
     if (pendingData) {
       const res = await fetch('/api/user/profile', {
         method: 'PATCH',
@@ -218,13 +176,12 @@ export default function RegisterComponent() {
         body: JSON.stringify({
           name: pendingData.fullName,
           email: pendingData.email,
-          phoneNumber: pendingData.phoneNumber,
+          phoneNumber: `+237${pendingData.phoneNumber}`,
         }),
       });
 
       if (!res.ok) {
-        // Non-fatal — account is created, profile update failed
-        console.error('Profile update failed after registration');
+        console.error('Profile update failed after OTP verification');
       }
     }
 
@@ -235,13 +192,18 @@ export default function RegisterComponent() {
   const handleResend = async () => {
     if (resendCooldown > 0 || !pendingData) return;
     setServerError('');
+
+    const fullPhone = `+237${pendingData.phoneNumber}`;
+
     const { error } = await phoneNumberClient.sendOtp({
-      phoneNumber: pendingData.phoneNumber,
+      phoneNumber: fullPhone,
     });
+
     if (error) {
       setServerError(error.message ?? 'Failed to resend OTP.');
       return;
     }
+
     startCooldown();
   };
 
@@ -296,7 +258,6 @@ export default function RegisterComponent() {
           )}
         </div>
 
-        {/* Step 1 — Details (OTP) */}
         {step === 'details' && mode === 'otp' && (
           <form
             onSubmit={detailsForm.handleSubmit(handleSendOtp)}
@@ -327,21 +288,21 @@ export default function RegisterComponent() {
                   id="phoneNumber"
                   type="tel"
                   inputMode="numeric"
-                  placeholder="6207799669"
+                  pattern="[0-9]*"
+                  placeholder="620779969"
                   maxLength={9}
                   className="rounded-l-none"
-                  onChange={(e) => {
-                    const digits = e.target.value
-                      .replace(/\D/g, '')
-                      .slice(0, 9);
-                    detailsForm.setValue(
-                      'phoneNumber',
-                      digits ? `+237${digits}` : '',
-                      {
+                  {...detailsForm.register('phoneNumber', {
+                    onChange: (e) => {
+                      const clean = e.target.value
+                        .replace(/\D/g, '')
+                        .slice(0, 9);
+                      detailsForm.setValue('phoneNumber', clean, {
                         shouldValidate: true,
-                      },
-                    );
-                  }}
+                        shouldDirty: true,
+                      });
+                    },
+                  })}
                 />
               </div>
               {detailsForm.formState.errors.phoneNumber && (
@@ -390,7 +351,6 @@ export default function RegisterComponent() {
           </form>
         )}
 
-        {/* Step 1 — Details (Password) */}
         {step === 'details' && mode === 'password' && (
           <form
             onSubmit={passwordForm.handleSubmit(handlePhonePasswordRegister)}
@@ -421,21 +381,21 @@ export default function RegisterComponent() {
                   id="phoneNumberPassword"
                   type="tel"
                   inputMode="numeric"
+                  pattern="[0-9]*"
                   placeholder="620779969"
                   maxLength={9}
                   className="rounded-l-none"
-                  onChange={(e) => {
-                    const digits = e.target.value
-                      .replace(/\D/g, '')
-                      .slice(0, 9);
-                    passwordForm.setValue(
-                      'phoneNumber',
-                      digits ? `+237${digits}` : '',
-                      {
+                  {...passwordForm.register('phoneNumber', {
+                    onChange: (e) => {
+                      const clean = e.target.value
+                        .replace(/\D/g, '')
+                        .slice(0, 9);
+                      passwordForm.setValue('phoneNumber', clean, {
                         shouldValidate: true,
-                      },
-                    );
-                  }}
+                        shouldDirty: true,
+                      });
+                    },
+                  })}
                 />
               </div>
               {passwordForm.formState.errors.phoneNumber && (
@@ -500,7 +460,6 @@ export default function RegisterComponent() {
           </form>
         )}
 
-        {/* Step 2 — OTP */}
         {step === 'otp' && (
           <form
             onSubmit={otpForm.handleSubmit(handleVerifyOtp)}

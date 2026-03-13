@@ -37,31 +37,24 @@ export function LoginComponent() {
   const [resendCooldown, setResendCooldown] = useState(0);
   const [devOtp, setDevOtp] = useState('');
 
-  // Step 3: phone + password form
   const passwordForm = useForm<PhonePasswordInput>({
     resolver: zodResolver(phonePasswordSchema),
     mode: 'onTouched',
-    criteriaMode: 'firstError',
     defaultValues: { phoneNumber: '', password: '' },
   });
 
-  // Step 1: phone form
   const phoneForm = useForm<LoginInput>({
     resolver: zodResolver(loginSchema),
-    mode: 'onTouched', // validate on blur, not just submit
-    criteriaMode: 'firstError', // show only the first Zod error per field
+    mode: 'onTouched',
     defaultValues: { phoneNumber: '' },
   });
 
-  // Step 2: OTP form
   const otpForm = useForm<OtpInput>({
     resolver: zodResolver(otpSchema),
     mode: 'onTouched',
-    criteriaMode: 'firstError',
     defaultValues: { phoneNumber: '', code: '' },
   });
 
-  // capture OTP from console logs
   useEffect(() => {
     if (step !== 'otp' || !submittedPhone) return;
 
@@ -80,7 +73,7 @@ export function LoginComponent() {
           setDevOtp(data.code);
         }
       } catch {
-        // Non-critical — UI still works, user just doesn't see the code
+        // silent fail
       }
     };
 
@@ -94,8 +87,11 @@ export function LoginComponent() {
   const handleSendOtp = async (values: LoginInput) => {
     setServerError('');
     setDevOtp('');
+
+    const fullPhone = `+237${values.phoneNumber}`;
+
     const { error } = await phoneNumberClient.sendOtp({
-      phoneNumber: values.phoneNumber,
+      phoneNumber: fullPhone,
     });
 
     if (error) {
@@ -103,7 +99,7 @@ export function LoginComponent() {
       return;
     }
 
-    setSubmittedPhone(values.phoneNumber);
+    setSubmittedPhone(fullPhone);
     otpForm.setValue('phoneNumber', values.phoneNumber);
     setStep('otp');
     startCooldown();
@@ -111,8 +107,11 @@ export function LoginComponent() {
 
   const handlePhonePassword = async (values: PhonePasswordInput) => {
     setServerError('');
+
+    const fullPhone = `+237${values.phoneNumber}`;
+
     const { error } = await signIn.phoneNumber({
-      phoneNumber: values.phoneNumber,
+      phoneNumber: fullPhone,
       password: values.password,
       rememberMe: true,
     });
@@ -128,8 +127,11 @@ export function LoginComponent() {
 
   const handleVerifyOtp = async (values: OtpInput) => {
     setServerError('');
+
+    const fullPhone = submittedPhone || `+237${values.phoneNumber}`;
+
     const { error } = await phoneNumberClient.verify({
-      phoneNumber: values.phoneNumber,
+      phoneNumber: fullPhone,
       code: values.code,
     });
 
@@ -145,13 +147,16 @@ export function LoginComponent() {
   const handleResend = async () => {
     if (resendCooldown > 0) return;
     setServerError('');
+
     const { error } = await phoneNumberClient.sendOtp({
       phoneNumber: submittedPhone,
     });
+
     if (error) {
       setServerError(error.message ?? 'Failed to resend OTP.');
       return;
     }
+
     startCooldown();
   };
 
@@ -171,7 +176,6 @@ export function LoginComponent() {
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-background">
       <div className="w-full max-w-sm space-y-8">
-        {/* Header */}
         <div className="text-center">
           <h1 className="text-2xl font-bold tracking-tight">
             <Link href="/">{t('loginText')}</Link>
@@ -182,7 +186,9 @@ export function LoginComponent() {
               : step === 'phone' && mode === 'password'
                 ? t('loginPassword')
                 : step === 'otp'
-                  ? t('optReq', { phoneNumber: submittedPhone })
+                  ? t('optReq', {
+                      phoneNumber: submittedPhone?.replace('+237', ''),
+                    })
                   : t('loginPassword')}
           </p>
           {step === 'phone' && (
@@ -207,38 +213,43 @@ export function LoginComponent() {
           )}
         </div>
 
-        {/* Step 1 — Phone number */}
         {step === 'phone' && mode === 'otp' && (
           <form
             onSubmit={phoneForm.handleSubmit(handleSendOtp)}
             className="space-y-4"
           >
-            <Label htmlFor="phoneNumber">{t('phone')}</Label>
-            <div className="flex">
-              <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-input bg-muted text-sm text-muted-foreground select-none">
-                +237
-              </span>
-              <Input
-                id="phoneNumber"
-                type="tel"
-                inputMode="numeric"
-                placeholder="620 000 000"
-                autoComplete="tel"
-                maxLength={9}
-                className="rounded-l-none"
-                onChange={(e) => {
-                  const digits = e.target.value.replace(/\D/g, '').slice(0, 9);
-                  e.target.value = digits;
-                  phoneForm.setValue(
-                    'phoneNumber',
-                    digits ? `+237${digits}` : '',
-                    {
-                      shouldValidate: true,
+            <div className="space-y-1.5">
+              <Label htmlFor="phoneNumber">{t('phone')}</Label>
+              <div className="flex">
+                <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-input bg-muted text-sm text-muted-foreground select-none">
+                  +237
+                </span>
+                <Input
+                  id="phoneNumber"
+                  type="tel"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  placeholder="620000000"
+                  maxLength={9}
+                  className="rounded-l-none"
+                  {...phoneForm.register('phoneNumber', {
+                    onChange: (e) => {
+                      const clean = e.target.value
+                        .replace(/\D/g, '')
+                        .slice(0, 9);
+                      phoneForm.setValue('phoneNumber', clean, {
+                        shouldValidate: true,
+                        shouldDirty: true,
+                      });
                     },
-                  );
-                }}
-                onBlur={() => phoneForm.trigger('phoneNumber')}
-              />
+                  })}
+                />
+              </div>
+              {phoneForm.formState.errors.phoneNumber && (
+                <p className="text-xs text-destructive">
+                  {phoneForm.formState.errors.phoneNumber.message}
+                </p>
+              )}
             </div>
 
             {serverError && (
@@ -264,38 +275,43 @@ export function LoginComponent() {
           </form>
         )}
 
-        {/* Step 1 — Phone + Password */}
         {step === 'phone' && mode === 'password' && (
           <form
             onSubmit={passwordForm.handleSubmit(handlePhonePassword)}
             className="space-y-4"
           >
-            <Label htmlFor="phoneNumberPassword">{t('phone')}</Label>
-            <div className="flex">
-              <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-input bg-muted text-sm text-muted-foreground select-none">
-                +237
-              </span>
-              <Input
-                id="phoneNumberPassword"
-                type="tel"
-                inputMode="numeric"
-                placeholder="620 000 000"
-                autoComplete="tel"
-                maxLength={9}
-                className="rounded-l-none"
-                onChange={(e) => {
-                  const digits = e.target.value.replace(/\D/g, '').slice(0, 9);
-                  e.target.value = digits;
-                  passwordForm.setValue(
-                    'phoneNumber',
-                    digits ? `+237${digits}` : '',
-                    {
-                      shouldValidate: true,
+            <div className="space-y-1.5">
+              <Label htmlFor="phoneNumberPassword">{t('phone')}</Label>
+              <div className="flex">
+                <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-input bg-muted text-sm text-muted-foreground select-none">
+                  +237
+                </span>
+                <Input
+                  id="phoneNumberPassword"
+                  type="tel"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  placeholder="620000000"
+                  maxLength={9}
+                  className="rounded-l-none"
+                  {...passwordForm.register('phoneNumber', {
+                    onChange: (e) => {
+                      const clean = e.target.value
+                        .replace(/\D/g, '')
+                        .slice(0, 9);
+                      passwordForm.setValue('phoneNumber', clean, {
+                        shouldValidate: true,
+                        shouldDirty: true,
+                      });
                     },
-                  );
-                }}
-                onBlur={() => passwordForm.trigger('phoneNumber')}
-              />
+                  })}
+                />
+              </div>
+              {passwordForm.formState.errors.phoneNumber && (
+                <p className="text-xs text-destructive">
+                  {passwordForm.formState.errors.phoneNumber.message}
+                </p>
+              )}
             </div>
 
             <div className="space-y-1.5">
@@ -335,7 +351,6 @@ export function LoginComponent() {
           </form>
         )}
 
-        {/* Step 2 — OTP */}
         {step === 'otp' && (
           <form
             onSubmit={otpForm.handleSubmit(handleVerifyOtp)}
@@ -359,7 +374,6 @@ export function LoginComponent() {
                 </p>
               )}
 
-              {/* display OTP code here */}
               {devOtp && (
                 <div className="rounded-md border border-border bg-muted px-4 py-3 text-center">
                   <p className="text-xs text-muted-foreground mb-1">

@@ -1,6 +1,5 @@
 'use client';
 
-import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import {
@@ -47,7 +46,6 @@ export function DashboardHeader() {
   const t = useTranslations();
   const { user, logout } = useAuth();
   const [isSheetOpen, setIsSheetOpen] = useState(false);
-  const Logo = '/camtel.png';
 
   const navigation = [
     { name: t('Navigation.home'), href: '/dashboard', icon: Home },
@@ -79,7 +77,7 @@ export function DashboardHeader() {
         {/* Logo */}
         <Link href="/" className="flex items-center gap-3">
           <Image
-            src={Logo}
+            src="/camtel.png"
             alt="Camtel"
             width={48}
             height={48}

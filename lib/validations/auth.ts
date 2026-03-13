@@ -22,10 +22,7 @@ import { z } from 'zod';
 export const phoneSchema = z
   .string()
   .min(1, 'Phone number is required')
-  .regex(
-    /^\+[1-9]\d{7,14}$/,
-    'Enter a valid phone number with country code (e.g. +237650000000)',
-  );
+  .regex(/^\d{9}$/, { message: 'Phone number must be exactly 9 digits' });
 
 // ---------------------------------------------------------------------------
 // Login
