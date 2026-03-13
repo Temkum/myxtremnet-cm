@@ -31,6 +31,12 @@ export function LoginComponent() {
   const callbackUrl = searchParams.get('callbackUrl') ?? '/dashboard';
 
   const [step, setStep] = useState<Step>('phone');
+
+  const translateError = (error: { message?: string } | undefined) => {
+    if (!error?.message) return null;
+    return t(error.message as any) ?? error.message;
+  };
+
   const [mode, setMode] = useState<AuthMode>('otp');
   const [submittedPhone, setSubmittedPhone] = useState('');
   const [serverError, setServerError] = useState('');
@@ -96,7 +102,7 @@ export function LoginComponent() {
     });
 
     if (error) {
-      setServerError(error.message ?? 'Failed to send OTP. Try again.');
+      setServerError(error.message ?? t('failedOTP'));
       return;
     }
 
@@ -118,7 +124,7 @@ export function LoginComponent() {
     });
 
     if (error) {
-      setServerError(error.message ?? 'Invalid phone number or password.');
+      setServerError(error.message ?? t('invalidPhone&Password'));
       return;
     }
 
@@ -137,7 +143,7 @@ export function LoginComponent() {
     });
 
     if (error) {
-      setServerError(error.message ?? 'Invalid or expired code.');
+      setServerError(error.message ?? t('invalidExpiredCode'));
       return;
     }
 
@@ -154,7 +160,7 @@ export function LoginComponent() {
     });
 
     if (error) {
-      setServerError(error.message ?? 'Failed to resend OTP.');
+      setServerError(error.message ?? t('failedResendOTP'));
       return;
     }
 
@@ -248,7 +254,7 @@ export function LoginComponent() {
               </div>
               {phoneForm.formState.errors.phoneNumber && (
                 <p className="text-xs text-destructive">
-                  {phoneForm.formState.errors.phoneNumber.message}
+                  {translateError(phoneForm.formState.errors.phoneNumber)}
                 </p>
               )}
             </div>
@@ -310,7 +316,7 @@ export function LoginComponent() {
               </div>
               {passwordForm.formState.errors.phoneNumber && (
                 <p className="text-xs text-destructive">
-                  {passwordForm.formState.errors.phoneNumber.message}
+                  {translateError(passwordForm.formState.errors.phoneNumber)}
                 </p>
               )}
             </div>
@@ -326,7 +332,7 @@ export function LoginComponent() {
               />
               {passwordForm.formState.errors.password && (
                 <p className="text-xs text-destructive">
-                  {passwordForm.formState.errors.password.message}
+                  {translateError(passwordForm.formState.errors.password)}
                 </p>
               )}
             </div>
@@ -371,7 +377,7 @@ export function LoginComponent() {
               />
               {otpForm.formState.errors.code && (
                 <p className="text-xs text-destructive">
-                  {otpForm.formState.errors.code.message}
+                  {translateError(otpForm.formState.errors.code)}
                 </p>
               )}
 

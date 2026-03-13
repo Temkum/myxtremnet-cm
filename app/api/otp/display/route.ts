@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { verification } from '@/db/schema/auth-schema';
-import { and, eq, gt } from 'drizzle-orm';
 import { z } from 'zod';
+import { getTranslations } from 'next-intl/server';
 
 const querySchema = z.object({
   phone: z
@@ -35,6 +34,9 @@ function isRateLimited(ip: string): boolean {
 }
 
 export async function GET(request: NextRequest) {
+  // Get translations for error messages
+  const t = await getTranslations('Auth');
+
   // Rate limit by IP
   const ip =
     request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ??
@@ -42,7 +44,10 @@ export async function GET(request: NextRequest) {
     'unknown';
 
   if (isRateLimited(ip)) {
-    return NextResponse.json({ message: 'Too many requests' }, { status: 429 });
+    return NextResponse.json(
+      { message: t('tooManyRequests') },
+      { status: 429 },
+    );
   }
 
   // Validate query param
@@ -52,7 +57,7 @@ export async function GET(request: NextRequest) {
 
   if (!parsed.success) {
     return NextResponse.json(
-      { message: 'Invalid phone number' },
+      { message: t('invalidPhoneNumber') },
       { status: 400 },
     );
   }
@@ -81,7 +86,7 @@ export async function GET(request: NextRequest) {
   } catch (err) {
     console.error('[GET /api/otp/display]', err);
     return NextResponse.json(
-      { message: 'Internal server error' },
+      { message: t('internalServerError') },
       { status: 500 },
     );
   }

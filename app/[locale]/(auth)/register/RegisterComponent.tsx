@@ -35,6 +35,11 @@ export default function RegisterComponent() {
   const [resendCooldown, setResendCooldown] = useState(0);
   const [devOtp, setDevOtp] = useState('');
 
+  const translateError = (error: { message?: string } | undefined) => {
+    if (!error?.message) return null;
+    return t(error.message as any) ?? error.message;
+  };
+
   const passwordForm = useForm<PhonePasswordRegisterInput>({
     resolver: zodResolver(phonePasswordRegisterSchema),
     mode: 'onTouched',
@@ -90,7 +95,9 @@ export default function RegisterComponent() {
     });
 
     if (error) {
-      setServerError(error.message ?? 'Failed to send OTP. Try again.');
+      setServerError(
+        error.message ?? translateError({ message: error.message }) ?? '',
+      );
       return;
     }
 
@@ -124,11 +131,15 @@ export default function RegisterComponent() {
         msg.includes('already exists') ||
         msg.includes('use another email')
       ) {
-        setServerError('Phone number is already registered. Please sign in.');
+        setServerError(translateError({ message: signUpError.message }) ?? '');
         return;
       }
 
-      setServerError(signUpError.message ?? 'Registration failed. Try again.');
+      setServerError(
+        signUpError.message ??
+          translateError({ message: signUpError.message }) ??
+          '',
+      );
       return;
     }
 
@@ -164,7 +175,9 @@ export default function RegisterComponent() {
     });
 
     if (error) {
-      setServerError(error.message ?? 'Invalid or expired code.');
+      setServerError(
+        error.message ?? translateError({ message: error.message }) ?? '',
+      );
       return;
     }
 
@@ -200,7 +213,9 @@ export default function RegisterComponent() {
     });
 
     if (error) {
-      setServerError(error.message ?? 'Failed to resend OTP.');
+      setServerError(
+        error.message ?? translateError({ message: error.message }) ?? '',
+      );
       return;
     }
 
@@ -273,7 +288,7 @@ export default function RegisterComponent() {
               />
               {detailsForm.formState.errors.fullName && (
                 <p className="text-xs text-destructive">
-                  {detailsForm.formState.errors.fullName.message}
+                  {translateError(detailsForm.formState.errors.fullName)}
                 </p>
               )}
             </div>
@@ -307,7 +322,7 @@ export default function RegisterComponent() {
               </div>
               {detailsForm.formState.errors.phoneNumber && (
                 <p className="text-xs text-destructive">
-                  {detailsForm.formState.errors.phoneNumber.message}
+                  {translateError(detailsForm.formState.errors.phoneNumber)}
                 </p>
               )}
             </div>
@@ -323,7 +338,7 @@ export default function RegisterComponent() {
               />
               {detailsForm.formState.errors.email && (
                 <p className="text-xs text-destructive">
-                  {detailsForm.formState.errors.email.message}
+                  {translateError(detailsForm.formState.errors.email)}
                 </p>
               )}
             </div>
@@ -338,7 +353,7 @@ export default function RegisterComponent() {
               disabled={detailsForm.formState.isSubmitting}
             >
               {detailsForm.formState.isSubmitting
-                ? 'Sending code...'
+                ? t('sendingCode')
                 : t('continue')}
             </Button>
 
@@ -366,7 +381,7 @@ export default function RegisterComponent() {
               />
               {passwordForm.formState.errors.fullName && (
                 <p className="text-xs text-destructive">
-                  {passwordForm.formState.errors.fullName.message}
+                  {translateError(passwordForm.formState.errors.fullName)}
                 </p>
               )}
             </div>
@@ -400,7 +415,7 @@ export default function RegisterComponent() {
               </div>
               {passwordForm.formState.errors.phoneNumber && (
                 <p className="text-xs text-destructive">
-                  {passwordForm.formState.errors.phoneNumber.message}
+                  {translateError(passwordForm.formState.errors.phoneNumber)}
                 </p>
               )}
             </div>
@@ -416,7 +431,7 @@ export default function RegisterComponent() {
               />
               {passwordForm.formState.errors.email && (
                 <p className="text-xs text-destructive">
-                  {passwordForm.formState.errors.email.message}
+                  {translateError(passwordForm.formState.errors.email)}
                 </p>
               )}
             </div>
@@ -432,7 +447,7 @@ export default function RegisterComponent() {
               />
               {passwordForm.formState.errors.password && (
                 <p className="text-xs text-destructive">
-                  {passwordForm.formState.errors.password.message}
+                  {translateError(passwordForm.formState.errors.password)}
                 </p>
               )}
             </div>
@@ -479,7 +494,7 @@ export default function RegisterComponent() {
               />
               {otpForm.formState.errors.code && (
                 <p className="text-xs text-destructive">
-                  {otpForm.formState.errors.code.message}
+                  {translateError(otpForm.formState.errors.code)}
                 </p>
               )}
             </div>

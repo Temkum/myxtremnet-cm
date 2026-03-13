@@ -21,8 +21,8 @@ import { z } from 'zod';
 // ---------------------------------------------------------------------------
 export const phoneSchema = z
   .string()
-  .min(1, 'Phone number is required')
-  .regex(/^\d{9}$/, { message: 'Phone number must be exactly 9 digits' });
+  .min(1, 'phoneIsRequired')
+  .regex(/^\d{9}$/, { message: 'phoneMustBe9Digits' });
 
 // ---------------------------------------------------------------------------
 // Login
@@ -40,9 +40,9 @@ export const otpSchema = z.object({
   phoneNumber: phoneSchema,
   code: z
     .string()
-    .min(1, 'Verification code is required')
-    .length(6, 'Code must be exactly 6 digits')
-    .regex(/^\d+$/, 'Code must contain only digits'),
+    .min(1, 'codeRequired')
+    .length(6, 'codeMustBe6Digits')
+    .regex(/^\d+$/, 'codeMustBeDigits'),
 });
 
 export type OtpInput = z.infer<typeof otpSchema>;
@@ -52,10 +52,7 @@ export type OtpInput = z.infer<typeof otpSchema>;
 // ---------------------------------------------------------------------------
 export const phonePasswordSchema = z.object({
   phoneNumber: phoneSchema,
-  password: z
-    .string()
-    .min(1, 'Password is required')
-    .min(6, 'Password must be at least 6 characters'),
+  password: z.string().min(1, 'passwordIsRequired').min(6, 'passwordMin6Chars'),
 });
 
 export type PhonePasswordInput = z.infer<typeof phonePasswordSchema>;
@@ -66,14 +63,8 @@ export type PhonePasswordInput = z.infer<typeof phonePasswordSchema>;
 const registerShape = {
   phoneNumber: phoneSchema,
   // Zod v4: z.string().email() still works; z.email() also valid standalone
-  email: z
-    .string()
-    .min(1, 'Email is required')
-    .email('Enter a valid email address'),
-  fullName: z
-    .string()
-    .min(2, 'Full name must be at least 2 characters')
-    .max(100, 'Full name is too long'),
+  email: z.string().min(1, 'emailRequired').email('emailInvalid'),
+  fullName: z.string().min(2, 'fullNameMin2Chars').max(100, 'fullNameTooLong'),
 };
 
 export const registerSchema = z.object(registerShape);
@@ -85,10 +76,7 @@ export type RegisterInput = z.infer<typeof registerSchema>;
 // ---------------------------------------------------------------------------
 export const phonePasswordRegisterSchema = z.object({
   ...registerShape,
-  password: z
-    .string()
-    .min(1, 'Password is required')
-    .min(6, 'Password must be at least 6 characters'),
+  password: z.string().min(1, 'passwordIsRequired').min(6, 'passwordMin6Chars'),
 });
 
 export type PhonePasswordRegisterInput = z.infer<
