@@ -20,12 +20,14 @@ interface AuthContextType {
     name: string;
     phoneNumber: string | null | undefined;
     serviceId: string | null | undefined;
+    role: 'user' | 'admin';
   } | null;
   session: ReturnType<typeof useSession>['data'];
   isLoading: boolean;
   sendOtp: (phone: string) => Promise<{ error?: string }>;
   verifyOtp: (phone: string, code: string) => Promise<{ error?: string }>;
   logout: () => Promise<void>;
+  isAdmin: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -41,8 +43,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // These fields come from the phoneNumber plugin & your custom schema
         phoneNumber: (session.user as any).phoneNumber ?? null,
         serviceId: (session.user as any).serviceId ?? null,
+        role: (session.user as any).role ?? 'user', // Default to 'user', admin would come from backend
       }
     : null;
+
+  const isAdmin = user?.role === 'admin';
 
   const sendOtp = async (phone: string): Promise<{ error?: string }> => {
     const { error } = await phoneNumber.sendOtp({ phoneNumber: phone });
@@ -74,6 +79,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         sendOtp,
         verifyOtp,
         logout,
+        isAdmin,
       }}
     >
       {children}

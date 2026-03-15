@@ -219,7 +219,11 @@
     "upgradeChangeOffer": "Upgrade or change your offer",
     "viewHistory": "View History",
     "checkPastTransactions": "Check past transactions",
-    "package": "{data} package"
+    "package": "{data} package",
+    "systemOverview": "System Overview",
+    "userManagement": "User Management",
+    "bulkOperations": "Bulk Operations",
+    "auditLogs": "Audit Logs"
   },
   "Support": {
     "feedbackSupport": "Feedback & Support",

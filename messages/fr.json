@@ -219,7 +219,11 @@
     "upgradeChangeOffer": "Mettre a niveau ou changer votre offre",
     "viewHistory": "Voir l'Historique",
     "checkPastTransactions": "Consultez les transactions passees",
-    "package": "Forfait {data}"
+    "package": "Forfait {data}",
+    "systemOverview": "Apercu du Systeme",
+    "userManagement": "Gestion des Utilisateurs",
+    "bulkOperations": "Operations en Masse",
+    "auditLogs": "Journaux d'Audit"
   },
   "Support": {
     "feedbackSupport": "Commentaires & Support",
