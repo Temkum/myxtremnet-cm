@@ -22,7 +22,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={_geist.className}>
+    <html lang="en" className={`${_geist.className} ${_geistMono.className}`}>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
@@ -39,7 +39,7 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className={_geistMono.className}>{children}</body>
+      <body>{children}</body>
     </html>
   );
 }

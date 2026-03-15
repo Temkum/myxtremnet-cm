@@ -223,7 +223,10 @@
     "systemOverview": "Apercu du Systeme",
     "userManagement": "Gestion des Utilisateurs",
     "bulkOperations": "Operations en Masse",
-    "auditLogs": "Journaux d'Audit"
+    "auditLogs": "Journaux d'Audit",
+    "bundleManagement": "Gestion des Forfaits",
+    "productManagement": "Gestion des Produits",
+    "supportManagement": "Gestion du Support"
   },
   "Support": {
     "feedbackSupport": "Commentaires & Support",

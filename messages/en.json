@@ -223,7 +223,10 @@
     "systemOverview": "System Overview",
     "userManagement": "User Management",
     "bulkOperations": "Bulk Operations",
-    "auditLogs": "Audit Logs"
+    "auditLogs": "Audit Logs",
+    "bundleManagement": "Bundle Management",
+    "productManagement": "Product Management",
+    "supportManagement": "Support Management"
   },
   "Support": {
     "feedbackSupport": "Feedback & Support",
