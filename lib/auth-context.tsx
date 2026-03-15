@@ -10,7 +10,7 @@
  * are replaced by the Better Auth client methods.
  */
 
-import React, { createContext, useContext } from 'react';
+import React, { createContext, useContext, useEffect } from 'react';
 import { useSession, signOut, phoneNumber } from '@/lib/auth-client';
 import { useRouter } from 'next/navigation';
 
@@ -48,6 +48,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     : null;
 
   const isAdmin = user?.role === 'admin';
+
+  // Redirect admin users to admin dashboard
+  useEffect(() => {
+    if (user && isAdmin && !isPending) {
+      // Check if current path is not already admin
+      const currentPath = window.location.pathname;
+      if (!currentPath.includes('/admin')) {
+        router.push('/admin');
+      }
+    }
+  }, [user, isAdmin, isPending, router]);
 
   const sendOtp = async (phone: string): Promise<{ error?: string }> => {
     const { error } = await phoneNumber.sendOtp({ phoneNumber: phone });
