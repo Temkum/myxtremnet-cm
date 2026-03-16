@@ -39,7 +39,7 @@ import { useAuth } from '@/lib/auth-context';
 import { useState } from 'react';
 import Image from 'next/image';
 
-export function DashboardHeader() {
+export function UserHeader() {
   const nextIntlPathname = useNextIntlPathname();
   const locale = useLocale();
   const router = useRouter();
@@ -48,21 +48,21 @@ export function DashboardHeader() {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
 
   const navigation = [
-    { name: t('Navigation.home'), href: '/dashboard', icon: Home },
-    { name: t('Navigation.bundles'), href: '/dashboard/bundles', icon: Rss },
+    { name: t('Navigation.home'), href: '/users', icon: Home },
+    { name: t('Navigation.bundles'), href: '/users/bundles', icon: Rss },
     {
       name: t('Navigation.product'),
-      href: '/dashboard/services',
+      href: '/users/services',
       icon: Package,
     },
     {
       name: t('Navigation.account'),
-      href: '/dashboard/account',
+      href: '/users/account',
       icon: Settings,
     },
     {
       name: t('Navigation.support'),
-      href: '/dashboard/support',
+      href: '/users/support',
       icon: HelpCircle,
     },
   ];
@@ -95,7 +95,7 @@ export function DashboardHeader() {
         <nav className="hidden md:flex items-center gap-1">
           {navigation.map((item) => {
             const isActive =
-              item.href === '/dashboard'
+              item.href === '/users'
                 ? nextIntlPathname === item.href
                 : nextIntlPathname === item.href ||
                   nextIntlPathname.startsWith(item.href + '/');

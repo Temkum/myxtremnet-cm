@@ -1,5 +1,5 @@
 import React from 'react';
-import { DashboardFooter } from '@/components/dashboard/footer';
+import { UserFooter } from '@/components/users/footer';
 import { ProtectedRoute } from '@/components/auth/protected-route';
 import { AdminSidebar } from '@/components/admin/admin-sidebar';
 
@@ -14,7 +14,7 @@ export default function AdminLayout({
         <AdminSidebar />
         <main className="flex-1">{children}</main>
       </div>
-      <DashboardFooter />
+      <UserFooter />
     </ProtectedRoute>
   );
 }

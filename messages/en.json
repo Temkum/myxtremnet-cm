@@ -332,6 +332,7 @@
     "english": "English",
     "french": "French",
     "login": "Login",
-    "logout": "Logout"
+    "logout": "Logout",
+    "userDashboard": "User Dashboard"
   }
 }

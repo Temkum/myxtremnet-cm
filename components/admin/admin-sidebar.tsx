@@ -66,7 +66,7 @@ export function AdminSidebar() {
   const handleLanguageChange = (lang: string) => {
     router.push(`/${lang}${pathname.replace(`/${locale}`, '')}`);
   };
-  const currentLanguage = locale === 'fr' ? 'Français' : 'English';
+
   const { user, logout } = useAuth();
 
   return (
@@ -109,13 +109,6 @@ export function AdminSidebar() {
         {/* Footer Navigation */}
         <div className="pt-6 border-t border-border">
           <div className="space-y-2">
-            <Link
-              href="/dashboard"
-              className="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
-            >
-              <LayoutDashboard className="h-4 w-4" />
-              {t('dashboard')}
-            </Link>
             <Link
               href="/"
               className="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"

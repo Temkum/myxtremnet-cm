@@ -2,12 +2,12 @@ import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { UserWelcome } from '@/components/dashboard/user-welcome';
+import { UserWelcome } from '@/components/users/user-welcome';
 import {
   PromoBanner,
   ServiceHighlights,
-} from '@/components/dashboard/promo-banner';
-import { QuickFAQ } from '@/components/dashboard/sidebar';
+} from '@/components/users/promo-banner';
+import { QuickFAQ } from '@/components/users/sidebar';
 import {
   Radio,
   Satellite,

@@ -334,6 +334,7 @@
     "english": "Anglais",
     "french": "Francais",
     "login": "Se connecter",
-    "logout": "Se deconnecter"
+    "logout": "Se deconnecter",
+    "userDashboard": "Tableau de bord utilisateur"
   }
 }
