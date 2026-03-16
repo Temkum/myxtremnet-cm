@@ -3,7 +3,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import { Geist, Geist_Mono } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/next';
 import { getTranslations, getMessages } from 'next-intl/server';
-import { ConditionalUserHeader } from '@/components/conditional-user-header';
+import { DynamicHeader } from '@/components/dyanmic-header';
 import { AuthProvider } from '@/lib/auth-context';
 import '../globals.css';
 
@@ -41,7 +41,7 @@ export default async function LocaleLayout({
     <NextIntlClientProvider messages={messages}>
       <AuthProvider>
         <div className="min-h-screen font-sans">
-          <ConditionalUserHeader />
+          <DynamicHeader />
           {children}
           <Analytics />
         </div>
