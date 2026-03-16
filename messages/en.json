@@ -311,5 +311,27 @@
     "signIn": "Sign In",
     "backToHome": "Back to Home",
     "loading": "Loading..."
+  },
+  "Admin": {
+    "dashboard": "Dashboard",
+    "users": "Users",
+    "bundles": "Bundles",
+    "products": "Products",
+    "support": "Support",
+    "audit": "Audit",
+    "bulk": "Bulk",
+    "userManagement": "User Management",
+    "bundleManagement": "Bundle Management",
+    "productManagement": "Product Management",
+    "supportManagement": "Support Management",
+    "auditManagement": "Audit Management",
+    "bulkManagement": "Bulk Management",
+    "home": "Home",
+    "adminPanel": "Admin Panel",
+    "camtelManagement": "Camtel Management",
+    "english": "English",
+    "french": "French",
+    "login": "Login",
+    "logout": "Logout"
   }
 }

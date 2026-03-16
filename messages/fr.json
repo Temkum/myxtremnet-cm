@@ -313,5 +313,27 @@
     "signIn": "Se connecter",
     "backToHome": "Retour à l'accueil",
     "loading": "Chargement..."
+  },
+  "Admin": {
+    "dashboard": "Tableau de bord",
+    "users": "Utilisateurs",
+    "bundles": "Forfaits",
+    "products": "Produits",
+    "support": "Support",
+    "audit": "Audit",
+    "bulk": "En masse",
+    "userManagement": "Gestion des utilisateurs",
+    "bundleManagement": "Gestion des forfaits",
+    "productManagement": "Gestion des produits",
+    "supportManagement": "Gestion du support",
+    "auditManagement": "Gestion de l'audit",
+    "bulkManagement": "Gestion en masse",
+    "home": "Accueil",
+    "adminPanel": "Panneau d'administration",
+    "camtelManagement": "Gestion Camtel",
+    "english": "Anglais",
+    "french": "Francais",
+    "login": "Se connecter",
+    "logout": "Se deconnecter"
   }
 }
