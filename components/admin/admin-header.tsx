@@ -30,7 +30,6 @@ import {
   Globe,
   ChevronDown,
   UserCheck,
-  Search,
 } from 'lucide-react';
 import { useTranslations, useLocale } from 'next-intl';
 import {
@@ -39,8 +38,9 @@ import {
   useRouter,
 } from '@/src/i18n/navigation';
 import { useAuth } from '@/lib/auth-context';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import Image from 'next/image';
+import { SearchForm } from './search-form';
 
 export function AdminHeader() {
   const nextIntlPathname = useNextIntlPathname();
@@ -54,34 +54,43 @@ export function AdminHeader() {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      // Navigate to user management with search query
-      router.push(
-        `/admin/users?search=${encodeURIComponent(searchQuery.trim())}`,
-      );
+      // Navigate to user management with search query using i18n routing
+      router.push({
+        pathname: '/admin/users',
+        query: { search: searchQuery.trim() },
+      });
     }
+  };
+
+  const handleMobileSearch = (e: React.FormEvent) => {
+    handleSearch(e);
+    setIsSheetOpen(false);
   };
 
   const handleLanguageChange = (newLocale: string) => {
     router.replace(nextIntlPathname, { locale: newLocale });
   };
 
-  const navigation = [
-    { name: t('dashboard'), href: '/admin/dashboard', icon: LayoutDashboard },
-    { name: t('userManagement'), href: '/admin/users', icon: Users },
-    { name: t('bundleManagement'), href: '/admin/bundles', icon: Package },
-    {
-      name: t('productManagement'),
-      href: '/admin/products',
-      icon: ShoppingCart,
-    },
-    {
-      name: t('supportManagement'),
-      href: '/admin/support',
-      icon: MessageSquare,
-    },
-    { name: t('auditManagement'), href: '/admin/audit', icon: FileText },
-    { name: t('bulkManagement'), href: '/admin/bulk', icon: Settings },
-  ];
+  const navigation = useMemo(
+    () => [
+      { name: t('dashboard'), href: '/admin/dashboard', icon: LayoutDashboard },
+      { name: t('userManagement'), href: '/admin/users', icon: Users },
+      { name: t('bundleManagement'), href: '/admin/bundles', icon: Package },
+      {
+        name: t('productManagement'),
+        href: '/admin/products',
+        icon: ShoppingCart,
+      },
+      {
+        name: t('supportManagement'),
+        href: '/admin/support',
+        icon: MessageSquare,
+      },
+      { name: t('auditManagement'), href: '/admin/audit', icon: FileText },
+      { name: t('bulkManagement'), href: '/admin/bulk', icon: Settings },
+    ],
+    [t],
+  );
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-card shadow-sm">
@@ -105,18 +114,11 @@ export function AdminHeader() {
 
         {/* Desktop Search */}
         <div className="hidden md:flex items-center gap-2 flex-1 max-w-md mx-6">
-          <form onSubmit={handleSearch} className="relative w-full">
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search users by name, email, or service ID..."
-              className="w-full px-4 py-2 pl-10 text-sm bg-background border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-            />
-            <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">
-              <Search className="h-4 w-4" />
-            </div>
-          </form>
+          <SearchForm
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            onSubmit={handleSearch}
+          />
         </div>
 
         {/* Right Section */}
@@ -187,7 +189,7 @@ export function AdminHeader() {
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link href="/users">
+                  <Link href="/admin/dashboard">
                     <User className="mr-2 h-4 w-4" />
                     User View
                   </Link>
@@ -215,18 +217,11 @@ export function AdminHeader() {
               </VisuallyHidden>
               <div className="flex flex-col gap-4 mt-6">
                 {/* Mobile Search */}
-                <form onSubmit={handleSearch} className="relative w-full">
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search users by name, email, or service ID..."
-                    className="w-full px-4 py-2 pl-10 text-sm bg-background border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                  />
-                  <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">
-                    <Search className="h-4 w-4" />
-                  </div>
-                </form>
+                <SearchForm
+                  searchQuery={searchQuery}
+                  setSearchQuery={setSearchQuery}
+                  onSubmit={handleMobileSearch}
+                />
 
                 {user && (
                   <div className="px-2 py-4 border-b border-border">
@@ -237,10 +232,9 @@ export function AdminHeader() {
                 <nav className="flex flex-col gap-1">
                   {navigation.map((item) => {
                     const isActive =
-                      item.href === '/admin/dashboard'
-                        ? nextIntlPathname === item.href
-                        : nextIntlPathname === item.href ||
-                          nextIntlPathname.startsWith(item.href + '/');
+                      nextIntlPathname === item.href ||
+                      (item.href !== '/admin/dashboard' &&
+                        nextIntlPathname.startsWith(item.href + '/'));
                     const Icon = item.icon;
                     return (
                       <Link
@@ -261,7 +255,7 @@ export function AdminHeader() {
                   })}
                   <div className="mt-4 pt-4 border-t border-border">
                     <Link
-                      href="/users"
+                      href="/admin/dashboard"
                       onClick={() => setIsSheetOpen(false)}
                       className="flex items-center gap-3 px-3 py-2 rounded-md transition-colors text-foreground hover:bg-secondary"
                     >
