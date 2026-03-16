@@ -73,7 +73,7 @@ export function AdminSidebar() {
     <div className="w-64 bg-card border-r border-border min-h-screen flex flex-col">
       <div className="p-4 space-y-6">
         {/* Header */}
-        <div className="flex items-center gap-3 pb-6 border-b border-border">
+        {/* <div className="flex items-center gap-3 pb-6 border-b border-border">
           <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
             <Image src="/camtel.png" alt="Camtel" width={40} height={40} />
           </div>
@@ -83,7 +83,7 @@ export function AdminSidebar() {
               {t('camtelManagement')}
             </p>
           </div>
-        </div>
+        </div> */}
 
         {/* Navigation */}
         <nav className="space-y-2">

@@ -30,6 +30,7 @@ import {
   Globe,
   ChevronDown,
   UserCheck,
+  Search,
 } from 'lucide-react';
 import { useTranslations, useLocale } from 'next-intl';
 import {
@@ -48,6 +49,21 @@ export function AdminHeader() {
   const t = useTranslations('Admin');
   const { user, logout } = useAuth();
   const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      // Navigate to user management with search query
+      router.push(
+        `/admin/users?search=${encodeURIComponent(searchQuery.trim())}`,
+      );
+    }
+  };
+
+  const handleLanguageChange = (newLocale: string) => {
+    router.replace(nextIntlPathname, { locale: newLocale });
+  };
 
   const navigation = [
     { name: t('dashboard'), href: '/admin/dashboard', icon: LayoutDashboard },
@@ -66,10 +82,6 @@ export function AdminHeader() {
     { name: t('auditManagement'), href: '/admin/audit', icon: FileText },
     { name: t('bulkManagement'), href: '/admin/bulk', icon: Settings },
   ];
-
-  const handleLanguageChange = (newLocale: string) => {
-    router.replace(nextIntlPathname, { locale: newLocale });
-  };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-card shadow-sm">
@@ -91,31 +103,21 @@ export function AdminHeader() {
           </div>
         </Link>
 
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-1">
-          {navigation.map((item) => {
-            const isActive =
-              item.href === '/admin/dashboard'
-                ? nextIntlPathname === item.href
-                : nextIntlPathname === item.href ||
-                  nextIntlPathname.startsWith(item.href + '/');
-
-            return (
-              <Link
-                key={item.name}
-                href={item.href}
-                className={cn(
-                  'px-4 py-2 text-sm font-medium rounded-md transition-colors cursor-pointer',
-                  isActive
-                    ? 'bg-primary text-primary-foreground'
-                    : 'text-foreground hover:bg-secondary',
-                )}
-              >
-                {item.name}
-              </Link>
-            );
-          })}
-        </nav>
+        {/* Desktop Search */}
+        <div className="hidden md:flex items-center gap-2 flex-1 max-w-md mx-6">
+          <form onSubmit={handleSearch} className="relative w-full">
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search users by name, email, or service ID..."
+              className="w-full px-4 py-2 pl-10 text-sm bg-background border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+            />
+            <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">
+              <Search className="h-4 w-4" />
+            </div>
+          </form>
+        </div>
 
         {/* Right Section */}
         <div className="flex items-center gap-2">
@@ -212,6 +214,20 @@ export function AdminHeader() {
                 <SheetTitle>Admin Menu</SheetTitle>
               </VisuallyHidden>
               <div className="flex flex-col gap-4 mt-6">
+                {/* Mobile Search */}
+                <form onSubmit={handleSearch} className="relative w-full">
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search users by name, email, or service ID..."
+                    className="w-full px-4 py-2 pl-10 text-sm bg-background border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                  />
+                  <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">
+                    <Search className="h-4 w-4" />
+                  </div>
+                </form>
+
                 {user && (
                   <div className="px-2 py-4 border-b border-border">
                     <p className="font-medium">{user.name}</p>
