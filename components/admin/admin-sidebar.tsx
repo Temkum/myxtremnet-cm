@@ -14,10 +14,10 @@ import {
   Church,
   LogOut,
 } from 'lucide-react';
-import Image from 'next/image';
 import { Button } from '../ui/button';
 import { useLocale } from 'next-intl';
 import { useAuth } from '@/lib/auth-context';
+import { cn } from '@/lib/utils';
 
 const getNavigationItems = (t: any) => [
   {
@@ -72,32 +72,26 @@ export function AdminSidebar() {
   return (
     <div className="w-64 bg-card border-r border-border min-h-screen flex flex-col">
       <div className="p-4 space-y-6">
-        {/* Header */}
-        {/* <div className="flex items-center gap-3 pb-6 border-b border-border">
-          <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-            <Image src="/camtel.png" alt="Camtel" width={40} height={40} />
-          </div>
-          <div>
-            <h2 className="font-semibold text-foreground">{t('adminPanel')}</h2>
-            <p className="text-sm text-muted-foreground">
-              {t('camtelManagement')}
-            </p>
-          </div>
-        </div> */}
-
         {/* Navigation */}
         <nav className="space-y-2">
           {navigationItems.map((item) => {
-            const isActive = pathname === item.href;
+            const isActive =
+              item.href === '/admin/dashboard'
+                ? pathname === item.href || pathname.endsWith(item.href)
+                : pathname === item.href ||
+                  pathname.endsWith(item.href) ||
+                  pathname.includes(item.href + '/');
+
             return (
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                className={cn(
+                  'flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors',
                   isActive
                     ? 'bg-primary text-primary-foreground'
-                    : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
-                }`}
+                    : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground',
+                )}
               >
                 <item.icon className="h-4 w-4" />
                 {item.title}
