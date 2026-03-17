@@ -170,15 +170,15 @@ export const auth = betterAuth({
     window: 300,
     max: 10,
     customRules: {
-      // Max 5 OTP sends per minute in development, 1 per 5 minutes in production
+      // Max 5 OTP sends per minute in development, 3 per 5 minutes in production
       '/phone-number/send-otp': {
         window: process.env.NODE_ENV === 'production' ? 300 : 60,
-        max: process.env.NODE_ENV === 'production' ? 1 : 5,
+        max: process.env.NODE_ENV === 'production' ? 5 : 5,
       },
       // Max 5 verify attempts per 2 minutes
       '/phone-number/verify': {
         window: 300,
-        max: 5,
+        max: 10,
       },
     },
   },

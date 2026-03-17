@@ -68,21 +68,34 @@ export default function RegisterComponent() {
   });
 
   useEffect(() => {
-    if (process.env.NODE_ENV === 'development' && step === 'otp') {
-      const originalLog = console.log;
-      console.log = (...args) => {
-        const message = args.join(' ');
-        const match = message.match(/📱 OTP for ([+\d]+): (\d{6})/);
-        if (match && match[1] === pendingData?.phoneNumber) {
-          setDevOtp(match[2]);
+    if (step !== 'otp' || !pendingData?.phoneNumber) return;
+
+    let cancelled = false;
+
+    const fetchOtp = async () => {
+      try {
+        const res = await fetch(
+          `/api/otp/display?phone=${encodeURIComponent(pendingData.phoneNumber)}`,
+        );
+
+        if (!res.ok) return;
+
+        const data = await res.json();
+        if (!cancelled && data.code) {
+          setDevOtp(data.code);
         }
-        originalLog(...args);
-      };
-      return () => {
-        console.log = originalLog;
-      };
-    }
-  }, [step, pendingData]);
+      } catch {
+        // silent fail
+        console.error('Failed to fetch OTP');
+      }
+    };
+
+    fetchOtp();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [step, pendingData?.phoneNumber]);
 
   const handleSendOtp = async (values: RegisterInput) => {
     setServerError('');
@@ -504,23 +517,26 @@ export default function RegisterComponent() {
             )}
 
             {devOtp && (
-              <Alert className="mt-4">
-                <AlertDescription>
-                  <strong>Dev mode:</strong> OTP is {devOtp}
-                  <Button
-                    type="button"
-                    size="sm"
-                    variant="outline"
-                    className="ml-2"
-                    onClick={() => {
-                      otpForm.setValue('code', devOtp);
-                      otpForm.handleSubmit(handleVerifyOtp)();
-                    }}
-                  >
-                    {t('autoFillVerify')}
-                  </Button>
-                </AlertDescription>
-              </Alert>
+              <div className="rounded-md border border-border bg-muted px-4 py-3 text-center">
+                <p className="text-xs text-muted-foreground mb-1">
+                  {t('verificationCode')}
+                </p>
+                <p className="text-2xl font-mono font-bold tracking-[0.4em]">
+                  {devOtp}
+                </p>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  className="mt-2"
+                  onClick={() => {
+                    otpForm.setValue('code', devOtp);
+                    otpForm.handleSubmit(handleVerifyOtp)();
+                  }}
+                >
+                  {t('autoFillVerify')}
+                </Button>
+              </div>
             )}
 
             <Button
