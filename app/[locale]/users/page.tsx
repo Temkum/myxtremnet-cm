@@ -30,69 +30,69 @@ export default function DashboardPage() {
   const offerCategories = [
     {
       name: t('lteService'),
-      href: '/dashboard/services/lte',
+      href: '/users/services/lte',
       icon: Radio,
       badge: t('popular'),
     },
     {
       name: t('wttxOutdoor'),
-      href: '/dashboard/services/wttx-outdoor',
+      href: '/users/services/wttx-outdoor',
       icon: Satellite,
     },
     {
       name: t('wttxIndoor'),
-      href: '/dashboard/services/wttx-indoor',
+      href: '/users/services/wttx-indoor',
       icon: Router,
     },
-    { name: t('ulService'), href: '/dashboard/services/ul', icon: Wifi },
+    { name: t('ulService'), href: '/users/services/ul', icon: Wifi },
   ];
 
   const packageCategories = [
-    { name: t('lteService'), href: '/dashboard/packages/lte', icon: Radio },
+    { name: t('lteService'), href: '/users/packages/lte', icon: Radio },
     {
       name: t('wttxOutdoor'),
-      href: '/dashboard/packages/wttx-outdoor',
+      href: '/users/packages/wttx-outdoor',
       icon: Satellite,
     },
     {
       name: t('wttxIndoor'),
-      href: '/dashboard/packages/wttx-indoor',
+      href: '/users/packages/wttx-indoor',
       icon: Router,
     },
-    { name: t('ulService'), href: '/dashboard/packages/ul', icon: Wifi },
+    { name: t('ulService'), href: '/users/packages/ul', icon: Wifi },
   ];
 
   const quickActions = [
     {
       name: t('accountInfo'),
-      href: '/dashboard/account',
+      href: '/users/account',
       icon: CreditCard,
       description: t('accountInfoDesc'),
     },
     {
       name: t('bundles'),
-      href: '/dashboard/bundles',
+      href: '/users/bundles',
       icon: RefreshCw,
       description: t('bundlesDesc'),
     },
     {
       name: t('recharge'),
-      href: '/dashboard/recharge',
+      href: '/users/recharge',
       icon: RefreshCw,
       description: t('rechargeDesc'),
     },
     {
       name: t('orderHistory'),
-      href: '/dashboard/orders',
+      href: '/users/orders',
       icon: History,
       description: t('orderHistoryDesc'),
     },
   ];
 
   const supportLinks = [
-    { name: 'FAQ', href: '/dashboard/faq', icon: HelpCircle },
-    { name: 'Feedback', href: '/dashboard/support', icon: MessageSquare },
-    { name: 'Contact Us', href: '/dashboard/contact', icon: Phone },
+    { name: 'FAQ', href: '/users/faq', icon: HelpCircle },
+    { name: 'Feedback', href: '/users/support', icon: MessageSquare },
+    { name: 'Contact Us', href: '/users/contact', icon: Phone },
   ];
 
   return (
@@ -257,7 +257,7 @@ export default function DashboardPage() {
                   {t('needHelpDesc')}
                 </p>
                 <Button asChild className="w-full">
-                  <Link href="/dashboard/contact">{t('contactSupport')}</Link>
+                  <Link href="/users/contact">{t('contactSupport')}</Link>
                 </Button>
               </CardContent>
             </Card>

@@ -158,7 +158,7 @@ export default function RegisterComponent() {
       console.error('Profile update failed after registration');
     }
 
-    router.push('/dashboard');
+    router.push('/users');
     router.refresh();
   };
 
@@ -198,7 +198,7 @@ export default function RegisterComponent() {
       }
     }
 
-    router.push('/dashboard');
+    router.push('/users');
     router.refresh();
   };
 

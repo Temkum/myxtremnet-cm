@@ -26,45 +26,44 @@ import {
 import { useAuth } from '@/lib/auth-context';
 import { auditLogs } from '@/data/admin';
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
+import AdminGuard from '@/components/AdminGuard';
 
 export default function AuditPage() {
-  const { user, isAdmin } = useAuth();
+  const { isAdmin } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
-
-  if (!isAdmin) {
-    return (
-      <div className="container mx-auto px-4 py-6">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-foreground mb-4">
-            Access Restricted
-          </h1>
-          <p className="text-muted-foreground">
-            You don't have permission to access audit logs.
-          </p>
-        </div>
-      </div>
-    );
-  }
+  const t = useTranslations('Audit');
 
   return (
-    <div className="container mx-auto px-4 py-6 space-y-6">
-      {/* Page Header */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">Audit Logs</h1>
-          <p className="text-muted-foreground">
-            Monitor system activity and user actions
-          </p>
+    <AdminGuard fallbackMessage={t('noPermission')}>
+      <div className="container mx-auto px-4 py-6 space-y-6">
+        {/* Page Header */}
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-bold text-foreground">{t('title')}</h1>
+            <p className="text-muted-foreground">{t('subtitle')}</p>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button variant="outline">
+              <Filter className="h-4 w-4 mr-2" />
+              {t('filter')}
+            </Button>
+            <Button variant="outline">
+              <Download className="h-4 w-4 mr-2" />
+              {t('export')}
+            </Button>
+          </div>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline">
-            <Filter className="h-4 w-4 mr-2" />
-            Filter
-          </Button>
-          <Button variant="outline">
-            <Download className="h-4 w-4 mr-2" />
-            Export
-          </Button>
+          <div className="relative flex-1 max-w-sm">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder={t('searchPlaceholder')}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10"
+            />
+          </div>
         </div>
       </div>
 
@@ -77,7 +76,9 @@ export default function AuditPage() {
                 <FileText className="h-5 w-5 text-blue-600" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Total Logs</p>
+                <p className="text-sm text-muted-foreground">
+                  {t('totalLogs')}
+                </p>
                 <p className="font-bold text-xl">{auditLogs.length}</p>
               </div>
             </div>
@@ -90,7 +91,9 @@ export default function AuditPage() {
                 <User className="h-5 w-5 text-green-600" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">User Actions</p>
+                <p className="text-sm text-muted-foreground">
+                  {t('userActions')}
+                </p>
                 <p className="font-bold text-xl">
                   {
                     auditLogs.filter(
@@ -111,7 +114,9 @@ export default function AuditPage() {
                 <Settings className="h-5 w-5 text-orange-600" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Admin Actions</p>
+                <p className="text-sm text-muted-foreground">
+                  {t('adminActions')}
+                </p>
                 <p className="font-bold text-xl">
                   {auditLogs.filter((log) => log.user.includes('ADMIN')).length}
                 </p>
@@ -126,7 +131,7 @@ export default function AuditPage() {
                 <Activity className="h-5 w-5 text-purple-600" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Today</p>
+                <p className="text-sm text-muted-foreground">{t('today')}</p>
                 <p className="font-bold text-xl">
                   {
                     auditLogs.filter((log) =>
@@ -147,7 +152,7 @@ export default function AuditPage() {
             <div className="relative flex-1 max-w-sm">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Search logs..."
+                placeholder={t('searchPlaceholder')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10"
@@ -160,11 +165,11 @@ export default function AuditPage() {
             <Table>
               <TableHeader>
                 <TableRow className="bg-secondary/50">
-                  <TableHead>Timestamp</TableHead>
-                  <TableHead>User</TableHead>
-                  <TableHead>Action</TableHead>
-                  <TableHead>Details</TableHead>
-                  <TableHead>IP Address</TableHead>
+                  <TableHead>{t('timestamp')}</TableHead>
+                  <TableHead>{t('user')}</TableHead>
+                  <TableHead>{t('action')}</TableHead>
+                  <TableHead>{t('details')}</TableHead>
+                  <TableHead>{t('ipAddress')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -230,6 +235,6 @@ export default function AuditPage() {
           </div>
         </CardContent>
       </Card>
-    </div>
+    </AdminGuard>
   );
 }
