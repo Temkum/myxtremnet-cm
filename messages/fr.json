@@ -152,7 +152,7 @@
     "wttxIndoor": "WTTx Indoor",
     "ulService": "Service UL"
   },
-  "Bundles": {
+  "UserBundles": {
     "subscribeOffer": "S'abonner aux Offres",
     "selectService": "Selectionnez un service pour votre numero: {phoneNumber}",
     "changeNumber": "Changer de Numero",
@@ -166,6 +166,26 @@
     "internetData": "{amount} GB Donnees Internet",
     "nationalCalls": "{minutes} Minutes Appels Nationaux",
     "smsAllNetworks": "{count} SMS vers tous les reseaux"
+  },
+  "AdminBundles": {
+    "noPermissionAdmin": "Vous n'avez pas la permission d'accéder à la gestion des forfaits.",
+    "title": "Gestion des Forfaits",
+    "subtitle": "Gérer et surveiller les forfaits de données et les packages",
+    "totalBundles": "Total des Forfaits",
+    "activeBundles": "Forfaits Actifs",
+    "totalSubscribers": "Total des Abonnés",
+    "avgRevenue": "Revenu Moyen",
+    "searchBundles": "Rechercher des forfaits...",
+    "allCategories": "Toutes les Catégories",
+    "export": "Exporter",
+    "import": "Importer",
+    "addBundle": "Ajouter un Forfait",
+    "edit": "Modifier",
+    "viewUsers": "Voir les Utilisateurs",
+    "data": "Données",
+    "validity": "Validité",
+    "priceLabel": "Prix",
+    "subscribers": "Abonnés"
   },
   "Services": {
     "servicesAndOffers": "Services & Offres",
@@ -395,10 +415,5 @@
     "bonusDataToUsers": "{percentage}% de données bonus à {count} utilisateurs",
     "userImport": "Importation d'Utilisateurs",
     "usersImported": "{count} utilisateurs importés depuis CSV"
-  },
-  "Bundles": {
-    "noPermissionAdmin": "Vous n'avez pas la permission d'accéder à la gestion des forfaits.",
-    "title": "Gestion des Forfaits",
-    "subtitle": "Gérer et surveiller les forfaits de données et les packages"
   }
 }

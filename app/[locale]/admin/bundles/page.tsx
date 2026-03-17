@@ -79,7 +79,7 @@ export default function BundlesPage() {
   const { user } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
   const [filterCategory, setFilterCategory] = useState('all');
-  const t = useTranslations('Bundles');
+  const t = useTranslations('AdminBundles');
 
   const filteredBundles = bundles.filter((bundle) => {
     const matchesSearch =
@@ -101,21 +101,17 @@ export default function BundlesPage() {
       {/* Page Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">
-            Bundle Management
-          </h1>
-          <p className="text-muted-foreground">
-            Manage and monitor data bundles and packages
-          </p>
+          <h1 className="text-2xl font-bold text-foreground">{t('title')}</h1>
+          <p className="text-muted-foreground">{t('subtitle')}</p>
         </div>
         <div className="flex items-center gap-2">
           <Button variant="outline">
             <Upload className="h-4 w-4 mr-2" />
-            Import
+            {t('import')}
           </Button>
           <Button>
             <Plus className="h-4 w-4 mr-2" />
-            Add Bundle
+            {t('addBundle')}
           </Button>
         </div>
       </div>
@@ -129,7 +125,9 @@ export default function BundlesPage() {
                 <Package className="h-5 w-5 text-blue-600" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Total Bundles</p>
+                <p className="text-sm text-muted-foreground">
+                  {t('totalBundles')}
+                </p>
                 <p className="font-bold text-xl">{bundles.length}</p>
               </div>
             </div>
@@ -142,7 +140,9 @@ export default function BundlesPage() {
                 <Activity className="h-5 w-5 text-green-600" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Active Bundles</p>
+                <p className="text-sm text-muted-foreground">
+                  {t('activeBundles')}
+                </p>
                 <p className="font-bold text-xl">{activeBundles}</p>
               </div>
             </div>
@@ -156,7 +156,7 @@ export default function BundlesPage() {
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">
-                  Total Subscribers
+                  {t('totalSubscribers')}
                 </p>
                 <p className="font-bold text-xl">
                   {totalSubscribers.toLocaleString()}
@@ -172,7 +172,9 @@ export default function BundlesPage() {
                 <DollarSign className="h-5 w-5 text-orange-600" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Avg Revenue</p>
+                <p className="text-sm text-muted-foreground">
+                  {t('avgRevenue')}
+                </p>
                 <p className="font-bold text-xl">
                   {Math.round(
                     bundles.reduce(
@@ -196,7 +198,7 @@ export default function BundlesPage() {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <input
                 type="text"
-                placeholder="Search bundles..."
+                placeholder={t('searchBundles')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 border border-input rounded-md bg-background"
@@ -209,7 +211,7 @@ export default function BundlesPage() {
                 onChange={(e) => setFilterCategory(e.target.value)}
                 className="px-3 py-2 border border-input rounded-md bg-background"
               >
-                <option value="all">All Categories</option>
+                <option value="all">{t('allCategories')}</option>
                 <option value="LTE">LTE</option>
                 <option value="WTTx">WTTx</option>
                 <option value="Promo">Promo</option>
@@ -218,7 +220,7 @@ export default function BundlesPage() {
             </div>
             <Button variant="outline">
               <Download className="h-4 w-4 mr-2" />
-              Export
+              {t('export')}
             </Button>
           </div>
         </CardHeader>
@@ -261,22 +263,28 @@ export default function BundlesPage() {
                   </p>
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Data:</span>
+                      <span className="text-muted-foreground">
+                        {t('data')}:
+                      </span>
                       <span className="font-medium">{bundle.data}</span>
                     </div>
                     <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Validity:</span>
+                      <span className="text-muted-foreground">
+                        {t('validity')}:
+                      </span>
                       <span className="font-medium">{bundle.validity}</span>
                     </div>
                     <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Price:</span>
+                      <span className="text-muted-foreground">
+                        {t('priceLabel')}:
+                      </span>
                       <span className="font-medium">
                         {bundle.price.toLocaleString()} FCFA
                       </span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground">
-                        Subscribers:
+                        {t('subscribers')}:
                       </span>
                       <span className="font-medium">{bundle.subscribers}</span>
                     </div>
@@ -284,11 +292,11 @@ export default function BundlesPage() {
                   <div className="flex items-center gap-2 pt-2">
                     <Button size="sm" variant="outline" className="flex-1">
                       <Edit className="h-4 w-4 mr-1" />
-                      Edit
+                      {t('edit')}
                     </Button>
                     <Button size="sm" variant="outline" className="flex-1">
                       <Users className="h-4 w-4 mr-1" />
-                      View Users
+                      {t('viewUsers')}
                     </Button>
                     <Button size="sm" variant="outline">
                       <Trash2 className="h-4 w-4" />

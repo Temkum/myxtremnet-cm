@@ -152,7 +152,7 @@
     "wttxIndoor": "WTTx Indoor",
     "ulService": "UL Service"
   },
-  "Bundles": {
+  "UserBundles": {
     "subscribeOffer": "Subscribe Offer",
     "selectService": "Select a service for your number: {phoneNumber}",
     "changeNumber": "Change Number",
@@ -166,6 +166,26 @@
     "internetData": "{amount} GB Internet Data",
     "nationalCalls": "{minutes} Minutes National Calls",
     "smsAllNetworks": "{count} SMS to all networks"
+  },
+  "AdminBundles": {
+    "noPermissionAdmin": "You don't have permission to access bundle management.",
+    "title": "Bundle Management",
+    "subtitle": "Manage and monitor data bundles and packages",
+    "totalBundles": "Total Bundles",
+    "activeBundles": "Active Bundles",
+    "totalSubscribers": "Total Subscribers",
+    "avgRevenue": "Avg Revenue",
+    "searchBundles": "Search bundles...",
+    "allCategories": "All Categories",
+    "export": "Export",
+    "import": "Import",
+    "addBundle": "Add Bundle",
+    "edit": "Edit",
+    "viewUsers": "View Users",
+    "data": "Data",
+    "validity": "Validity",
+    "priceLabel": "Price",
+    "subscribers": "Subscribers"
   },
   "Services": {
     "servicesAndOffers": "Services & Offers",
@@ -393,10 +413,5 @@
     "bonusDataToUsers": "{percentage}% Bonus Data to {count} users",
     "userImport": "User Import",
     "usersImported": "{count} users imported from CSV"
-  },
-  "Bundles": {
-    "noPermissionAdmin": "You don't have permission to access bundle management.",
-    "title": "Bundle Management",
-    "subtitle": "Manage and monitor data bundles and packages"
   }
 }
