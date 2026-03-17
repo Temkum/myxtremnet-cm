@@ -1,10 +1,14 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { phoneNumber as phoneNumberClient, signIn } from '@/lib/auth-client';
+import {
+  getSession,
+  phoneNumber as phoneNumberClient,
+  signIn,
+} from '@/lib/auth-client';
 import { useTranslations } from 'next-intl';
 import {
   loginSchema,
@@ -26,9 +30,7 @@ type AuthMode = 'otp' | 'password';
 
 export function LoginComponent() {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const t = useTranslations('Auth');
-  const callbackUrl = searchParams.get('callbackUrl') ?? '/dashboard';
 
   const [step, setStep] = useState<Step>('phone');
 
@@ -128,8 +130,7 @@ export function LoginComponent() {
       return;
     }
 
-    router.push(callbackUrl);
-    router.refresh();
+    await redirectByRole();
   };
 
   const handleVerifyOtp = async (values: OtpInput) => {
@@ -147,7 +148,14 @@ export function LoginComponent() {
       return;
     }
 
-    router.push(callbackUrl);
+    await redirectByRole();
+  };
+
+  const redirectByRole = async () => {
+    const { data: session } = await getSession();
+    console.log('session after login:', JSON.stringify(session, null, 2));
+    const role = (session?.user as any)?.role ?? 'user';
+    router.push(role === 'admin' ? '/admin/dashboard' : '/users');
     router.refresh();
   };
 

@@ -4,9 +4,20 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, LayoutDashboard } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useAuth } from '@/lib/auth-context';
 
 export function NotFoundActions() {
   const router = useRouter();
+
+  // Try to get auth context, but provide fallback if not available
+  let isAdmin = false;
+  try {
+    const auth = useAuth();
+    isAdmin = auth.isAdmin;
+  } catch (error) {
+    // AuthProvider not available, use default behavior
+    console.warn('AuthProvider not available in NotFoundActions');
+  }
 
   return (
     <div className="flex flex-col sm:flex-row items-center gap-3">
@@ -20,9 +31,9 @@ export function NotFoundActions() {
       </Button>
 
       <Button asChild className="w-full sm:w-auto">
-        <Link href="/dashboard">
+        <Link href={isAdmin ? '/admin' : '/users'}>
           <LayoutDashboard className="mr-2 h-4 w-4" />
-          Dashboard
+          {isAdmin ? 'Admin Dashboard' : 'User Dashboard'}
         </Link>
       </Button>
     </div>

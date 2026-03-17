@@ -183,6 +183,17 @@ export const auth = betterAuth({
     },
   },
 
+  user: {
+    additionalFields: {
+      role: {
+        type: 'string',
+        required: false,
+        defaultValue: 'user',
+        input: false, // not settable by the client
+      },
+    },
+  },
+
   trustedOrigins: [process.env.BETTER_AUTH_URL!],
 });
 

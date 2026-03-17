@@ -3,7 +3,7 @@ import { routing } from './src/i18n/routing';
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 
-const PROTECTED = ['/dashboard'];
+const PROTECTED = ['/users', '/admin'];
 const AUTH_ONLY = ['/login', '/register'];
 
 const intlMiddleware = createMiddleware(routing);
@@ -40,7 +40,7 @@ export default async function proxy(request: NextRequest) {
 
   // user tries to access login/register but is already authenticated
   if (AUTH_ONLY.some((p) => pathname.startsWith(p)) && isAuthenticated) {
-    return NextResponse.redirect(new URL('/dashboard', request.url));
+    return NextResponse.redirect(new URL('/users', request.url));
   }
 
   return NextResponse.next();

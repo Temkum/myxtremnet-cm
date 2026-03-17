@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 
 export default function BundleDetails() {
-  const t = useTranslations('Bundles');
+  const t = useTranslations('UserBundles');
 
   const details = [
     t('internetData', { amount: '10' }),

@@ -35,6 +35,9 @@ export const user = pgTable('user', {
 
   // your business field — Camtel service ID
   serviceId: text('service_id').unique(),
+
+  // user role for admin access control
+  role: text('role').notNull().default('user'),
 });
 
 // ---------------------------------------------------------------------------

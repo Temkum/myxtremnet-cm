@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 
 export default function ServiceListing() {
-  const t = useTranslations('Bundles');
+  const t = useTranslations('UserBundles');
   const phoneNumber = '620779967';
 
   const offers = [
