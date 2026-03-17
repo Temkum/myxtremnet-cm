@@ -27,15 +27,14 @@ import { useAuth } from '@/lib/auth-context';
 import { auditLogs } from '@/data/admin';
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
-import AdminGuard from '@/components/AdminGuard';
 
 export default function AuditPage() {
-  const { isAdmin } = useAuth();
+  const { user } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
   const t = useTranslations('Audit');
 
   return (
-    <AdminGuard fallbackMessage={t('noPermission')}>
+    <>
       <div className="container mx-auto px-4 py-6 space-y-6">
         {/* Page Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -235,6 +234,6 @@ export default function AuditPage() {
           </div>
         </CardContent>
       </Card>
-    </AdminGuard>
+    </>
   );
 }

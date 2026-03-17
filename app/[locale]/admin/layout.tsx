@@ -1,6 +1,6 @@
 import React from 'react';
 import { UserFooter } from '@/components/users/footer';
-import { ProtectedRoute } from '@/components/auth/protected-route';
+import AdminRoute from '@/components/AdminRoute';
 import { AdminSidebar } from '@/components/admin/admin-sidebar';
 
 export default function AdminLayout({
@@ -9,12 +9,12 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   return (
-    <ProtectedRoute>
+    <AdminRoute>
       <div className="min-h-screen flex bg-background">
         <AdminSidebar />
         <main className="flex-1">{children}</main>
       </div>
       <UserFooter />
-    </ProtectedRoute>
+    </AdminRoute>
   );
 }

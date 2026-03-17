@@ -76,7 +76,7 @@ const bundles = [
 ];
 
 export default function BundlesPage() {
-  const { user, isAdmin } = useAuth();
+  const { user } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
   const [filterCategory, setFilterCategory] = useState('all');
   const t = useTranslations('Bundles');
@@ -97,215 +97,209 @@ export default function BundlesPage() {
   const activeBundles = bundles.filter((bundle) => bundle.active).length;
 
   return (
-    <AdminGuard fallbackMessage={t('noPermissionAdmin')}>
-      <div className="container mx-auto px-4 py-6 space-y-6">
-        {/* Page Header */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-bold text-foreground">
-              Bundle Management
-            </h1>
-            <p className="text-muted-foreground">
-              Manage and monitor data bundles and packages
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
-            <Button variant="outline">
-              <Upload className="h-4 w-4 mr-2" />
-              Import
-            </Button>
-            <Button>
-              <Plus className="h-4 w-4 mr-2" />
-              Add Bundle
-            </Button>
-          </div>
+    <div className="container mx-auto px-4 py-6 space-y-6">
+      {/* Page Header */}
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground">
+            Bundle Management
+          </h1>
+          <p className="text-muted-foreground">
+            Manage and monitor data bundles and packages
+          </p>
         </div>
-
-        {/* Statistics */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
-                  <Package className="h-5 w-5 text-blue-600" />
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Total Bundles</p>
-                  <p className="font-bold text-xl">{bundles.length}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-full bg-green-100 flex items-center justify-center">
-                  <Activity className="h-5 w-5 text-green-600" />
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">
-                    Active Bundles
-                  </p>
-                  <p className="font-bold text-xl">{activeBundles}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-full bg-purple-100 flex items-center justify-center">
-                  <Users className="h-5 w-5 text-purple-600" />
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">
-                    Total Subscribers
-                  </p>
-                  <p className="font-bold text-xl">
-                    {totalSubscribers.toLocaleString()}
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-full bg-orange-100 flex items-center justify-center">
-                  <DollarSign className="h-5 w-5 text-orange-600" />
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Avg Revenue</p>
-                  <p className="font-bold text-xl">
-                    {Math.round(
-                      bundles.reduce(
-                        (sum, b) => sum + b.price * b.subscribers,
-                        0,
-                      ) / totalSubscribers,
-                    ).toLocaleString()}{' '}
-                    FCFA
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+        <div className="flex items-center gap-2">
+          <Button variant="outline">
+            <Upload className="h-4 w-4 mr-2" />
+            Import
+          </Button>
+          <Button>
+            <Plus className="h-4 w-4 mr-2" />
+            Add Bundle
+          </Button>
         </div>
+      </div>
 
-        {/* Search and Filters */}
+      {/* Statistics */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
-          <CardHeader>
-            <div className="flex flex-col md:flex-row gap-4">
-              <div className="relative flex-1 max-w-sm">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <input
-                  type="text"
-                  placeholder="Search bundles..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-input rounded-md bg-background"
-                />
+          <CardContent className="p-4">
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
+                <Package className="h-5 w-5 text-blue-600" />
               </div>
-              <div className="flex items-center gap-2">
-                <Filter className="h-4 w-4 text-muted-foreground" />
-                <select
-                  value={filterCategory}
-                  onChange={(e) => setFilterCategory(e.target.value)}
-                  className="px-3 py-2 border border-input rounded-md bg-background"
-                >
-                  <option value="all">All Categories</option>
-                  <option value="LTE">LTE</option>
-                  <option value="WTTx">WTTx</option>
-                  <option value="Promo">Promo</option>
-                  <option value="Special">Special</option>
-                </select>
+              <div>
+                <p className="text-sm text-muted-foreground">Total Bundles</p>
+                <p className="font-bold text-xl">{bundles.length}</p>
               </div>
-              <Button variant="outline">
-                <Download className="h-4 w-4 mr-2" />
-                Export
-              </Button>
             </div>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {filteredBundles.map((bundle) => (
-                <Card
-                  key={bundle.id}
-                  className="hover:shadow-md transition-shadow"
-                >
-                  <CardHeader className="pb-3">
-                    <div className="flex items-start justify-between">
-                      <div className="flex items-center gap-2">
-                        <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
-                          <Wifi className="h-4 w-4 text-primary" />
-                        </div>
-                        <div>
-                          <h3 className="font-semibold">{bundle.name}</h3>
-                          <Badge variant="outline" className="text-xs">
-                            {bundle.category}
-                          </Badge>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <Badge
-                          className={
-                            bundle.active
-                              ? 'bg-green-100 text-green-700 hover:bg-green-100'
-                              : 'bg-red-100 text-red-700 hover:bg-red-100'
-                          }
-                        >
-                          {bundle.active ? 'Active' : 'Inactive'}
-                        </Badge>
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="space-y-3">
-                    <p className="text-sm text-muted-foreground">
-                      {bundle.description}
-                    </p>
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Data:</span>
-                        <span className="font-medium">{bundle.data}</span>
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Validity:</span>
-                        <span className="font-medium">{bundle.validity}</span>
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Price:</span>
-                        <span className="font-medium">
-                          {bundle.price.toLocaleString()} FCFA
-                        </span>
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">
-                          Subscribers:
-                        </span>
-                        <span className="font-medium">
-                          {bundle.subscribers}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2 pt-2">
-                      <Button size="sm" variant="outline" className="flex-1">
-                        <Edit className="h-4 w-4 mr-1" />
-                        Edit
-                      </Button>
-                      <Button size="sm" variant="outline" className="flex-1">
-                        <Users className="h-4 w-4 mr-1" />
-                        View Users
-                      </Button>
-                      <Button size="sm" variant="outline">
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-full bg-green-100 flex items-center justify-center">
+                <Activity className="h-5 w-5 text-green-600" />
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Active Bundles</p>
+                <p className="font-bold text-xl">{activeBundles}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-full bg-purple-100 flex items-center justify-center">
+                <Users className="h-5 w-5 text-purple-600" />
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">
+                  Total Subscribers
+                </p>
+                <p className="font-bold text-xl">
+                  {totalSubscribers.toLocaleString()}
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-full bg-orange-100 flex items-center justify-center">
+                <DollarSign className="h-5 w-5 text-orange-600" />
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Avg Revenue</p>
+                <p className="font-bold text-xl">
+                  {Math.round(
+                    bundles.reduce(
+                      (sum, b) => sum + b.price * b.subscribers,
+                      0,
+                    ) / totalSubscribers,
+                  ).toLocaleString()}{' '}
+                  FCFA
+                </p>
+              </div>
             </div>
           </CardContent>
         </Card>
       </div>
-    </AdminGuard>
+
+      {/* Search and Filters */}
+      <Card>
+        <CardHeader>
+          <div className="flex flex-col md:flex-row gap-4">
+            <div className="relative flex-1 max-w-sm">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <input
+                type="text"
+                placeholder="Search bundles..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-10 pr-4 py-2 border border-input rounded-md bg-background"
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <Filter className="h-4 w-4 text-muted-foreground" />
+              <select
+                value={filterCategory}
+                onChange={(e) => setFilterCategory(e.target.value)}
+                className="px-3 py-2 border border-input rounded-md bg-background"
+              >
+                <option value="all">All Categories</option>
+                <option value="LTE">LTE</option>
+                <option value="WTTx">WTTx</option>
+                <option value="Promo">Promo</option>
+                <option value="Special">Special</option>
+              </select>
+            </div>
+            <Button variant="outline">
+              <Download className="h-4 w-4 mr-2" />
+              Export
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {filteredBundles.map((bundle) => (
+              <Card
+                key={bundle.id}
+                className="hover:shadow-md transition-shadow"
+              >
+                <CardHeader className="pb-3">
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
+                        <Wifi className="h-4 w-4 text-primary" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold">{bundle.name}</h3>
+                        <Badge variant="outline" className="text-xs">
+                          {bundle.category}
+                        </Badge>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Badge
+                        className={
+                          bundle.active
+                            ? 'bg-green-100 text-green-700 hover:bg-green-100'
+                            : 'bg-red-100 text-red-700 hover:bg-red-100'
+                        }
+                      >
+                        {bundle.active ? 'Active' : 'Inactive'}
+                      </Badge>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <p className="text-sm text-muted-foreground">
+                    {bundle.description}
+                  </p>
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Data:</span>
+                      <span className="font-medium">{bundle.data}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Validity:</span>
+                      <span className="font-medium">{bundle.validity}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Price:</span>
+                      <span className="font-medium">
+                        {bundle.price.toLocaleString()} FCFA
+                      </span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">
+                        Subscribers:
+                      </span>
+                      <span className="font-medium">{bundle.subscribers}</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 pt-2">
+                    <Button size="sm" variant="outline" className="flex-1">
+                      <Edit className="h-4 w-4 mr-1" />
+                      Edit
+                    </Button>
+                    <Button size="sm" variant="outline" className="flex-1">
+                      <Users className="h-4 w-4 mr-1" />
+                      View Users
+                    </Button>
+                    <Button size="sm" variant="outline">
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   );
 }

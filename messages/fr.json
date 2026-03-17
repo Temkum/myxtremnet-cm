@@ -339,6 +339,14 @@
     "accessRestricted": "Accès Restreint",
     "noPermissionAdmin": "Vous n'avez pas la permission d'accéder à cette zone d'administration."
   },
+  "AccessDenied": {
+    "title": "Accès Refusé",
+    "description": "Vous n'avez pas la permission d'accéder à cette zone administrative.",
+    "adminRequired": "Des privilèges d'administrateur sont requis pour voir ce contenu.",
+    "contactAdmin": "Veuillez contacter votre administrateur système si vous pensez qu'il s'agit d'une erreur.",
+    "goBack": "Retour",
+    "login": "Se connecter"
+  },
   "Audit": {
     "accessRestricted": "Accès Restreint",
     "noPermission": "Vous n'avez pas la permission d'accéder aux journaux d'audit.",

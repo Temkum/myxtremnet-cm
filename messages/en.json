@@ -337,6 +337,14 @@
     "accessRestricted": "Access Restricted",
     "noPermissionAdmin": "You don't have permission to access this admin area."
   },
+  "AccessDenied": {
+    "title": "Access Denied",
+    "description": "You don't have permission to access this administrative area.",
+    "adminRequired": "Administrator privileges are required to view this content.",
+    "contactAdmin": "Please contact your system administrator if you believe this is an error.",
+    "goBack": "Go Back",
+    "login": "Login"
+  },
   "Audit": {
     "accessRestricted": "Access Restricted",
     "noPermission": "You don't have permission to access audit logs.",

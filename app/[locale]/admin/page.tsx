@@ -46,23 +46,8 @@ import { useState } from 'react';
 
 export default function AdminDashboard() {
   const t = useTranslations('Account');
-  const { user, isAdmin } = useAuth();
+  const { user } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
-
-  if (!isAdmin) {
-    return (
-      <div className="container mx-auto px-4 py-6">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-foreground mb-4">
-            Access Restricted
-          </h1>
-          <p className="text-muted-foreground">
-            You don't have permission to access the admin dashboard.
-          </p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="container mx-auto px-4 py-6 space-y-6">
