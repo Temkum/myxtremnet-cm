@@ -16,14 +16,14 @@
 import { z } from 'zod';
 
 // ---------------------------------------------------------------------------
-// Phone — E.164 format. Cameroon: +237 followed by 9 digits.
+// Phone — Camtel service format: must start with 620 and be exactly 9 digits.
 // Defined as a standalone schema so it can be reused and tested in isolation.
 // ---------------------------------------------------------------------------
 export const phoneSchema = z
   .string()
   .min(1, 'phoneIsRequired')
-  .regex(/^[6-9]\d{8}$/, {
-    message: 'Phone must be 9 digits starting with 6, 7, 8, or 9',
+  .regex(/^620\d{6}$/, {
+    message: 'Phone must be 9 digits starting with 620',
   });
 
 // ---------------------------------------------------------------------------

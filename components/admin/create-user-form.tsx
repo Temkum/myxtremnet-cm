@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { useForm, useFieldArray, FieldArrayPath } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
@@ -59,7 +59,7 @@ export default function CreateUserForm({
       name: '',
       email: '',
       role: 'user',
-      phoneNumbers: [''],
+      phoneNumbers: ['620'],
       idCardNumber: '',
       locationPlan: '',
       photo: undefined,
@@ -74,6 +74,57 @@ export default function CreateUserForm({
   });
 
   const selectedRole = watch('role');
+  const watchedPhoneNumbers = watch('phoneNumbers');
+
+  // Check for duplicate phone numbers
+  const phoneNumberErrors = useMemo(() => {
+    const errors: { [key: number]: string } = {};
+    const phoneMap = new Map<string, number[]>();
+
+    watchedPhoneNumbers.forEach((phone, index) => {
+      if (phone && phone.trim()) {
+        const trimmedPhone = phone.trim();
+        if (!phoneMap.has(trimmedPhone)) {
+          phoneMap.set(trimmedPhone, []);
+        }
+        phoneMap.get(trimmedPhone)!.push(index);
+      }
+    });
+
+    // Mark duplicates
+    phoneMap.forEach((indices, phone) => {
+      if (indices.length > 1) {
+        indices.forEach((index) => {
+          errors[index] = 'Duplicate phone number';
+        });
+      }
+    });
+
+    return errors;
+  }, [watchedPhoneNumbers]);
+
+  // Handle phone number input with Camtel format (620xxxxxx)
+  const handlePhoneChange = useCallback(
+    (index: number, value: string) => {
+      // Remove all non-digits
+      const digits = value.replace(/\D/g, '');
+
+      // Always start with 620
+      let formattedValue = '620';
+
+      // Add remaining digits up to 9 total
+      if (digits.length > 3) {
+        const remainingDigits = digits.slice(3, 9);
+        formattedValue += remainingDigits;
+      }
+
+      // Update the form value
+      setValue(`phoneNumbers.${index}`, formattedValue, {
+        shouldValidate: true,
+      });
+    },
+    [setValue],
+  );
 
   const handlePhotoChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -179,27 +230,46 @@ export default function CreateUserForm({
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="name">Full Name</Label>
-                <Input {...register('name')} placeholder="John Doe" />
+                <Label htmlFor="name" className="flex items-center gap-1">
+                  Full Name
+                  <span className="text-destructive">*</span>
+                </Label>
+                <Input
+                  {...register('name')}
+                  placeholder="John Doe"
+                  className={
+                    errors.name
+                      ? 'border-destructive focus:border-destructive'
+                      : ''
+                  }
+                />
                 {errors.name && (
-                  <p className="text-xs text-destructive">
+                  <p className="text-xs text-destructive flex items-center gap-1">
+                    <span className="w-1 h-1 bg-destructive rounded-full"></span>
                     {errors.name.message}
                   </p>
                 )}
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email" className="flex items-center gap-1">
+                  Email
+                  <span className="text-destructive">*</span>
+                </Label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                  <Mail
+                    className={`absolute left-3 top-2.5 h-4 w-4 ${errors.email ? 'text-destructive' : 'text-muted-foreground'}`}
+                  />
                   <Input
                     {...register('email')}
-                    className="pl-10"
+                    className={`pl-10 ${errors.email ? 'border-destructive focus:border-destructive' : ''}`}
                     placeholder="john@camtel.cm"
+                    type="email"
                   />
                 </div>
                 {errors.email && (
-                  <p className="text-xs text-destructive">
+                  <p className="text-xs text-destructive flex items-center gap-1">
+                    <span className="w-1 h-1 bg-destructive rounded-full"></span>
                     {errors.email.message}
                   </p>
                 )}
@@ -207,14 +277,23 @@ export default function CreateUserForm({
             </div>
 
             <div className="space-y-2">
-              <Label>System Role</Label>
+              <Label className="flex items-center gap-1">
+                System Role
+                <span className="text-destructive">*</span>
+              </Label>
               <Select
-                onValueChange={(val: 'user' | 'admin') => setValue('role', val)}
+                onValueChange={(val: 'user' | 'admin') =>
+                  setValue('role', val, { shouldValidate: true })
+                }
                 defaultValue="user"
               >
-                <SelectTrigger className="w-full">
+                <SelectTrigger
+                  className={`w-full ${errors.role ? 'border-destructive' : ''}`}
+                >
                   <div className="flex items-center gap-2">
-                    <Shield className="h-4 w-4 text-muted-foreground" />
+                    <Shield
+                      className={`h-4 w-4 ${errors.role ? 'text-destructive' : 'text-muted-foreground'}`}
+                    />
                     <SelectValue />
                   </div>
                 </SelectTrigger>
@@ -223,6 +302,12 @@ export default function CreateUserForm({
                   <SelectItem value="admin">System Administrator</SelectItem>
                 </SelectContent>
               </Select>
+              {errors.role && (
+                <p className="text-xs text-destructive flex items-center gap-1">
+                  <span className="w-1 h-1 bg-destructive rounded-full"></span>
+                  {errors.role.message}
+                </p>
+              )}
             </div>
           </div>
 
@@ -232,6 +317,7 @@ export default function CreateUserForm({
               <Phone className="h-4 w-4 text-muted-foreground" />
               <h3 className="text-sm font-bold uppercase tracking-tight text-muted-foreground">
                 Phone Connectivity
+                <span className="text-destructive ml-1">*</span>
               </h3>
             </div>
             <div className="space-y-3">
@@ -242,12 +328,21 @@ export default function CreateUserForm({
                     <Input
                       {...register(`phoneNumbers.${index}`)}
                       type="tel"
-                      placeholder="6xx xxx xxx"
-                      className="pl-10 tabular-nums"
+                      placeholder="620 xxx xxx"
+                      maxLength={9}
+                      onChange={(e) => handlePhoneChange(index, e.target.value)}
+                      className={`pl-10 tabular-nums ${
+                        errors.phoneNumbers?.[index] || phoneNumberErrors[index]
+                          ? 'border-destructive focus:border-destructive'
+                          : ''
+                      }`}
                     />
-                    {errors.phoneNumbers?.[index] && (
-                      <p className="text-xs text-destructive mt-1">
-                        {errors.phoneNumbers[index]?.message}
+                    {(errors.phoneNumbers?.[index] ||
+                      phoneNumberErrors[index]) && (
+                      <p className="text-xs text-destructive mt-1 flex items-center gap-1">
+                        <span className="w-1 h-1 bg-destructive rounded-full flex-shrink-0"></span>
+                        {phoneNumberErrors[index] ||
+                          errors?.phoneNumbers?.[index]?.message}
                       </p>
                     )}
                   </div>
@@ -266,11 +361,12 @@ export default function CreateUserForm({
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => append('')}
+                onClick={() => append('620')}
                 className="w-full"
+                disabled={fields.length >= 5}
               >
                 <Plus className="h-4 w-4 mr-2" />
-                Add Phone Number
+                Add Phone Number {fields.length >= 5 && '(Max 5)'}
               </Button>
             </div>
           </div>
@@ -284,26 +380,40 @@ export default function CreateUserForm({
                 <FileText className="h-4 w-4" /> Compliance
               </h3>
               <div className="space-y-2">
-                <Label>ID Card / Passport</Label>
+                <Label className="flex items-center gap-1">
+                  ID Card / Passport
+                  <span className="text-destructive">*</span>
+                </Label>
                 <Input
                   {...register('idCardNumber')}
                   placeholder="ID# 123456789"
+                  className={
+                    errors.idCardNumber
+                      ? 'border-destructive focus:border-destructive'
+                      : ''
+                  }
                 />
                 {errors.idCardNumber && (
-                  <p className="text-xs text-destructive mt-1">
+                  <p className="text-xs text-destructive mt-1 flex items-center gap-1">
+                    <span className="w-1 h-1 bg-destructive rounded-full"></span>
                     {errors.idCardNumber.message}
                   </p>
                 )}
               </div>
               <div className="space-y-2">
-                <Label>Location Description</Label>
+                <Label className="flex items-center gap-1">
+                  Location Description
+                  <span className="text-destructive">*</span>
+                </Label>
                 <Textarea
                   {...register('locationPlan')}
-                  className="resize-none"
+                  className={`resize-none ${errors.locationPlan ? 'border-destructive focus:border-destructive' : ''}`}
                   rows={3}
+                  placeholder="Describe the installation location..."
                 />
                 {errors.locationPlan && (
-                  <p className="text-xs text-destructive mt-1">
+                  <p className="text-xs text-destructive mt-1 flex items-center gap-1">
+                    <span className="w-1 h-1 bg-destructive rounded-full"></span>
                     {errors.locationPlan.message}
                   </p>
                 )}
@@ -352,7 +462,8 @@ export default function CreateUserForm({
                   </label>
                 )}
                 {errors.photo && (
-                  <p className="text-xs text-destructive mt-2">
+                  <p className="text-xs text-destructive mt-2 flex items-center gap-1">
+                    <span className="w-1 h-1 bg-destructive rounded-full"></span>
                     {errors.photo.message}
                   </p>
                 )}
@@ -372,7 +483,11 @@ export default function CreateUserForm({
             </Button>
             <Button
               type="submit"
-              disabled={isSubmitting || !isValid}
+              disabled={
+                isSubmitting ||
+                !isValid ||
+                Object.keys(phoneNumberErrors).length > 0
+              }
               className="min-w-[120px]"
             >
               {isSubmitting ? (

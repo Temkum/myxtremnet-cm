@@ -120,6 +120,7 @@ export async function POST(req: NextRequest) {
         email: validatedData.email.toLowerCase(),
         role: validatedData.role,
         phoneNumber: validatedData.phoneNumbers[0],
+        serviceId: validatedData.phoneNumbers[0],
         idCardNumber: validatedData.idCardNumber,
         locationPlan: validatedData.locationPlan,
         photoPath: photoPath,
