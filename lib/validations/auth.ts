@@ -22,7 +22,9 @@ import { z } from 'zod';
 export const phoneSchema = z
   .string()
   .min(1, 'phoneIsRequired')
-  .regex(/^\d{9}$/, { message: 'phoneMustBe9Digits' });
+  .regex(/^\d{9}$/, {
+    message: 'Phone must start with 620 and be 9 digits total',
+  });
 
 // ---------------------------------------------------------------------------
 // Login

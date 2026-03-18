@@ -103,7 +103,7 @@
     "sendingCode": "Sending code...",
     "devModeOtp": "Dev mode: OTP is {otp}",
     "phoneIsRequired": "Phone number is required",
-    "phoneMustBe9Digits": "Phone number must be exactly 9 digits",
+    "phoneMustBe9Digits": "Phone must start with 620 and be 9 digits total",
     "codeRequired": "Verification code is required",
     "codeMustBe6Digits": "Code must be exactly 6 digits",
     "codeMustBeDigits": "Code must contain only digits",

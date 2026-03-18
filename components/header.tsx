@@ -20,7 +20,7 @@ export function Header() {
   const router = useRouter();
   const pathname = usePathname();
   const t = useTranslations();
-  const logo = '/camtel.png';
+  const logo = '/camtel.webp';
 
   const navItems = [
     { key: 'Navigation.home', href: '/dashboard' },

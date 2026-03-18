@@ -77,7 +77,7 @@ export function UserHeader() {
         {/* Logo */}
         <Link href="/" className="flex items-center gap-3">
           <Image
-            src="/camtel.png"
+            src="/camtel.webp"
             alt="Camtel"
             width={48}
             height={48}

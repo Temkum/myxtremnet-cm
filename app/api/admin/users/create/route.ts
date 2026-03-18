@@ -2,167 +2,104 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { user, account, userPhoneNumbers } from '@/db/schema/auth-schema';
-import { eq } from 'drizzle-orm';
 import { hash } from 'bcryptjs';
 import { adminCreateUserSchema } from '@/lib/validations/auth';
 
 export async function POST(req: NextRequest) {
   try {
-    // Verify admin authentication
-    const session = await auth.api.getSession({
-      headers: req.headers,
-    });
-
+    const session = await auth.api.getSession({ headers: req.headers });
     if (!session?.user || session.user.role !== 'admin') {
-      return NextResponse.json(
-        { message: 'Unauthorized. Admin access required.' },
-        { status: 403 },
-      );
+      return NextResponse.json({ message: 'Unauthorized' }, { status: 403 });
     }
 
     const formData = await req.formData();
 
-    const name = formData.get('name') as string;
-    const email = formData.get('email') as string;
-    const role = formData.get('role') as string;
-    const phoneNumbersJson = formData.get('phoneNumbers') as string;
-    const idCardNumber = formData.get('idCardNumber') as string;
-    const locationPlan = formData.get('locationPlan') as string;
-    const photo = formData.get('photo') as File | null;
+    // Extract and parse phone numbers correctly
+    const phoneNumbersRaw = formData.get('phoneNumbers');
+    let parsedPhoneNumbers = [];
 
-    // Validate input using Zod schema
+    try {
+      const json = JSON.parse(phoneNumbersRaw as string);
+      // React Hook Form sends an array of objects: [{id: '...', number: '620...'}]
+      // Zod expects an array of strings: ['620...']
+      parsedPhoneNumbers = json.map((p: { number: string }) => p.number);
+    } catch (e) {
+      return NextResponse.json(
+        { message: 'Invalid phone number format' },
+        { status: 400 },
+      );
+    }
+
     const validationResult = adminCreateUserSchema.safeParse({
-      name,
-      email,
-      role,
-      phoneNumbers: JSON.parse(phoneNumbersJson || '[]'),
-      idCardNumber,
-      locationPlan,
-      photo: photo || undefined,
+      name: formData.get('name'),
+      email: formData.get('email'),
+      role: formData.get('role'),
+      idCardNumber: formData.get('idCardNumber'),
+      locationPlan: formData.get('locationPlan'),
+      phoneNumbers: parsedPhoneNumbers, // Now matches z.array(z.string())
+      photo: formData.get('photo') || undefined,
     });
 
     if (!validationResult.success) {
-      const errors = validationResult.error.issues.map((err) => err.message);
       return NextResponse.json(
-        { message: 'Validation failed', errors },
+        {
+          message: 'Validation failed',
+          errors: validationResult.error.flatten(),
+        },
         { status: 400 },
       );
     }
 
     const validatedData = validationResult.data;
 
-    // Check if email already exists
-    const existingUser = await db
-      .select()
-      .from(user)
-      .where(eq(user.email, validatedData.email))
-      .limit(1);
-
-    if (existingUser.length > 0) {
-      return NextResponse.json(
-        { message: 'Email already exists' },
-        { status: 409 },
-      );
-    }
-
-    // Check if any phone number already exists
-    for (const phoneNumber of validatedData.phoneNumbers) {
-      const existingPhone = await db
-        .select()
-        .from(user)
-        .where(eq(user.phoneNumber, phoneNumber))
-        .limit(1);
-
-      if (existingPhone.length > 0) {
-        return NextResponse.json(
-          { message: `Phone number ${phoneNumber} already exists` },
-          { status: 409 },
-        );
-      }
-    }
-
-    // Generate default password and hash it
-    const defaultPassword = 'camteluser';
-    const hashedPassword = await hash(defaultPassword, 10);
-
-    // Handle photo upload if present
-    let photoPath: string | null = null;
-    if (validatedData.photo && validatedData.photo.size > 0) {
-      // In a real implementation, you would upload to a storage service
-      // For now, we'll just store that a photo was provided
-      photoPath = 'uploaded';
-    }
-
-    // Create user with primary phone number
+    // DATABASE OPERATIONS
     const userId = crypto.randomUUID();
-    const now = new Date();
+    const DEFAULT_PASSWORD = 'camteluser';
+    const hashedPassword = await hash(DEFAULT_PASSWORD, 10);
 
-    // Create user record
-    await db.insert(user).values({
-      id: userId,
-      name: validatedData.name.trim(),
-      email: validatedData.email.trim().toLowerCase(),
-      role: validatedData.role === 'admin' ? 'admin' : 'user',
-      phoneNumber: validatedData.phoneNumbers[0], // Primary phone number
-      phoneNumberVerified: true, // Admin-created users are pre-verified
-      emailVerified: false,
-      idCardNumber: validatedData.idCardNumber.trim(),
-      locationPlan: validatedData.locationPlan.trim(),
-      photoPath,
-      defaultPassword, // Store for admin reference
-      createdAt: now,
-      updatedAt: now,
-    });
-
-    // Create phone number records
-    for (let i = 0; i < validatedData.phoneNumbers.length; i++) {
-      await db.insert(userPhoneNumbers).values({
-        id: crypto.randomUUID(),
-        userId,
-        phoneNumber: validatedData.phoneNumbers[i],
-        isPrimary: i === 0, // First phone number is primary
-        createdAt: now,
-      });
-    }
-
-    // Create account record with hashed password for Better Auth
-    await db.insert(account).values({
-      id: crypto.randomUUID(),
-      accountId: userId,
-      providerId: 'credential', // Better Auth uses 'credential' for email/password
-      userId: userId,
-      password: hashedPassword,
-      createdAt: now,
-      updatedAt: now,
-    });
-
-    // Log the creation for audit purposes
-    console.log(`User created by admin ${session.user.email}:`, {
-      userId,
-      name: validatedData.name,
-      email: validatedData.email,
-      role: validatedData.role,
-      phoneNumbers: validatedData.phoneNumbers,
-      idCardNumber: validatedData.idCardNumber,
-      hasPhoto: !!photoPath,
-    });
-
-    return NextResponse.json({
-      message: 'User created successfully',
-      user: {
+    await db.transaction(async (tx) => {
+      // 1. Insert User
+      await tx.insert(user).values({
         id: userId,
         name: validatedData.name,
-        email: validatedData.email,
+        email: validatedData.email.toLowerCase(),
         role: validatedData.role,
         phoneNumber: validatedData.phoneNumbers[0],
-        phoneNumbers: validatedData.phoneNumbers,
-        defaultPassword, // Return for admin to communicate to user
-      },
+        idCardNumber: validatedData.idCardNumber,
+        locationPlan: validatedData.locationPlan,
+        defaultPassword: DEFAULT_PASSWORD,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
+
+      // 2. Insert Multiple Phone Numbers
+      for (let i = 0; i < validatedData.phoneNumbers.length; i++) {
+        await tx.insert(userPhoneNumbers).values({
+          id: crypto.randomUUID(),
+          userId,
+          phoneNumber: validatedData.phoneNumbers[i],
+          isPrimary: i === 0,
+          createdAt: new Date(),
+        });
+      }
+
+      // 3. Create Auth Account
+      await tx.insert(account).values({
+        id: crypto.randomUUID(),
+        userId,
+        accountId: userId,
+        providerId: 'credential',
+        password: hashedPassword,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
     });
+
+    return NextResponse.json({ message: 'User created' }, { status: 201 });
   } catch (error) {
-    console.error('Error creating user:', error);
+    console.error(error);
     return NextResponse.json(
-      { message: 'Internal server error' },
+      { message: 'Internal Server Error' },
       { status: 500 },
     );
   }

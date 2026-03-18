@@ -103,7 +103,7 @@
     "sendingCode": "Envoi du code...",
     "devModeOtp": "Mode dev: OTP est {otp}",
     "phoneIsRequired": "Le numero de telephone est requis",
-    "phoneMustBe9Digits": "Le numero de telephone doit contenir exactement 9 chiffres",
+    "phoneMustBe9Digits": "Le numero de telephone doit commencer par 620 et contenir 9 chiffres au total",
     "codeRequired": "Le code de verification est requis",
     "codeMustBe6Digits": "Le code doit contenir exactement 6 chiffres",
     "codeMustBeDigits": "Le code doit contenir uniquement des chiffres",

@@ -1,6 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -13,7 +15,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
 import {
   X,
   Plus,
@@ -24,242 +26,237 @@ import {
   Shield,
   FileText,
   Camera,
+  Loader2,
 } from 'lucide-react';
 import { toast } from 'sonner';
-
-interface PhoneNumber {
-  id: string;
-  number: string;
-}
-
-interface CreateUserFormData {
-  name: string;
-  email: string;
-  role: 'user' | 'admin';
-  phoneNumbers: PhoneNumber[];
-  idCardNumber: string;
-  locationPlan: string;
-  photo: File | null;
-}
+import { Badge } from '../ui/badge';
+import {
+  adminCreateUserSchema,
+  AdminCreateUserInput,
+} from '@/lib/validations/auth';
 
 export default function CreateUserForm({
   onSuccess,
 }: {
   onSuccess: () => void;
 }) {
-  const [formData, setFormData] = useState<CreateUserFormData>({
-    name: '',
-    email: '',
-    role: 'user',
-    phoneNumbers: [{ id: '1', number: '' }],
-    idCardNumber: '',
-    locationPlan: '',
-    photo: null,
-  });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [photo, setPhoto] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
 
-  const handleInputChange = (
-    field: keyof CreateUserFormData,
-    value: string,
-  ) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-  };
+  const {
+    register,
+    control,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { errors, isValid },
+    setError,
+    clearErrors,
+  } = useForm<AdminCreateUserInput>({
+    resolver: zodResolver(adminCreateUserSchema),
+    defaultValues: {
+      name: '',
+      email: '',
+      role: 'user',
+      phoneNumbers: [''],
+      idCardNumber: '',
+      locationPlan: '',
+    },
+    mode: 'onChange',
+  });
+
+  const selectedRole = watch('role');
+
+  const handlePhotoChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (file) {
+        if (file.size > 5 * 1024 * 1024) {
+          setError('photo', { message: 'File exceeds 5MB' });
+          return;
+        }
+        if (!file.type.startsWith('image/')) {
+          setError('photo', { message: 'Invalid image type' });
+          return;
+        }
+
+        setPhoto(file);
+        clearErrors('photo');
+        const reader = new FileReader();
+        reader.onloadend = () => setPhotoPreview(reader.result as string);
+        reader.readAsDataURL(file);
+      }
+    },
+    [setError, clearErrors],
+  );
 
   const addPhoneNumber = () => {
-    const newId = Date.now().toString();
-    setFormData((prev) => ({
-      ...prev,
-      phoneNumbers: [...prev.phoneNumbers, { id: newId, number: '' }],
-    }));
+    const currentPhones = watch('phoneNumbers');
+    setValue('phoneNumbers', [...currentPhones, '']);
   };
 
-  const removePhoneNumber = (id: string) => {
-    if (formData.phoneNumbers.length > 1) {
-      setFormData((prev) => ({
-        ...prev,
-        phoneNumbers: prev.phoneNumbers.filter((phone) => phone.id !== id),
-      }));
-    }
-  };
-
-  const updatePhoneNumber = (id: string, number: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      phoneNumbers: prev.phoneNumbers.map((phone) =>
-        phone.id === id ? { ...phone, number } : phone,
-      ),
-    }));
-  };
-
-  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      if (file.size > 5 * 1024 * 1024) {
-        toast.error('Photo must be less than 5MB');
-        return;
-      }
-      if (!file.type.startsWith('image/')) {
-        toast.error('Please upload an image file');
-        return;
-      }
-      setFormData((prev) => ({ ...prev, photo: file }));
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPhotoPreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const removePhoto = () => {
-    setFormData((prev) => ({ ...prev, photo: null }));
-    setPhotoPreview(null);
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-
-    try {
-      const formDataToSend = new FormData();
-      formDataToSend.append('name', formData.name);
-      formDataToSend.append('email', formData.email);
-      formDataToSend.append('role', formData.role);
-      formDataToSend.append(
+  const removePhoneNumber = (index: number) => {
+    const currentPhones = watch('phoneNumbers');
+    if (currentPhones.length > 1) {
+      setValue(
         'phoneNumbers',
-        JSON.stringify(formData.phoneNumbers.filter((p) => p.number.trim())),
+        currentPhones.filter((_, i) => i !== index),
       );
-      formDataToSend.append('idCardNumber', formData.idCardNumber);
-      formDataToSend.append('locationPlan', formData.locationPlan);
+    }
+  };
 
-      if (formData.photo) {
-        formDataToSend.append('photo', formData.photo);
-      }
-
-      const response = await fetch('/api/admin/users/create', {
-        method: 'POST',
-        body: formDataToSend,
+  const onSubmit = async (data: AdminCreateUserInput) => {
+    setIsSubmitting(true);
+    try {
+      // Log the user object for debugging
+      console.log('🔍 Creating user with data:', {
+        ...data,
+        photo: photo
+          ? {
+              name: photo.name,
+              size: photo.size,
+              type: photo.type,
+            }
+          : null,
       });
 
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'Failed to create user');
+      const body = new FormData();
+      Object.entries(data).forEach(([key, value]) => {
+        if (key === 'phoneNumbers') {
+          body.append(key, JSON.stringify(value));
+        } else {
+          body.append(key, value as string);
+        }
+      });
+      if (photo) body.append('photo', photo);
+
+      const res = await fetch('/api/admin/users/create', {
+        method: 'POST',
+        body,
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || 'Failed to create user');
       }
 
-      toast.success('User created successfully');
-      onSuccess();
-    } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : 'Failed to create user',
+      const result = await res.json();
+      console.log('✅ User created successfully:', result);
+
+      toast.success(
+        `User "${data.name}" created successfully! Default password: camteluser123`,
       );
+      onSuccess();
+    } catch (err) {
+      console.error('❌ Error creating user:', err);
+      toast.error(err instanceof Error ? err.message : 'Submission failed');
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const isFormValid = () => {
-    return (
-      formData.name.trim() &&
-      formData.email.trim() &&
-      formData.phoneNumbers.some((p) => p.number.trim()) &&
-      formData.idCardNumber.trim() &&
-      formData.locationPlan.trim()
-    );
-  };
-
   return (
-    <Card className="w-full max-w-2xl mx-auto">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <User className="h-5 w-5" />
-          Create New User
+    <Card className="w-full max-w-2xl mx-auto border-none shadow-none sm:border sm:shadow-sm">
+      <CardHeader className="pb-4">
+        <CardTitle className="flex items-center gap-2 text-xl">
+          <User className="h-5 w-5 text-primary" />
+          User Registration
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Basic Information */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Basic Information</h3>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+          {/* Section: Profile Identity */}
+          <div className="space-y-4 p-4 rounded-xl bg-muted/30 border border-muted-foreground/10">
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-bold uppercase tracking-tight text-muted-foreground">
+                Basic Profile
+              </h3>
+              <Badge variant="outline" className="font-mono">
+                {selectedRole}
+              </Badge>
+            </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="name">Full Name *</Label>
-                <Input
-                  id="name"
-                  value={formData.name}
-                  onChange={(e) => handleInputChange('name', e.target.value)}
-                  placeholder="Enter full name"
-                  required
-                />
+                <Label htmlFor="name">Full Name</Label>
+                <Input {...register('name')} placeholder="John Doe" />
+                {errors.name && (
+                  <p className="text-xs text-destructive">
+                    {errors.name.message}
+                  </p>
+                )}
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="email">Email Address *</Label>
+                <Label htmlFor="email">Email</Label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Mail className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                   <Input
-                    id="email"
-                    type="email"
-                    value={formData.email}
-                    onChange={(e) => handleInputChange('email', e.target.value)}
-                    placeholder="user@example.com"
+                    {...register('email')}
                     className="pl-10"
-                    required
+                    placeholder="john@camtel.cm"
                   />
                 </div>
+                {errors.email && (
+                  <p className="text-xs text-destructive">
+                    {errors.email.message}
+                  </p>
+                )}
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="role">Role *</Label>
+              <Label>System Role</Label>
               <Select
-                value={formData.role}
-                onValueChange={(value: 'user' | 'admin') =>
-                  handleInputChange('role', value)
-                }
+                onValueChange={(val: 'user' | 'admin') => setValue('role', val)}
+                defaultValue="user"
               >
-                <SelectTrigger>
+                <SelectTrigger className="w-full">
                   <div className="flex items-center gap-2">
-                    <Shield className="h-4 w-4" />
-                    <SelectValue placeholder="Select role" />
+                    <Shield className="h-4 w-4 text-muted-foreground" />
+                    <SelectValue />
                   </div>
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="user">User</SelectItem>
-                  <SelectItem value="admin">Admin</SelectItem>
+                  <SelectItem value="user">Standard User</SelectItem>
+                  <SelectItem value="admin">System Administrator</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
 
-          {/* Phone Numbers */}
+          {/* Section: Contact Details */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Phone Numbers *</h3>
-            <div className="space-y-2">
-              {formData.phoneNumbers.map((phone, index) => (
-                <div key={phone.id} className="flex items-center gap-2">
+            <div className="flex items-center gap-2">
+              <Phone className="h-4 w-4 text-muted-foreground" />
+              <h3 className="text-sm font-bold uppercase tracking-tight text-muted-foreground">
+                Phone Connectivity
+              </h3>
+            </div>
+            <div className="space-y-3">
+              {watch('phoneNumbers').map((phone, index) => (
+                <div key={index} className="flex gap-2">
                   <div className="relative flex-1">
-                    <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Phone className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                     <Input
-                      value={phone.number}
+                      {...register(`phoneNumbers.${index}`)}
                       type="tel"
-                      pattern="[0-9]*"
-                      maxLength={9}
-                      onChange={(e) =>
-                        updatePhoneNumber(phone.id, e.target.value)
-                      }
-                      placeholder="Enter phone number"
-                      className="pl-10"
-                      required={index === 0}
+                      placeholder="6xx xxx xxx"
+                      className="pl-10 tabular-nums"
                     />
+                    {errors.phoneNumbers?.[index] && (
+                      <p className="text-xs text-destructive mt-1">
+                        {errors.phoneNumbers[index]?.message}
+                      </p>
+                    )}
                   </div>
-                  {formData.phoneNumbers.length > 1 && (
+                  {watch('phoneNumbers').length > 1 && (
                     <Button
                       type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => removePhoneNumber(phone.id)}
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => removePhoneNumber(index)}
                     >
                       <X className="h-4 w-4" />
                     </Button>
@@ -278,100 +275,113 @@ export default function CreateUserForm({
             </div>
           </div>
 
-          {/* Government Information */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Government Information</h3>
+          <Separator />
 
-            <div className="space-y-2">
-              <Label htmlFor="idCardNumber">ID Card Number *</Label>
-              <div className="relative">
-                <FileText className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          {/* Section: Verification */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="space-y-4">
+              <h3 className="text-sm font-bold uppercase tracking-tight text-muted-foreground flex items-center gap-2">
+                <FileText className="h-4 w-4" /> Compliance
+              </h3>
+              <div className="space-y-2">
+                <Label>ID Card / Passport</Label>
                 <Input
-                  id="idCardNumber"
-                  value={formData.idCardNumber}
-                  onChange={(e) =>
-                    handleInputChange('idCardNumber', e.target.value)
-                  }
-                  placeholder="Enter government-issued ID number"
-                  className="pl-10"
-                  required
+                  {...register('idCardNumber')}
+                  placeholder="ID# 123456789"
                 />
+                {errors.idCardNumber && (
+                  <p className="text-xs text-destructive mt-1">
+                    {errors.idCardNumber.message}
+                  </p>
+                )}
+              </div>
+              <div className="space-y-2">
+                <Label>Location Description</Label>
+                <Textarea
+                  {...register('locationPlan')}
+                  className="resize-none"
+                  rows={3}
+                />
+                {errors.locationPlan && (
+                  <p className="text-xs text-destructive mt-1">
+                    {errors.locationPlan.message}
+                  </p>
+                )}
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="locationPlan">Location Plan *</Label>
-              <Textarea
-                id="locationPlan"
-                value={formData.locationPlan}
-                onChange={(e) =>
-                  handleInputChange('locationPlan', e.target.value)
-                }
-                placeholder="Enter location plan details"
-                rows={3}
-                required
-              />
-            </div>
-          </div>
-
-          {/* Photo Upload */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Passport Photo</h3>
-
-            <div className="space-y-2">
-              {photoPreview ? (
-                <div className="relative inline-block">
-                  <img
-                    src={photoPreview}
-                    alt="Passport photo preview"
-                    className="w-32 h-32 object-cover rounded-lg border"
-                  />
-                  <Button
-                    type="button"
-                    variant="destructive"
-                    size="sm"
-                    className="absolute -top-2 -right-2"
-                    onClick={removePhoto}
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
-                </div>
-              ) : (
-                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-                  <Camera className="h-12 w-12 text-gray-400 mx-auto mb-2" />
-                  <p className="text-sm text-gray-600 mb-2">
-                    Upload passport photo
+            <div className="space-y-4">
+              <h3 className="text-sm font-bold uppercase tracking-tight text-muted-foreground flex items-center gap-2">
+                <Camera className="h-4 w-4" /> Photo ID
+              </h3>
+              <div className="flex flex-col items-center justify-center border-2 border-dashed rounded-xl p-4 min-h-[160px] bg-muted/10 transition-colors hover:bg-muted/20">
+                {photoPreview ? (
+                  <div className="relative group">
+                    <img
+                      src={photoPreview}
+                      alt="Preview"
+                      className="w-32 h-32 rounded-lg object-cover shadow-md"
+                    />
+                    <button
+                      onClick={() => {
+                        setPhoto(null);
+                        setPhotoPreview(null);
+                        clearErrors('photo');
+                      }}
+                      className="absolute -top-2 -right-2 bg-destructive text-white rounded-full p-1 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </div>
+                ) : (
+                  <label className="cursor-pointer text-center">
+                    <Upload className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
+                    <span className="text-xs font-medium block">
+                      Upload Passport Size
+                    </span>
+                    <span className="text-[10px] text-muted-foreground">
+                      JPG, PNG up to 5MB
+                    </span>
+                    <input
+                      type="file"
+                      className="hidden"
+                      accept="image/*"
+                      onChange={handlePhotoChange}
+                    />
+                  </label>
+                )}
+                {errors.photo && (
+                  <p className="text-xs text-destructive mt-2">
+                    {errors.photo.message}
                   </p>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handlePhotoChange}
-                    className="hidden"
-                    id="photo-upload"
-                  />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() =>
-                      document.getElementById('photo-upload')?.click()
-                    }
-                  >
-                    <Upload className="h-4 w-4 mr-2" />
-                    Choose Photo
-                  </Button>
-                  <p className="text-xs text-gray-500 mt-2">Max size: 5MB</p>
-                </div>
-              )}
+                )}
+              </div>
             </div>
           </div>
 
-          {/* Form Actions */}
-          <div className="flex justify-end gap-2 pt-4 border-t">
-            <Button type="button" variant="outline" onClick={onSuccess}>
-              Cancel
+          {/* Footer Actions */}
+          <div className="flex items-center justify-end gap-3 pt-6">
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={onSuccess}
+              disabled={isSubmitting}
+            >
+              Discard
             </Button>
-            <Button type="submit" disabled={!isFormValid() || isSubmitting}>
-              {isSubmitting ? 'Creating...' : 'Create User'}
+            <Button
+              type="submit"
+              disabled={isSubmitting || !isValid}
+              className="min-w-[120px]"
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Creating...
+                </>
+              ) : (
+                'Create User'
+              )}
             </Button>
           </div>
         </form>
