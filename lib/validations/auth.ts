@@ -22,8 +22,8 @@ import { z } from 'zod';
 export const phoneSchema = z
   .string()
   .min(1, 'phoneIsRequired')
-  .regex(/^\d{9}$/, {
-    message: 'Phone must start with 620 and be 9 digits total',
+  .regex(/^[6-9]\d{8}$/, {
+    message: 'Phone must be 9 digits starting with 6, 7, 8, or 9',
   });
 
 // ---------------------------------------------------------------------------
@@ -92,7 +92,11 @@ export const adminCreateUserSchema = z.object({
   name: z.string().min(2, 'fullNameMin2Chars').max(100, 'fullNameTooLong'),
   email: z.string().min(1, 'emailRequired').email('emailInvalid'),
   role: z.enum(['user', 'admin'], { message: 'roleRequired' }),
-  phoneNumbers: z.array(phoneSchema).min(1, 'atLeastOnePhoneRequired'),
+  phoneNumbers: z
+    .array(z.string().min(1, 'phoneIsRequired'))
+    .min(1, 'atLeastOnePhoneRequired')
+    .transform((phones) => phones.filter((phone) => phone.trim().length > 0))
+    .pipe(z.array(phoneSchema).min(1, 'atLeastOneValidPhoneRequired')),
   idCardNumber: z.string().min(1, 'idCardRequired').min(3, 'idCardMin3Chars'),
   locationPlan: z
     .string()

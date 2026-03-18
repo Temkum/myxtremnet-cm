@@ -43,7 +43,7 @@ export const user = pgTable('user', {
   idCardNumber: text('id_card_number').unique(),
   locationPlan: text('location_plan'),
   photoPath: text('photo_path'),
-  defaultPassword: text('default_password'), // For admin reference
+  mustChangePassword: boolean('must_change_password').notNull().default(true),
 });
 
 // ---------------------------------------------------------------------------

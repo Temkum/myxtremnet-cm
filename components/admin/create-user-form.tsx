@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useCallback } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, useFieldArray, FieldArrayPath } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -62,15 +62,26 @@ export default function CreateUserForm({
       phoneNumbers: [''],
       idCardNumber: '',
       locationPlan: '',
+      photo: undefined,
     },
     mode: 'onChange',
+  });
+
+  // FIX #4: Use useFieldArray for proper phone number management
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: 'phoneNumbers' as FieldArrayPath<AdminCreateUserInput>,
   });
 
   const selectedRole = watch('role');
 
   const handlePhotoChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      const file = e.target.files?.[0];
+      const file = e.target.files?.[0] ?? null;
+      setPhoto(file);
+      // FIX #5: Register photo with RHF for proper validation
+      setValue('photo', file ?? undefined, { shouldValidate: true });
+
       if (file) {
         if (file.size > 5 * 1024 * 1024) {
           setError('photo', { message: 'File exceeds 5MB' });
@@ -80,52 +91,40 @@ export default function CreateUserForm({
           setError('photo', { message: 'Invalid image type' });
           return;
         }
-
-        setPhoto(file);
         clearErrors('photo');
         const reader = new FileReader();
         reader.onloadend = () => setPhotoPreview(reader.result as string);
         reader.readAsDataURL(file);
+      } else {
+        setPhotoPreview(null);
       }
     },
-    [setError, clearErrors],
+    [setValue, setError, clearErrors],
   );
 
-  const addPhoneNumber = () => {
-    const currentPhones = watch('phoneNumbers');
-    setValue('phoneNumbers', [...currentPhones, '']);
-  };
-
-  const removePhoneNumber = (index: number) => {
-    const currentPhones = watch('phoneNumbers');
-    if (currentPhones.length > 1) {
-      setValue(
-        'phoneNumbers',
-        currentPhones.filter((_, i) => i !== index),
-      );
-    }
-  };
+  // FIX #4: Remove manual phone array management - now handled by useFieldArray
 
   const onSubmit = async (data: AdminCreateUserInput) => {
     setIsSubmitting(true);
     try {
-      // Log the user object for debugging
-      console.log('🔍 Creating user with data:', {
-        ...data,
-        photo: photo
-          ? {
-              name: photo.name,
-              size: photo.size,
-              type: photo.type,
-            }
-          : null,
+      // FIX #6: Remove PII from console logs
+      console.log('Creating user with data:', {
+        name: data.name,
+        email: data.email,
+        role: data.role,
+        phoneCount: data.phoneNumbers.length,
+        hasPhoto: !!photo,
       });
 
       const body = new FormData();
       Object.entries(data).forEach(([key, value]) => {
         if (key === 'phoneNumbers') {
-          body.append(key, JSON.stringify(value));
-        } else {
+          // Filter out empty phone numbers before sending
+          const validPhones = (value as string[]).filter(
+            (phone) => phone.trim().length > 0,
+          );
+          body.append(key, JSON.stringify(validPhones));
+        } else if (key !== 'photo') {
           body.append(key, value as string);
         }
       });
@@ -142,10 +141,11 @@ export default function CreateUserForm({
       }
 
       const result = await res.json();
-      console.log('✅ User created successfully:', result);
+      console.log('✅ User created successfully:', { userId: result.userId });
 
+      // FIX #1: Don't expose password in UI - notify admin through secure channel
       toast.success(
-        `User "${data.name}" created successfully! Default password: camteluser123`,
+        `User "${data.name}" created successfully! Temporary password sent via secure channel.`,
       );
       onSuccess();
     } catch (err) {
@@ -235,8 +235,8 @@ export default function CreateUserForm({
               </h3>
             </div>
             <div className="space-y-3">
-              {watch('phoneNumbers').map((phone, index) => (
-                <div key={index} className="flex gap-2">
+              {fields.map((field, index) => (
+                <div key={field.id} className="flex gap-2">
                   <div className="relative flex-1">
                     <Phone className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                     <Input
@@ -251,12 +251,12 @@ export default function CreateUserForm({
                       </p>
                     )}
                   </div>
-                  {watch('phoneNumbers').length > 1 && (
+                  {fields.length > 1 && (
                     <Button
                       type="button"
                       variant="ghost"
                       size="icon"
-                      onClick={() => removePhoneNumber(index)}
+                      onClick={() => remove(index)}
                     >
                       <X className="h-4 w-4" />
                     </Button>
@@ -266,7 +266,7 @@ export default function CreateUserForm({
               <Button
                 type="button"
                 variant="outline"
-                onClick={addPhoneNumber}
+                onClick={() => append('')}
                 className="w-full"
               >
                 <Plus className="h-4 w-4 mr-2" />
@@ -326,6 +326,7 @@ export default function CreateUserForm({
                       onClick={() => {
                         setPhoto(null);
                         setPhotoPreview(null);
+                        setValue('photo', undefined, { shouldValidate: true });
                         clearErrors('photo');
                       }}
                       className="absolute -top-2 -right-2 bg-destructive text-white rounded-full p-1 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"

@@ -4,6 +4,7 @@ import { db } from '@/lib/db';
 import { user, account, userPhoneNumbers } from '@/db/schema/auth-schema';
 import { hash } from 'bcryptjs';
 import { adminCreateUserSchema } from '@/lib/validations/auth';
+import { inArray } from 'drizzle-orm';
 
 export async function POST(req: NextRequest) {
   try {
@@ -14,18 +15,33 @@ export async function POST(req: NextRequest) {
 
     const formData = await req.formData();
 
-    // Extract and parse phone numbers correctly
+    // Extract and parse phone numbers correctly with proper error handling
     const phoneNumbersRaw = formData.get('phoneNumbers');
-    let parsedPhoneNumbers = [];
+    let parsedPhoneNumbers: unknown;
+
+    if (!phoneNumbersRaw || typeof phoneNumbersRaw !== 'string') {
+      return NextResponse.json(
+        { message: 'Phone numbers are required' },
+        { status: 400 },
+      );
+    }
 
     try {
-      const json = JSON.parse(phoneNumbersRaw as string);
-      // React Hook Form sends an array of objects: [{id: '...', number: '620...'}]
-      // Zod expects an array of strings: ['620...']
-      parsedPhoneNumbers = json.map((p: { number: string }) => p.number);
-    } catch (e) {
+      parsedPhoneNumbers = JSON.parse(phoneNumbersRaw);
+    } catch {
       return NextResponse.json(
-        { message: 'Invalid phone number format' },
+        { message: 'Invalid phoneNumbers format' },
+        { status: 400 },
+      );
+    }
+
+    // Validate it's an array of strings
+    if (
+      !Array.isArray(parsedPhoneNumbers) ||
+      !parsedPhoneNumbers.every((item) => typeof item === 'string')
+    ) {
+      return NextResponse.json(
+        { message: 'Phone numbers must be an array of strings' },
         { status: 400 },
       );
     }
@@ -52,13 +68,52 @@ export async function POST(req: NextRequest) {
 
     const validatedData = validationResult.data;
 
+    // FIX #2 & #3: Check phone uniqueness across both tables with single query
+    const duplicatePhones = await db
+      .select({ phoneNumber: user.phoneNumber })
+      .from(user)
+      .where(inArray(user.phoneNumber, validatedData.phoneNumbers))
+      .union(
+        db
+          .select({ phoneNumber: userPhoneNumbers.phoneNumber })
+          .from(userPhoneNumbers)
+          .where(
+            inArray(userPhoneNumbers.phoneNumber, validatedData.phoneNumbers),
+          ),
+      );
+
+    if (duplicatePhones.length > 0) {
+      return NextResponse.json(
+        {
+          message: 'Phone number(s) already in use',
+          conflicts: duplicatePhones.map((r) => r.phoneNumber),
+        },
+        { status: 409 },
+      );
+    }
+
     // DATABASE OPERATIONS
     const userId = crypto.randomUUID();
     const DEFAULT_PASSWORD = 'camteluser';
     const hashedPassword = await hash(DEFAULT_PASSWORD, 10);
 
+    // FIX #8: Handle photo upload properly
+    let photoPath: string | null = null;
+    const photoFile = formData.get('photo') as File;
+
+    if (photoFile && photoFile.size > 0) {
+      // TODO: Implement actual file storage (S3, local storage, etc.)
+      // For now, fail fast if photo upload is not properly implemented
+      return NextResponse.json(
+        { message: 'Photo upload not yet implemented' },
+        { status: 501 },
+      );
+      // When implemented:
+      // photoPath = await uploadToStorage(photoFile, userId);
+    }
+
     await db.transaction(async (tx) => {
-      // 1. Insert User
+      // 1. Insert User (without plaintext password)
       await tx.insert(user).values({
         id: userId,
         name: validatedData.name,
@@ -67,21 +122,21 @@ export async function POST(req: NextRequest) {
         phoneNumber: validatedData.phoneNumbers[0],
         idCardNumber: validatedData.idCardNumber,
         locationPlan: validatedData.locationPlan,
-        defaultPassword: DEFAULT_PASSWORD,
+        photoPath: photoPath,
+        mustChangePassword: true,
         createdAt: new Date(),
         updatedAt: new Date(),
       });
 
-      // 2. Insert Multiple Phone Numbers
-      for (let i = 0; i < validatedData.phoneNumbers.length; i++) {
-        await tx.insert(userPhoneNumbers).values({
-          id: crypto.randomUUID(),
-          userId,
-          phoneNumber: validatedData.phoneNumbers[i],
-          isPrimary: i === 0,
-          createdAt: new Date(),
-        });
-      }
+      // 2. Insert Multiple Phone Numbers (batch operation)
+      const phoneInserts = validatedData.phoneNumbers.map((phone, index) => ({
+        id: crypto.randomUUID(),
+        userId,
+        phoneNumber: phone,
+        isPrimary: index === 0,
+        createdAt: new Date(),
+      }));
+      await tx.insert(userPhoneNumbers).values(phoneInserts);
 
       // 3. Create Auth Account
       await tx.insert(account).values({
@@ -95,9 +150,26 @@ export async function POST(req: NextRequest) {
       });
     });
 
-    return NextResponse.json({ message: 'User created' }, { status: 201 });
+    // FIX #6: Log without PII
+    console.log('User created successfully', {
+      userId,
+      adminEmail: session.user.email,
+      role: validatedData.role,
+    });
+
+    return NextResponse.json(
+      {
+        message: 'User created',
+        userId,
+      },
+      { status: 201 },
+    );
   } catch (error) {
-    console.error(error);
+    // FIX #6: Don't log PII in production
+    console.error(
+      'Error creating user:',
+      error instanceof Error ? error.message : 'Unknown error',
+    );
     return NextResponse.json(
       { message: 'Internal Server Error' },
       { status: 500 },
