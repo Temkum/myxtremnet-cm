@@ -82,3 +82,30 @@ export const phonePasswordRegisterSchema = z.object({
 export type PhonePasswordRegisterInput = z.infer<
   typeof phonePasswordRegisterSchema
 >;
+
+// ---------------------------------------------------------------------------
+// Admin User Creation
+// ---------------------------------------------------------------------------
+export const adminCreateUserSchema = z.object({
+  name: z.string().min(2, 'fullNameMin2Chars').max(100, 'fullNameTooLong'),
+  email: z.string().min(1, 'emailRequired').email('emailInvalid'),
+  role: z.enum(['user', 'admin'], { message: 'roleRequired' }),
+  phoneNumbers: z.array(phoneSchema).min(1, 'atLeastOnePhoneRequired'),
+  idCardNumber: z.string().min(1, 'idCardRequired').min(3, 'idCardMin3Chars'),
+  locationPlan: z
+    .string()
+    .min(1, 'locationPlanRequired')
+    .min(10, 'locationPlanMin10Chars'),
+  photo: z
+    .instanceof(File)
+    .optional()
+    .refine(
+      (file) => !file || file.size <= 5 * 1024 * 1024, // 5MB max
+      { message: 'photoMaxSize5MB' },
+    )
+    .refine((file) => !file || file.type.startsWith('image/'), {
+      message: 'photoMustBeImage',
+    }),
+});
+
+export type AdminCreateUserInput = z.infer<typeof adminCreateUserSchema>;

@@ -516,7 +516,7 @@ export default function RegisterComponent() {
               <p className="text-sm text-destructive">{serverError}</p>
             )}
 
-            {devOtp && (
+            {/* {devOtp && (
               <div className="rounded-md border border-border bg-muted px-4 py-3 text-center">
                 <p className="text-xs text-muted-foreground mb-1">
                   {t('verificationCode')}
@@ -536,6 +536,17 @@ export default function RegisterComponent() {
                 >
                   {t('autoFillVerify')}
                 </Button>
+              </div>
+            )} */}
+
+            {devOtp && (
+              <div className="rounded-md border border-border bg-muted px-4 py-3 text-center">
+                <p className="text-xs text-muted-foreground mb-1">
+                  {t('verificationCode')}
+                </p>
+                <p className="text-2xl font-mono font-bold tracking-[0.4em]">
+                  {devOtp}
+                </p>
               </div>
             )}
 

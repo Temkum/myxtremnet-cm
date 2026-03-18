@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -23,14 +23,16 @@ import {
   Mail,
   Phone,
   Calendar,
+  Plus,
 } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
 import { allUsers } from '@/data/admin';
-import { useState } from 'react';
+import CreateUserForm from '@/components/admin/create-user-form';
 
 export default function UsersPage() {
   const { user, isAdmin } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
+  const [showCreateForm, setShowCreateForm] = useState(false);
 
   if (!isAdmin) {
     return (
@@ -59,8 +61,8 @@ export default function UsersPage() {
             Manage and monitor all user accounts
           </p>
         </div>
-        <Button>
-          <Users className="h-4 w-4 mr-2" />
+        <Button onClick={() => setShowCreateForm(true)}>
+          <Plus className="h-4 w-4 mr-2" />
           Add New User
         </Button>
       </div>
@@ -188,6 +190,21 @@ export default function UsersPage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Create User Form Modal */}
+      {showCreateForm && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <div className="bg-background rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <CreateUserForm
+              onSuccess={() => {
+                setShowCreateForm(false);
+                // In a real implementation, you'd refresh the user list here
+                window.location.reload();
+              }}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

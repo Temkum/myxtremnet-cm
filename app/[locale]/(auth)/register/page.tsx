@@ -1,12 +1,6 @@
-import RegisterComponent from './RegisterComponent';
-
-import { Footer } from '@/components/footer';
+import { RedirectType } from 'next/navigation';
+import { redirect } from 'next/navigation';
 
 export default function RegisterPage() {
-  return (
-    <>
-      <RegisterComponent />
-      <Footer />
-    </>
-  );
+  redirect('/access-denied', RedirectType.replace);
 }
