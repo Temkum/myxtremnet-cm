@@ -24,6 +24,10 @@ import {
   Phone,
   Calendar,
   Plus,
+  Wallet,
+  Database,
+  AlertTriangle,
+  XCircle,
 } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
 import { allUsers } from '@/data/admin';
@@ -93,7 +97,8 @@ export default function UsersPage() {
                   <TableHead>Service ID</TableHead>
                   <TableHead>Role</TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead>Balance</TableHead>
+                  <TableHead>Wallet</TableHead>
+                  <TableHead>Data</TableHead>
                   <TableHead>Join Date</TableHead>
                   <TableHead>Actions</TableHead>
                 </TableRow>
@@ -142,18 +147,41 @@ export default function UsersPage() {
                         </Badge>
                       </TableCell>
                       <TableCell>
-                        <Badge
-                          className={
-                            user.status === 'active'
-                              ? 'bg-green-100 text-green-700 hover:bg-green-100'
-                              : 'bg-red-100 text-red-700 hover:bg-red-100'
-                          }
-                        >
-                          {user.status}
-                        </Badge>
+                        <div className="flex items-center gap-2">
+                          {user.isBanned && (
+                            <Badge className="bg-orange-100 text-orange-700 hover:bg-orange-100">
+                              <AlertTriangle className="h-3 w-3 mr-1" />
+                              Banned
+                            </Badge>
+                          )}
+                          {user.isBlacklisted && (
+                            <Badge className="bg-red-100 text-red-700 hover:bg-red-100">
+                              <XCircle className="h-3 w-3 mr-1" />
+                              Blacklisted
+                            </Badge>
+                          )}
+                          {!user.isBanned && !user.isBlacklisted && (
+                            <Badge className="bg-green-100 text-green-700 hover:bg-green-100">
+                              Active
+                            </Badge>
+                          )}
+                        </div>
                       </TableCell>
                       <TableCell className="font-medium">
-                        {user.balance.toLocaleString()} FCFA
+                        <div className="flex items-center gap-1">
+                          <Wallet className="h-4 w-4 text-muted-foreground" />
+                          <span>
+                            {user.walletBalance?.toLocaleString() || '0'} FCFA
+                          </span>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-1">
+                          <Database className="h-4 w-4 text-muted-foreground" />
+                          <span className="font-mono">
+                            {user.dataBalance || '0 MB'}
+                          </span>
+                        </div>
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">

@@ -335,6 +335,7 @@
   "Admin": {
     "dashboard": "Dashboard",
     "users": "Users",
+    "newUser": "New User",
     "bundles": "Bundles",
     "products": "Products",
     "support": "Support",

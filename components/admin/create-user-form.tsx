@@ -62,6 +62,12 @@ export default function CreateUserForm({
       idCardNumber: '',
       locationPlan: '',
       photo: undefined,
+      walletBalance: '0.00',
+      dataBalance: '0 MB',
+      isBanned: false,
+      isBlacklisted: false,
+      bannedReason: '',
+      blacklistedReason: '',
     },
     mode: 'onChange',
   });
@@ -462,6 +468,166 @@ export default function CreateUserForm({
                     <span className="w-1 h-1 bg-destructive rounded-full"></span>
                     {errors.photo.message}
                   </p>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <Separator />
+
+          {/* Section: Subscription & Account */}
+          <div className="space-y-4 p-4 rounded-xl bg-muted/30 border border-muted-foreground/10">
+            <div className="flex items-center">
+              <h3 className="text-sm font-bold uppercase tracking-tight text-muted-foreground">
+                Subscription & Account
+              </h3>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label
+                  htmlFor="walletBalance"
+                  className="flex items-center gap-1"
+                >
+                  Wallet Balance (XAF)
+                </Label>
+                <Input
+                  {...register('walletBalance')}
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  placeholder="0.00"
+                  className={
+                    errors.walletBalance
+                      ? 'border-destructive focus:border-destructive'
+                      : ''
+                  }
+                />
+                {errors.walletBalance && (
+                  <p className="text-xs text-destructive flex items-center gap-1">
+                    <span className="w-1 h-1 bg-destructive rounded-full"></span>
+                    {errors.walletBalance.message}
+                  </p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label
+                  htmlFor="dataBalance"
+                  className="flex items-center gap-1"
+                >
+                  Data Balance
+                </Label>
+                <Input
+                  {...register('dataBalance')}
+                  placeholder="0 MB"
+                  className={
+                    errors.dataBalance
+                      ? 'border-destructive focus:border-destructive'
+                      : ''
+                  }
+                />
+                {errors.dataBalance && (
+                  <p className="text-xs text-destructive flex items-center gap-1">
+                    <span className="w-1 h-1 bg-destructive rounded-full"></span>
+                    {errors.dataBalance.message}
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Section: User Status */}
+          <div className="space-y-4 p-4 rounded-xl bg-muted/30 border border-muted-foreground/10">
+            <div className="flex items-center">
+              <h3 className="text-sm font-bold uppercase tracking-tight text-muted-foreground">
+                User Status
+              </h3>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    id="isBanned"
+                    {...register('isBanned')}
+                    className="rounded border-gray-300"
+                  />
+                  <Label htmlFor="isBanned" className="text-sm font-medium">
+                    Banned / Suspended
+                  </Label>
+                </div>
+                {watch('isBanned') && (
+                  <div className="space-y-2">
+                    <Label
+                      htmlFor="bannedReason"
+                      className="flex items-center gap-1"
+                    >
+                      Banned Reason
+                      <span className="text-destructive">*</span>
+                    </Label>
+                    <Textarea
+                      {...register('bannedReason')}
+                      rows={2}
+                      placeholder="Reason for banning this user..."
+                      className={`resize-none ${
+                        errors.bannedReason
+                          ? 'border-destructive focus:border-destructive'
+                          : ''
+                      }`}
+                    />
+                    {errors.bannedReason && (
+                      <p className="text-xs text-destructive flex items-center gap-1">
+                        <span className="w-1 h-1 bg-destructive rounded-full"></span>
+                        {errors.bannedReason.message}
+                      </p>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              <div className="space-y-4">
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    id="isBlacklisted"
+                    {...register('isBlacklisted')}
+                    className="rounded border-gray-300"
+                  />
+                  <Label
+                    htmlFor="isBlacklisted"
+                    className="text-sm font-medium"
+                  >
+                    Blacklisted / Permanently Blocked
+                  </Label>
+                </div>
+                {watch('isBlacklisted') && (
+                  <div className="space-y-2">
+                    <Label
+                      htmlFor="blacklistedReason"
+                      className="flex items-center gap-1"
+                    >
+                      Blacklisted Reason
+                      <span className="text-destructive">*</span>
+                    </Label>
+                    <Textarea
+                      {...register('blacklistedReason')}
+                      rows={2}
+                      placeholder="Reason for blacklisting this user..."
+                      className={`resize-none ${
+                        errors.blacklistedReason
+                          ? 'border-destructive focus:border-destructive'
+                          : ''
+                      }`}
+                    />
+                    {errors.blacklistedReason && (
+                      <p className="text-xs text-destructive flex items-center gap-1">
+                        <span className="w-1 h-1 bg-destructive rounded-full"></span>
+                        {errors.blacklistedReason.message}
+                      </p>
+                    )}
+                  </div>
                 )}
               </div>
             </div>

@@ -54,6 +54,13 @@ export async function POST(req: NextRequest) {
       locationPlan: formData.get('locationPlan'),
       phoneNumbers: parsedPhoneNumbers, // Now matches z.array(z.string())
       photo: formData.get('photo') || undefined,
+      // NEW: Handle subscription and status fields
+      walletBalance: formData.get('walletBalance'),
+      dataBalance: formData.get('dataBalance'),
+      isBanned: formData.get('isBanned') === 'true',
+      isBlacklisted: formData.get('isBlacklisted') === 'true',
+      bannedReason: formData.get('bannedReason'),
+      blacklistedReason: formData.get('blacklistedReason'),
     });
 
     if (!validationResult.success) {
@@ -127,6 +134,13 @@ export async function POST(req: NextRequest) {
         mustChangePassword: true,
         createdAt: new Date(),
         updatedAt: new Date(),
+        // NEW: Include subscription and status fields
+        walletBalance: validatedData.walletBalance || '0.00',
+        dataBalance: validatedData.dataBalance || '0 MB',
+        isBanned: validatedData.isBanned || false,
+        isBlacklisted: validatedData.isBlacklisted || false,
+        bannedReason: validatedData.bannedReason || null,
+        blacklistedReason: validatedData.blacklistedReason || null,
       });
 
       // 2. Insert Multiple Phone Numbers (batch operation)

@@ -337,6 +337,7 @@
   "Admin": {
     "dashboard": "Tableau de bord",
     "users": "Utilisateurs",
+    "newUser": "Nouvel Utilisateur",
     "bundles": "Forfaits",
     "products": "Produits",
     "support": "Support",

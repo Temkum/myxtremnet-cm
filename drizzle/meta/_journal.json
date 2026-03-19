@@ -36,6 +36,13 @@
       "when": 1773837313597,
       "tag": "0004_shallow_vermin",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1773926904973,
+      "tag": "0005_youthful_stick",
+      "breakpoints": true
     }
   ]
 }

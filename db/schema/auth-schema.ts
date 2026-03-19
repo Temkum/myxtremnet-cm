@@ -10,6 +10,7 @@
 
 import {
   boolean,
+  decimal,
   integer,
   pgTable,
   text,
@@ -44,6 +45,16 @@ export const user = pgTable('user', {
   locationPlan: text('location_plan'),
   photoPath: text('photo_path'),
   mustChangePassword: boolean('must_change_password').notNull().default(true),
+
+  // NEW: Subscription and status fields
+  walletBalance: decimal('wallet_balance', { precision: 10, scale: 2 })
+    .notNull()
+    .default('0.00'),
+  dataBalance: text('data_balance').notNull().default('0 MB'),
+  isBanned: boolean('is_banned').notNull().default(false),
+  isBlacklisted: boolean('is_blacklisted').notNull().default(false),
+  bannedReason: text('banned_reason'),
+  blacklistedReason: text('blacklisted_reason'),
 });
 
 // ---------------------------------------------------------------------------

@@ -13,6 +13,7 @@ import {
   Settings,
   Church,
   LogOut,
+  User,
 } from 'lucide-react';
 import { Button } from '../ui/button';
 import { useLocale } from 'next-intl';
@@ -29,6 +30,11 @@ const getNavigationItems = (t: any) => [
     title: t('userManagement'),
     href: '/admin/users',
     icon: Users,
+  },
+  {
+    title: t('newUser'),
+    href: '/admin/users/new',
+    icon: User,
   },
   {
     title: t('bundleManagement'),
