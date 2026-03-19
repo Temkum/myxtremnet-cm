@@ -29,7 +29,6 @@ import {
   Loader2,
 } from 'lucide-react';
 import { toast } from 'sonner';
-import { Badge } from '../ui/badge';
 import {
   adminCreateUserSchema,
   AdminCreateUserInput,
@@ -208,7 +207,7 @@ export default function CreateUserForm({
   };
 
   return (
-    <Card className="w-full max-w-2xl mx-auto border-none shadow-none sm:border sm:shadow-sm">
+    <Card className="w-full max-w-1xl mx-auto border-none shadow-none sm:border sm:shadow-sm">
       <CardHeader className="pb-4">
         <CardTitle className="flex items-center gap-2 text-xl">
           <User className="h-5 w-5 text-primary" />
@@ -219,13 +218,10 @@ export default function CreateUserForm({
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
           {/* Section: Profile Identity */}
           <div className="space-y-4 p-4 rounded-xl bg-muted/30 border border-muted-foreground/10">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center">
               <h3 className="text-sm font-bold uppercase tracking-tight text-muted-foreground">
                 Basic Profile
               </h3>
-              <Badge variant="outline" className="font-mono">
-                {selectedRole}
-              </Badge>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -316,7 +312,7 @@ export default function CreateUserForm({
             <div className="flex items-center gap-2">
               <Phone className="h-4 w-4 text-muted-foreground" />
               <h3 className="text-sm font-bold uppercase tracking-tight text-muted-foreground">
-                Phone Connectivity
+                Phone
                 <span className="text-destructive ml-1">*</span>
               </h3>
             </div>
