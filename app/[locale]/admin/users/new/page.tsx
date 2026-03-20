@@ -51,30 +51,15 @@ export default function NewUserPage() {
           <ArrowLeft className="h-4 w-4" />
           Back to Users
         </Button>
-        <div>
-          <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
-            <User className="h-6 w-6 text-primary" />
-            Create New User
-          </h1>
-          <p className="text-muted-foreground">
-            Add a new user to the system with full account details
-          </p>
-        </div>
       </div>
 
       {/* Form Container */}
-      <Card className="border shadow-lg">
-        <CardHeader className="bg-muted/30">
-          <CardTitle className="flex items-center gap-2">
-            <User className="h-5 w-5 text-primary" />
-            User Registration Form
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="p-6">
-          <CreateUserForm onSuccess={handleSuccess} />
+      <CreateUserForm onSuccess={handleSuccess} />
 
+      <Card className="border shadow-lg mt-3">
+        <CardContent className="">
           {/* Page-level Actions */}
-          <div className="flex items-center justify-between mt-8 pt-6 border-t">
+          <div className="flex items-center justify-between pt-6">
             <div className="text-sm text-muted-foreground">
               <p className="font-medium">Quick Tips:</p>
               <ul className="mt-2 space-y-1">
