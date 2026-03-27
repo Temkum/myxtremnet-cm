@@ -149,7 +149,7 @@ export default function ServiceListing() {
               <CardTitle className="pt-2">{offer.name}</CardTitle>
             </CardHeader>
             <CardFooter>
-              <Link href={`/dashboard/bundles/${offer.id}`}>
+              <Link href={`/users/bundles/${offer.id}`}>
                 <Button className="w-full group-hover:bg-primary">
                   {t('subscribe')}
                 </Button>

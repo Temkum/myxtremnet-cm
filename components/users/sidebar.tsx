@@ -24,45 +24,45 @@ import {
 import { Button } from '../ui/button';
 
 const offerLinks = [
-  { name: 'LTE SERVICE', href: '/dashboard/services/lte', icon: Radio },
+  { name: 'LTE SERVICE', href: '/users/services/lte', icon: Radio },
   {
     name: 'WTTx Outdoor',
-    href: '/dashboard/services/wttx-outdoor',
+    href: '/users/services/wttx-outdoor',
     icon: Satellite,
   },
   {
     name: 'WTTx Indoor',
-    href: '/dashboard/services/wttx-indoor',
+    href: '/users/services/wttx-indoor',
     icon: Router,
   },
-  { name: 'UL Service', href: '/dashboard/services/ul', icon: Wifi },
+  { name: 'UL Service', href: '/users/services/ul', icon: Wifi },
 ];
 
 const packageLinks = [
-  { name: 'LTE SERVICE', href: '/dashboard/packages/lte', icon: Radio },
+  { name: 'LTE SERVICE', href: '/users/packages/lte', icon: Radio },
   {
     name: 'WTTx Outdoor',
-    href: '/dashboard/packages/wttx-outdoor',
+    href: '/users/packages/wttx-outdoor',
     icon: Satellite,
   },
   {
     name: 'WTTx Indoor',
-    href: '/dashboard/packages/wttx-indoor',
+    href: '/users/packages/wttx-indoor',
     icon: Router,
   },
-  { name: 'UL Service', href: '/dashboard/packages/ul', icon: Wifi },
+  { name: 'UL Service', href: '/users/packages/ul', icon: Wifi },
 ];
 
 const serviceLinks = [
-  { name: 'Account Information', href: '/dashboard/account', icon: CreditCard },
-  { name: 'Order History', href: '/dashboard/orders', icon: History },
-  { name: 'Recharge', href: '/dashboard/recharge', icon: RefreshCw },
+  { name: 'Account Information', href: '/users/account', icon: CreditCard },
+  { name: 'Order History', href: '/users/orders', icon: History },
+  { name: 'Recharge', href: '/users/recharge', icon: RefreshCw },
 ];
 
 const supportLinks = [
-  { name: 'FAQ', href: '/dashboard/faq', icon: HelpCircle },
-  { name: 'Feedback', href: '/dashboard/support', icon: MessageSquare },
-  { name: 'Contact Us', href: '/dashboard/contact', icon: Phone },
+  { name: 'FAQ', href: '/users/faq', icon: HelpCircle },
+  { name: 'Feedback', href: '/users/support', icon: MessageSquare },
+  { name: 'Contact Us', href: '/users/contact', icon: Phone },
 ];
 
 interface SidebarSectionProps {
@@ -151,7 +151,7 @@ export function QuickFAQ() {
         <div className="flex items-center justify-between">
           <CardTitle className="text-sm font-semibold">FAQ</CardTitle>
           <Link
-            href="/dashboard/faq"
+            href="/users/faq"
             className="text-xs text-primary hover:underline"
           >
             <Button variant="ghost" size="sm">
@@ -171,7 +171,7 @@ export function QuickFAQ() {
                 {index + 1}
               </Badge>
               <Link
-                href="/dashboard/faq"
+                href="/users/faq"
                 className="text-muted-foreground hover:text-primary"
               >
                 {faq}

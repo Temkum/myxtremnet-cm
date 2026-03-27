@@ -183,13 +183,13 @@ export function UserHeader() {
                 </div>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
-                  <Link href="/dashboard/account">
+                  <Link href="/users/account">
                     <User className="mr-2 h-4 w-4" />
                     {t('User.profile')}
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link href="/dashboard/settings">
+                  <Link href="/users/settings">
                     <Key className="mr-2 h-4 w-4" />
                     {t('User.changePassword')}
                   </Link>
@@ -239,7 +239,7 @@ export function UserHeader() {
                 <nav className="flex flex-col gap-1">
                   {navigation.map((item) => {
                     const isActive =
-                      item.href === '/dashboard'
+                      item.href === '/users'
                         ? nextIntlPathname === item.href
                         : nextIntlPathname === item.href ||
                           nextIntlPathname.startsWith(item.href + '/');

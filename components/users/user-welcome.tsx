@@ -22,7 +22,7 @@ export function UserWelcome() {
             <p className="text-sm opacity-80">{t('welcome')},</p>
             <h2 className="text-lg font-bold">{user?.name || 'User'}</h2>
             <p className="text-sm opacity-80 mt-1">
-              {t('service')}: {user?.phoneNumber || '620000000'}
+              {t('service')}: {user?.phoneNumber}
             </p>
           </div>
         </div>
@@ -32,7 +32,7 @@ export function UserWelcome() {
             className="w-full justify-start bg-primary-foreground/20 hover:bg-primary-foreground/30 text-primary-foreground"
             asChild
           >
-            <Link href="/dashboard/account">
+            <Link href="/users/account">
               <User className="mr-2 h-4 w-4" />
               {t('profile')}
             </Link>
