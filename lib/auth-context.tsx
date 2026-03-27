@@ -43,7 +43,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // These fields come from the phoneNumber plugin & your custom schema
         phoneNumber: (session.user as any).phoneNumber ?? null,
         serviceId: (session.user as any).serviceId ?? null,
-        role: (session.user as any).role ?? 'user', // Default to 'user', admin would come from backend
+        role: (session.user as any).role ?? 'user',
       }
     : null;
 

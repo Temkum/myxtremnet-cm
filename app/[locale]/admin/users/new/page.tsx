@@ -6,28 +6,11 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, Save, User } from 'lucide-react';
 import { toast } from 'sonner';
-import { useAuth } from '@/lib/auth-context';
 import CreateUserForm from '@/components/admin/create-user-form';
 
 export default function NewUserPage() {
-  const { user, isAdmin } = useAuth();
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  if (!isAdmin) {
-    return (
-      <div className="container mx-auto px-4 py-6">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-foreground mb-4">
-            Access Restricted
-          </h1>
-          <p className="text-muted-foreground">
-            You don't have permission to create users.
-          </p>
-        </div>
-      </div>
-    );
-  }
 
   const handleSuccess = () => {
     toast.success('User created successfully!');
