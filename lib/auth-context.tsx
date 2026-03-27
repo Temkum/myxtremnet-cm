@@ -21,6 +21,7 @@ interface AuthContextType {
     phoneNumber: string | null | undefined;
     serviceId: string | null | undefined;
     role: 'user' | 'admin';
+    email: string | null | undefined;
   } | null;
   session: ReturnType<typeof useSession>['data'];
   isLoading: boolean;
@@ -44,6 +45,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         phoneNumber: (session.user as any).phoneNumber ?? null,
         serviceId: (session.user as any).serviceId ?? null,
         role: (session.user as any).role ?? 'user',
+        email: session.user.email ?? null,
       }
     : null;
 

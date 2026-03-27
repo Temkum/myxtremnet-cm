@@ -116,6 +116,13 @@ export function AdminSidebar() {
               <Church className="h-4 w-4" />
               <span>{t('home')}</span>
             </Link>
+            <Link
+              href="/admin/profile"
+              className="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+            >
+              <User className="h-4 w-4" />
+              <span>{t('profile')}</span>
+            </Link>
           </div>
         </div>
       </div>
