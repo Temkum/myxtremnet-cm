@@ -7,7 +7,6 @@ import {
   PromoBanner,
   ServiceHighlights,
 } from '@/components/users/promo-banner';
-import { QuickFAQ } from '@/components/users/sidebar';
 import {
   Radio,
   Satellite,
@@ -221,9 +220,6 @@ export default function DashboardPage() {
             <div className="lg:hidden">
               <UserWelcome />
             </div>
-
-            {/* FAQ Card */}
-            <QuickFAQ />
 
             {/* Support Links */}
             <Card>
