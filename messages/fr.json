@@ -116,8 +116,9 @@
     "fullNameTooLong": "Le nom est trop long"
   },
   "Language": {
-    "english": "English",
-    "french": "Francais"
+    "language": "Langue",
+    "english": "Anglais",
+    "french": "Français"
   },
   "Dashboard": {
     "welcome": "Bienvenue",

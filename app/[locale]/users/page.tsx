@@ -109,21 +109,23 @@ export default function DashboardPage() {
         </div>
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
           {quickActions.map((action) => (
             <Card
               key={action.name}
-              className="hover:shadow-md transition-shadow"
+              className="hover:shadow-md transition-shadow group overflow-hidden"
             >
               <Link href={action.href}>
-                <CardContent className="p-4">
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-                      <action.icon className="h-5 w-5 text-primary" />
+                <CardContent className="p-3 md:p-4">
+                  <div className="flex flex-col md:flex-row items-center md:items-start lg:items-center gap-2 md:gap-3 mb-1 md:mb-2">
+                    <div className="h-8 w-8 md:h-10 md:w-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                      <action.icon className="h-4 w-4 md:h-5 md:w-5 text-primary" />
                     </div>
-                    <span className="font-semibold">{action.name}</span>
+                    <span className="font-semibold text-xs md:text-sm lg:text-base text-center md:text-left leading-tight">
+                      {action.name}
+                    </span>
                   </div>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-[10px] md:text-xs text-muted-foreground hidden md:block">
                     {action.description}
                   </p>
                 </CardContent>

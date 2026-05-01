@@ -101,7 +101,17 @@ export async function POST(req: NextRequest) {
 
     // DATABASE OPERATIONS
     const userId = crypto.randomUUID();
-    const DEFAULT_PASSWORD = 'camteluser';
+    // Generate a secure random password (16 characters with mixed case, numbers, and symbols)
+    const generateSecurePassword = () => {
+      const chars =
+        'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*';
+      let password = '';
+      for (let i = 0; i < 16; i++) {
+        password += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      return password;
+    };
+    const DEFAULT_PASSWORD = generateSecurePassword();
     const hashedPassword = await hash(DEFAULT_PASSWORD, 10);
 
     // FIX #8: Handle photo upload properly
@@ -176,6 +186,7 @@ export async function POST(req: NextRequest) {
       {
         message: 'User created',
         userId,
+        temporaryPassword: DEFAULT_PASSWORD, // Include for admin to give to user
       },
       { status: 201 },
     );

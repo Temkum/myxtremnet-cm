@@ -116,6 +116,7 @@
     "fullNameTooLong": "Name is too long"
   },
   "Language": {
+    "language": "Language",
     "english": "English",
     "french": "Francais"
   },

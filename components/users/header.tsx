@@ -262,22 +262,31 @@ export function UserHeader() {
                     );
                   })}
                 </nav>
-                <div className="mt-auto pt-4 border-t border-border">
-                  <div className="flex items-center gap-2 px-3 text-sm">
+                <div className="mt-auto pt-6 border-t border-border">
+                  <p className="text-xs font-semibold uppercase text-muted-foreground mb-3 px-3">
+                    {t('Language.language')}
+                  </p>
+                  <div className="flex items-center gap-4 px-3">
                     <button
-                      onClick={() => handleLanguageChange('fr')}
-                      className={
-                        locale === 'fr'
-                          ? 'text-blue-500 hover:text-primary'
-                          : ''
-                      }
+                      onClick={() => handleLanguageChange('en')}
+                      className={cn(
+                        'text-sm font-medium transition-colors',
+                        locale === 'en'
+                          ? 'text-primary'
+                          : 'text-muted-foreground hover:text-foreground',
+                      )}
                     >
                       {t('Language.english')}
                     </button>
-                    <span>|</span>
+                    <div className="h-4 w-[1px] bg-border" />
                     <button
                       onClick={() => handleLanguageChange('fr')}
-                      className="hover:text-primary"
+                      className={cn(
+                        'text-sm font-medium transition-colors',
+                        locale === 'fr'
+                          ? 'text-primary'
+                          : 'text-muted-foreground hover:text-foreground',
+                      )}
                     >
                       {t('Language.french')}
                     </button>

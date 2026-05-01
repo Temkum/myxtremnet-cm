@@ -38,6 +38,14 @@ export default async function proxy(request: NextRequest) {
     return response;
   }
 
+  // Admin role verification - protect /admin routes
+  if (pathname.startsWith('/admin') && isAuthenticated) {
+    const userRole = (session?.user as any)?.role;
+    if (userRole !== 'admin') {
+      return NextResponse.redirect(new URL('/access-denied', request.url));
+    }
+  }
+
   // user tries to access login/register but is already authenticated
   if (AUTH_ONLY.some((p) => pathname.startsWith(p)) && isAuthenticated) {
     return NextResponse.redirect(new URL('/users', request.url));

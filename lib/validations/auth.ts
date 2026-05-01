@@ -15,29 +15,23 @@
 
 import { z } from 'zod';
 
-// ---------------------------------------------------------------------------
-// Phone — Camtel service format: must start with 620 and be exactly 9 digits.
+// Phone — Cameroon mobile format: must start with 6 and be exactly 9 digits.
 // Defined as a standalone schema so it can be reused and tested in isolation.
-// ---------------------------------------------------------------------------
 export const phoneSchema = z
   .string()
   .min(1, 'phoneIsRequired')
-  .regex(/^620\d{6}$/, {
-    message: 'Phone must be 9 digits starting with 620',
+  .regex(/^6\d{8}$/, {
+    message: 'Phone must be 9 digits starting with 6',
   });
 
-// ---------------------------------------------------------------------------
 // Login
-// ---------------------------------------------------------------------------
 export const loginSchema = z.object({
   phoneNumber: phoneSchema,
 });
 
 export type LoginInput = z.infer<typeof loginSchema>;
 
-// ---------------------------------------------------------------------------
 // OTP — validated separately from the phone step
-// ---------------------------------------------------------------------------
 export const otpSchema = z.object({
   phoneNumber: phoneSchema,
   code: z
@@ -49,9 +43,7 @@ export const otpSchema = z.object({
 
 export type OtpInput = z.infer<typeof otpSchema>;
 
-// ---------------------------------------------------------------------------
 // Phone + Password Login
-// ---------------------------------------------------------------------------
 export const phonePasswordSchema = z.object({
   phoneNumber: phoneSchema,
   password: z.string().min(1, 'passwordIsRequired').min(6, 'passwordMin6Chars'),
@@ -59,9 +51,7 @@ export const phonePasswordSchema = z.object({
 
 export type PhonePasswordInput = z.infer<typeof phonePasswordSchema>;
 
-// ---------------------------------------------------------------------------
 // Registration
-// ---------------------------------------------------------------------------
 const registerShape = {
   phoneNumber: phoneSchema,
   // Zod v4: z.string().email() still works; z.email() also valid standalone
@@ -73,9 +63,7 @@ export const registerSchema = z.object(registerShape);
 
 export type RegisterInput = z.infer<typeof registerSchema>;
 
-// ---------------------------------------------------------------------------
 // Phone + Password Registration
-// ---------------------------------------------------------------------------
 export const phonePasswordRegisterSchema = z.object({
   ...registerShape,
   password: z.string().min(1, 'passwordIsRequired').min(6, 'passwordMin6Chars'),
@@ -85,9 +73,7 @@ export type PhonePasswordRegisterInput = z.infer<
   typeof phonePasswordRegisterSchema
 >;
 
-// ---------------------------------------------------------------------------
 // Admin User Creation
-// ---------------------------------------------------------------------------
 export const adminCreateUserSchema = z
   .object({
     name: z.string().min(2, 'fullNameMin2Chars').max(100, 'fullNameTooLong'),
