@@ -151,7 +151,8 @@ export function DashboardSidebar() {
         >
           <TooltipProvider>
             {navLinks.map((item) => {
-              const isActive = pathname === item.href;
+              const isActive =
+                pathname === item.href || pathname.endsWith(item.href);
               const Icon = item.icon;
 
               // For collapsed state on desktop, wrap in tooltip
@@ -198,10 +199,6 @@ export function DashboardSidebar() {
                     <Icon className="h-4 w-4" aria-hidden="true" />
                     <span>{item.name}</span>
                   </div>
-                  <ChevronRight
-                    className="h-4 w-4 text-muted-foreground"
-                    aria-hidden="true"
-                  />
                 </Link>
               );
             })}
