@@ -15,27 +15,23 @@
 
 import { z } from 'zod';
 
-// ---------------------------------------------------------------------------
-// Phone — E.164 format. Cameroon: +237 followed by 9 digits.
+// Phone — Cameroon mobile format: must start with 6 and be exactly 9 digits.
 // Defined as a standalone schema so it can be reused and tested in isolation.
-// ---------------------------------------------------------------------------
 export const phoneSchema = z
   .string()
   .min(1, 'phoneIsRequired')
-  .regex(/^\d{9}$/, { message: 'phoneMustBe9Digits' });
+  .regex(/^6\d{8}$/, {
+    message: 'Phone must be 9 digits starting with 6',
+  });
 
-// ---------------------------------------------------------------------------
 // Login
-// ---------------------------------------------------------------------------
 export const loginSchema = z.object({
   phoneNumber: phoneSchema,
 });
 
 export type LoginInput = z.infer<typeof loginSchema>;
 
-// ---------------------------------------------------------------------------
 // OTP — validated separately from the phone step
-// ---------------------------------------------------------------------------
 export const otpSchema = z.object({
   phoneNumber: phoneSchema,
   code: z
@@ -47,9 +43,7 @@ export const otpSchema = z.object({
 
 export type OtpInput = z.infer<typeof otpSchema>;
 
-// ---------------------------------------------------------------------------
 // Phone + Password Login
-// ---------------------------------------------------------------------------
 export const phonePasswordSchema = z.object({
   phoneNumber: phoneSchema,
   password: z.string().min(1, 'passwordIsRequired').min(6, 'passwordMin6Chars'),
@@ -57,9 +51,7 @@ export const phonePasswordSchema = z.object({
 
 export type PhonePasswordInput = z.infer<typeof phonePasswordSchema>;
 
-// ---------------------------------------------------------------------------
 // Registration
-// ---------------------------------------------------------------------------
 const registerShape = {
   phoneNumber: phoneSchema,
   // Zod v4: z.string().email() still works; z.email() also valid standalone
@@ -71,9 +63,7 @@ export const registerSchema = z.object(registerShape);
 
 export type RegisterInput = z.infer<typeof registerSchema>;
 
-// ---------------------------------------------------------------------------
 // Phone + Password Registration
-// ---------------------------------------------------------------------------
 export const phonePasswordRegisterSchema = z.object({
   ...registerShape,
   password: z.string().min(1, 'passwordIsRequired').min(6, 'passwordMin6Chars'),
@@ -82,3 +72,54 @@ export const phonePasswordRegisterSchema = z.object({
 export type PhonePasswordRegisterInput = z.infer<
   typeof phonePasswordRegisterSchema
 >;
+
+// Admin User Creation
+export const adminCreateUserSchema = z
+  .object({
+    name: z.string().min(2, 'fullNameMin2Chars').max(100, 'fullNameTooLong'),
+    email: z.string().min(1, 'emailRequired').email('emailInvalid'),
+    role: z.enum(['user', 'admin'], { message: 'roleRequired' }),
+    phoneNumbers: z
+      .array(z.string().min(1, 'phoneIsRequired'))
+      .min(1, 'atLeastOnePhoneRequired')
+      .transform((phones) => phones.filter((phone) => phone.trim().length > 0))
+      .pipe(z.array(phoneSchema).min(1, 'atLeastOneValidPhoneRequired')),
+    idCardNumber: z.string().min(1, 'idCardRequired').min(3, 'idCardMin3Chars'),
+    locationPlan: z
+      .string()
+      .min(1, 'locationPlanRequired')
+      .min(10, 'locationPlanMin10Chars'),
+    photo: z
+      .instanceof(File)
+      .optional()
+      .refine(
+        (file) => !file || file.size <= 5 * 1024 * 1024, // 5MB max
+        { message: 'photoMaxSize5MB' },
+      )
+      .refine((file) => !file || file.type.startsWith('image/'), {
+        message: 'photoMustBeImage',
+      }),
+    walletBalance: z.string().optional(),
+    dataBalance: z.string().optional(),
+    isBanned: z.boolean().optional(),
+    isBlacklisted: z.boolean().optional(),
+    bannedReason: z.string().optional(),
+    blacklistedReason: z.string().optional(),
+  })
+  .refine(
+    (data) => {
+      if (data.isBanned && !data.bannedReason?.trim()) {
+        return false;
+      }
+      if (data.isBlacklisted && !data.blacklistedReason?.trim()) {
+        return false;
+      }
+      return true;
+    },
+    {
+      message: 'Reason required when banning or blacklisting user',
+      path: ['bannedReason'],
+    },
+  );
+
+export type AdminCreateUserInput = z.infer<typeof adminCreateUserSchema>;

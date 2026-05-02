@@ -14,7 +14,7 @@ export function Footer() {
           {/* logo */}
           <div className="flex items-center gap-3">
             <img
-              src="/camtel.png"
+              src="/camtel.webp"
               alt="Camtel"
               className="h-15 w-15 object-contain"
             />

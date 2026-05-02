@@ -22,8 +22,8 @@ export async function generateMetadata({
     title: 'Camtel - Customer Portal',
     description: t('Hero.subtitle'),
     icons: {
-      icon: '/camtel.png',
-      apple: '/camtel.png',
+      icon: '/camtel.webp',
+      apple: '/camtel.webp',
     },
   };
 }

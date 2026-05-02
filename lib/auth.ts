@@ -22,6 +22,7 @@ import { db } from '@/lib/db';
 import * as schema from '@/db/schema/auth-schema';
 import { verification } from '@/db/schema/auth-schema';
 import { eq, and, lt } from 'drizzle-orm';
+import '@/lib/env-validation';
 
 const OTP_TTL_MS = 10 * 60 * 1000; // must match expiresIn below
 
@@ -154,26 +155,63 @@ export const auth = betterAuth({
   // Session
   // -------------------------------------------------------------------------
   session: {
-    expiresIn: 60 * 60 * 24 * 7, // 7 days
+    expiresIn: 60 * 60 * 24 * 3, // 3 days base expiry
     updateAge: 60 * 60 * 24, // refresh cookie if older than 1 day
     cookieCache: {
       enabled: true,
       maxAge: 60 * 5, // 5-min client-side cache to reduce DB reads
     },
+    // Enhanced cookie security
+    cookieAttributes: {
+      secure: process.env.NODE_ENV === 'production', // HTTPS only in production
+      sameSite: 'lax', // CSRF protection
+      httpOnly: true, // Prevent XSS attacks
+    },
+  },
+
+  // -------------------------------------------------------------------------
+  // Session Hooks - Extend admin sessions to 7 days
+  // -------------------------------------------------------------------------
+  sessionHooks: {
+    after: [
+      {
+        matcher(context: any) {
+          // Extend session for admin users to 7 days
+          return context.user?.role === 'admin';
+        },
+        handler: async ({ session }: any) => {
+          if (session) {
+            // Update session expiresAt to 7 days from now
+            const sevenDaysFromNow = new Date(
+              Date.now() + 60 * 60 * 24 * 7 * 1000,
+            );
+            await db
+              .update(schema.session)
+              .set({ expiresAt: sevenDaysFromNow })
+              .where(eq(schema.session.id, session.id));
+          }
+        },
+      },
+    ],
   },
 
   // -------------------------------------------------------------------------
   // Rate limiting
   // -------------------------------------------------------------------------
   rateLimit: {
-    enabled: process.env.NODE_ENV === 'production', // Only enable in production
+    enabled: true, // Enable in all environments for security
     window: 300,
     max: 10,
     customRules: {
+      // Session polling - allow frequent checks (useSession hook polls this)
+      '/get-session': {
+        window: 60, // 1 minute window
+        max: process.env.NODE_ENV === 'production' ? 60 : 120, // 1-2 per second
+      },
       // Max 5 OTP sends per minute in development, 3 per 5 minutes in production
       '/phone-number/send-otp': {
         window: process.env.NODE_ENV === 'production' ? 300 : 60,
-        max: process.env.NODE_ENV === 'production' ? 5 : 5,
+        max: process.env.NODE_ENV === 'production' ? 3 : 5,
       },
       // Max 5 verify attempts per 2 minutes
       '/phone-number/verify': {

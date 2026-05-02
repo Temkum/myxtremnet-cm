@@ -73,13 +73,13 @@ export function AuthButton() {
         <DropdownMenuSeparator />
 
         <DropdownMenuItem asChild>
-          <a href="/dashboard/account" className="flex items-center">
+          <a href="/users/account" className="flex items-center">
             <User className="mr-2 h-4 w-4" />
             <span>{t('Auth.account')}</span>
           </a>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <a href="/dashboard/settings" className="flex items-center">
+          <a href="/users/settings" className="flex items-center">
             <Settings className="mr-2 h-4 w-4" />
             <span>{t('Auth.settings')}</span>
           </a>

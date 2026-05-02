@@ -10,6 +10,7 @@
 
 import {
   boolean,
+  decimal,
   integer,
   pgTable,
   text,
@@ -38,6 +39,35 @@ export const user = pgTable('user', {
 
   // user role for admin access control
   role: text('role').notNull().default('user'),
+
+  // Additional fields for admin-created users
+  idCardNumber: text('id_card_number').unique(),
+  locationPlan: text('location_plan'),
+  photoPath: text('photo_path'),
+  mustChangePassword: boolean('must_change_password').notNull().default(true),
+
+  // NEW: Subscription and status fields
+  walletBalance: decimal('wallet_balance', { precision: 10, scale: 2 })
+    .notNull()
+    .default('0.00'),
+  dataBalance: text('data_balance').notNull().default('0 MB'),
+  isBanned: boolean('is_banned').notNull().default(false),
+  isBlacklisted: boolean('is_blacklisted').notNull().default(false),
+  bannedReason: text('banned_reason'),
+  blacklistedReason: text('blacklisted_reason'),
+});
+
+// ---------------------------------------------------------------------------
+// user_phone_numbers - for multiple phone numbers support
+// ---------------------------------------------------------------------------
+export const userPhoneNumbers = pgTable('user_phone_numbers', {
+  id: text('id').primaryKey(),
+  userId: text('user_id')
+    .notNull()
+    .references(() => user.id, { onDelete: 'cascade' }),
+  phoneNumber: text('phone_number').notNull(),
+  isPrimary: boolean('is_primary').notNull().default(false),
+  createdAt: timestamp('created_at').notNull(),
 });
 
 // ---------------------------------------------------------------------------
@@ -95,6 +125,7 @@ export const verification = pgTable('verification', {
 export const userRelations = relations(user, ({ many }) => ({
   sessions: many(session),
   accounts: many(account),
+  phoneNumbers: many(userPhoneNumbers),
 }));
 
 export const sessionRelations = relations(session, ({ one }) => ({
@@ -104,3 +135,13 @@ export const sessionRelations = relations(session, ({ one }) => ({
 export const accountRelations = relations(account, ({ one }) => ({
   user: one(user, { fields: [account.userId], references: [user.id] }),
 }));
+
+export const userPhoneNumbersRelations = relations(
+  userPhoneNumbers,
+  ({ one }) => ({
+    user: one(user, {
+      fields: [userPhoneNumbers.userId],
+      references: [user.id],
+    }),
+  }),
+);

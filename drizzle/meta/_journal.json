@@ -22,6 +22,27 @@
       "when": 1773585920357,
       "tag": "0002_organic_stellaris",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1773777894676,
+      "tag": "0003_slimy_morgan_stark",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1773837313597,
+      "tag": "0004_shallow_vermin",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1773926904973,
+      "tag": "0005_youthful_stick",
+      "breakpoints": true
     }
   ]
 }

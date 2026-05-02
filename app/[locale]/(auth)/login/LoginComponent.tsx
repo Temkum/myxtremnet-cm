@@ -378,7 +378,7 @@ export function LoginComponent() {
                 type="text"
                 inputMode="numeric"
                 maxLength={6}
-                placeholder="123456"
+                placeholder="988657"
                 autoComplete="one-time-code"
                 className="text-center tracking-[0.5em] text-lg font-mono"
                 {...otpForm.register('code')}

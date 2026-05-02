@@ -77,7 +77,7 @@ export function UserHeader() {
         {/* Logo */}
         <Link href="/" className="flex items-center gap-3">
           <Image
-            src="/camtel.png"
+            src="/camtel.webp"
             alt="Camtel"
             width={48}
             height={48}
@@ -183,13 +183,13 @@ export function UserHeader() {
                 </div>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
-                  <Link href="/dashboard/account">
+                  <Link href="/users/account">
                     <User className="mr-2 h-4 w-4" />
                     {t('User.profile')}
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link href="/dashboard/settings">
+                  <Link href="/users/settings">
                     <Key className="mr-2 h-4 w-4" />
                     {t('User.changePassword')}
                   </Link>
@@ -239,7 +239,7 @@ export function UserHeader() {
                 <nav className="flex flex-col gap-1">
                   {navigation.map((item) => {
                     const isActive =
-                      item.href === '/dashboard'
+                      item.href === '/users'
                         ? nextIntlPathname === item.href
                         : nextIntlPathname === item.href ||
                           nextIntlPathname.startsWith(item.href + '/');
@@ -262,22 +262,31 @@ export function UserHeader() {
                     );
                   })}
                 </nav>
-                <div className="mt-auto pt-4 border-t border-border">
-                  <div className="flex items-center gap-2 px-3 text-sm">
+                <div className="mt-auto pt-6 border-t border-border">
+                  <p className="text-xs font-semibold uppercase text-muted-foreground mb-3 px-3">
+                    {t('Language.language')}
+                  </p>
+                  <div className="flex items-center gap-4 px-3">
                     <button
-                      onClick={() => handleLanguageChange('fr')}
-                      className={
-                        locale === 'fr'
-                          ? 'text-blue-500 hover:text-primary'
-                          : ''
-                      }
+                      onClick={() => handleLanguageChange('en')}
+                      className={cn(
+                        'text-sm font-medium transition-colors',
+                        locale === 'en'
+                          ? 'text-primary'
+                          : 'text-muted-foreground hover:text-foreground',
+                      )}
                     >
                       {t('Language.english')}
                     </button>
-                    <span>|</span>
+                    <div className="h-4 w-[1px] bg-border" />
                     <button
                       onClick={() => handleLanguageChange('fr')}
-                      className="hover:text-primary"
+                      className={cn(
+                        'text-sm font-medium transition-colors',
+                        locale === 'fr'
+                          ? 'text-primary'
+                          : 'text-muted-foreground hover:text-foreground',
+                      )}
                     >
                       {t('Language.french')}
                     </button>

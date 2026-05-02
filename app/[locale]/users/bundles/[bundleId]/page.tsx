@@ -17,7 +17,7 @@ export default function BundleDetails() {
     <div className="max-w-2xl mx-auto py-12 px-6">
       <Button variant="ghost" className="mb-6 -ml-4">
         <ArrowLeft className="mr-2 h-4 w-4" />
-        <Link href="/dashboard/bundles">{t('backToOffers')}</Link>
+        <Link href="/users/bundles">{t('backToOffers')}</Link>
       </Button>
 
       <div className="space-y-6">
@@ -55,7 +55,7 @@ export default function BundleDetails() {
           <Button className="flex-1 h-12 text-lg">
             {t('confirmSubscription')}
           </Button>
-          <Link href="/dashboard/bundles">
+          <Link href="/users/bundles">
             <Button
               variant="outline"
               className="flex-1 h-12 text-lg text-destructive"

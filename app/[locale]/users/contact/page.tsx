@@ -176,7 +176,7 @@ export default function FAQPage() {
           </p>
         </div>
         <Button variant="outline" asChild>
-          <Link href="/dashboard/support">
+          <Link href="/users/support">
             <MessageSquare className="h-4 w-4 mr-2" />
             Contact Support
           </Link>
@@ -342,7 +342,7 @@ export default function FAQPage() {
                 here to help.
               </p>
               <Button variant="secondary" asChild>
-                <Link href="/dashboard/support">
+                <Link href="/users/support">
                   <MessageSquare className="h-4 w-4 mr-2" />
                   Submit a Request
                 </Link>

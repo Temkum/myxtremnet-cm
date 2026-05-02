@@ -7,7 +7,10 @@ const querySchema = z.object({
   phone: z
     .string()
     .min(1)
-    .regex(/^\+[1-9]\d{7,14}$/, 'Invalid phone number'),
+    .regex(
+      /^\+2376\d{8}$/,
+      'Invalid phone number format. Must be +2376XXXXXXXX',
+    ),
 });
 
 // In-process rate limit — one IP gets max 10 reads per 10-min window.
@@ -34,6 +37,14 @@ function isRateLimited(ip: string): boolean {
 }
 
 export async function GET(request: NextRequest) {
+  // Disable OTP display in production for security
+  if (process.env.NODE_ENV === 'production') {
+    return NextResponse.json(
+      { message: 'OTP display is disabled in production' },
+      { status: 403 },
+    );
+  }
+
   // Get translations for error messages
   const t = await getTranslations('Auth');
 

@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -34,7 +33,7 @@ export default function AuditPage() {
   const t = useTranslations('Audit');
 
   return (
-    <>
+    <div className="p-12">
       <div className="container mx-auto px-4 py-6 space-y-6">
         {/* Page Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -67,7 +66,7 @@ export default function AuditPage() {
       </div>
 
       {/* Search and Statistics */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
@@ -234,6 +233,6 @@ export default function AuditPage() {
           </div>
         </CardContent>
       </Card>
-    </>
+    </div>
   );
 }

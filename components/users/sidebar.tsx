@@ -1,185 +1,221 @@
 'use client';
 
-import React from 'react';
-
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import {
-  Wifi,
-  Radio,
-  Router,
-  Satellite,
-  Package,
   CreditCard,
   History,
   RefreshCw,
-  HelpCircle,
-  MessageSquare,
-  Phone,
   ChevronRight,
+  Menu,
+  X,
 } from 'lucide-react';
 import { Button } from '../ui/button';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
-const offerLinks = [
-  { name: 'LTE SERVICE', href: '/dashboard/services/lte', icon: Radio },
-  {
-    name: 'WTTx Outdoor',
-    href: '/dashboard/services/wttx-outdoor',
-    icon: Satellite,
-  },
-  {
-    name: 'WTTx Indoor',
-    href: '/dashboard/services/wttx-indoor',
-    icon: Router,
-  },
-  { name: 'UL Service', href: '/dashboard/services/ul', icon: Wifi },
-];
+// Constants
+const HEADER_HEIGHT = '4rem'; // 64px
+const SIDEBAR_COLLAPSE_DELAY = 200; // ms
 
-const packageLinks = [
-  { name: 'LTE SERVICE', href: '/dashboard/packages/lte', icon: Radio },
-  {
-    name: 'WTTx Outdoor',
-    href: '/dashboard/packages/wttx-outdoor',
-    icon: Satellite,
-  },
-  {
-    name: 'WTTx Indoor',
-    href: '/dashboard/packages/wttx-indoor',
-    icon: Router,
-  },
-  { name: 'UL Service', href: '/dashboard/packages/ul', icon: Wifi },
-];
-
-const serviceLinks = [
-  { name: 'Account Information', href: '/dashboard/account', icon: CreditCard },
-  { name: 'Order History', href: '/dashboard/orders', icon: History },
-  { name: 'Recharge', href: '/dashboard/recharge', icon: RefreshCw },
-];
-
-const supportLinks = [
-  { name: 'FAQ', href: '/dashboard/faq', icon: HelpCircle },
-  { name: 'Feedback', href: '/dashboard/support', icon: MessageSquare },
-  { name: 'Contact Us', href: '/dashboard/contact', icon: Phone },
-];
-
-interface SidebarSectionProps {
-  title: string;
-  links: { name: string; href: string; icon: React.ElementType }[];
-  variant?: 'offers' | 'packages' | 'service' | 'support';
+// Types
+interface NavLink {
+  name: string;
+  href: string;
+  icon: React.ElementType;
 }
 
-function SidebarSection({
-  title,
-  links,
-  variant = 'offers',
-}: SidebarSectionProps) {
-  const pathname = usePathname();
+// Data
+const navLinks: NavLink[] = [
+  { name: 'Account Information', href: '/users/account', icon: CreditCard },
+  { name: 'Order History', href: '/users/orders', icon: History },
+  { name: 'Recharge', href: '/users/recharge', icon: RefreshCw },
+];
 
-  const variantColors = {
-    offers: 'border-l-primary',
-    packages: 'border-l-accent',
-    service: 'border-l-chart-3',
-    support: 'border-l-chart-4',
-  };
-
-  return (
-    <Card className="overflow-hidden">
-      <CardHeader
-        className={cn('py-3 px-4 border-l-4', variantColors[variant])}
-      >
-        <CardTitle className="text-sm font-semibold">{title}</CardTitle>
-      </CardHeader>
-      <CardContent className="p-0">
-        <nav className="flex flex-col">
-          {links.map((item) => {
-            const isActive = pathname === item.href;
-            const Icon = item.icon;
-            return (
-              <Link
-                key={item.name}
-                href={item.href}
-                className={cn(
-                  'flex items-center justify-between px-4 py-2.5 text-sm transition-colors border-b border-border last:border-b-0',
-                  isActive
-                    ? 'bg-primary/10 text-primary font-medium'
-                    : 'text-foreground hover:bg-secondary',
-                )}
-              >
-                <div className="flex items-center gap-2">
-                  <Icon className="h-4 w-4" />
-                  <span>{item.name}</span>
-                </div>
-                <ChevronRight className="h-4 w-4 text-muted-foreground" />
-              </Link>
-            );
-          })}
-        </nav>
-      </CardContent>
-    </Card>
-  );
+// Utility hook for preventing body scroll
+function useBodyScrollLock(lock: boolean) {
+  useEffect(() => {
+    if (lock) {
+      const originalOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = originalOverflow;
+      };
+    }
+    return undefined;
+  }, [lock]);
 }
 
+// Main DashboardSidebar Component
 export function DashboardSidebar() {
-  return (
-    <aside className="w-full lg:w-72 space-y-4">
-      <SidebarSection title="Offers" links={offerLinks} variant="offers" />
-      <SidebarSection
-        title="Packages"
-        links={packageLinks}
-        variant="packages"
-      />
-      <SidebarSection title="Service" links={serviceLinks} variant="service" />
-      <SidebarSection title="Support" links={supportLinks} variant="support" />
-    </aside>
-  );
-}
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const collapseTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-export function QuickFAQ() {
-  const faqs = [
-    'How do I change my default password?',
-    "What's to do if I've forgot my password?",
-    'How do I pay for my X-tremNet services?',
-    'How do I monitor my consumption?',
-  ];
+  // Prevent body scroll when mobile menu is open
+  useBodyScrollLock(isMobileMenuOpen);
+
+  // Debounced collapse handlers
+  const handleMouseEnter = useCallback(() => {
+    if (collapseTimeoutRef.current) {
+      clearTimeout(collapseTimeoutRef.current);
+    }
+    setIsCollapsed(false);
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    collapseTimeoutRef.current = setTimeout(() => {
+      setIsCollapsed(true);
+    }, SIDEBAR_COLLAPSE_DELAY);
+  }, []);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (collapseTimeoutRef.current) {
+        clearTimeout(collapseTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  // Close mobile menu on route change
+  const pathname = usePathname();
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [pathname]);
 
   return (
-    <Card>
-      <CardHeader className="py-3 px-4 border-l-4 border-l-accent">
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-sm font-semibold">FAQ</CardTitle>
-          <Link
-            href="/dashboard/faq"
-            className="text-xs text-primary hover:underline"
+    <>
+      {/* Mobile Menu Toggle Button (FAB) */}
+      <Button
+        variant="default"
+        size="icon"
+        className={cn(
+          'lg:hidden fixed bottom-6 right-6 z-50 rounded-full shadow-2xl h-12 w-12 bg-primary text-primary-foreground',
+          'hover:scale-110 transition-transform',
+          'focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2',
+        )}
+        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        aria-label={
+          isMobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'
+        }
+        aria-expanded={isMobileMenuOpen}
+      >
+        {isMobileMenuOpen ? (
+          <X className="h-6 w-6" aria-hidden="true" />
+        ) : (
+          <Menu className="h-6 w-6" aria-hidden="true" />
+        )}
+      </Button>
+
+      {/* Sidebar */}
+      <aside
+        className={cn(
+          'fixed lg:sticky top-16 left-0 z-40 bg-background border-r border-border overflow-y-auto transition-all duration-300 ease-in-out flex flex-col gap-4',
+          'scrollbar-thin scrollbar-thumb-muted-foreground/20 scrollbar-track-transparent',
+          `h-[calc(100vh-${HEADER_HEIGHT})]`,
+          isMobileMenuOpen
+            ? 'translate-x-0 w-72 p-4 shadow-2xl'
+            : '-translate-x-full lg:translate-x-0',
+          isCollapsed ? 'lg:w-20 lg:p-2' : 'lg:w-72 lg:p-4',
+        )}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        aria-label="Dashboard navigation"
+        role="complementary"
+      >
+        {/* Mobile/Tablet Header in Sidebar */}
+        <div className="lg:hidden flex justify-between items-center mb-4 border-b pb-4">
+          <span className="font-bold text-lg text-primary">Menu</span>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setIsMobileMenuOpen(false)}
+            aria-label="Close navigation menu"
           >
-            <Button variant="ghost" size="sm">
-              View All
-            </Button>
-          </Link>
+            <X className="h-5 w-5" aria-hidden="true" />
+          </Button>
         </div>
-      </CardHeader>
-      <CardContent className="p-4">
-        <ul className="space-y-2">
-          {faqs.map((faq, index) => (
-            <li key={index} className="flex items-start gap-2 text-sm">
-              <Badge
-                variant="outline"
-                className="h-5 min-w-5 flex items-center justify-center text-xs"
-              >
-                {index + 1}
-              </Badge>
-              <Link
-                href="/dashboard/faq"
-                className="text-muted-foreground hover:text-primary"
-              >
-                {faq}
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </CardContent>
-    </Card>
+
+        {/* Navigation Links */}
+        <nav
+          className="flex-1 space-y-1"
+          role="navigation"
+          aria-label="Dashboard navigation"
+        >
+          <TooltipProvider>
+            {navLinks.map((item) => {
+              const isActive =
+                pathname === item.href || pathname.endsWith(item.href);
+              const Icon = item.icon;
+
+              // For collapsed state on desktop, wrap in tooltip
+              if (isCollapsed) {
+                return (
+                  <Tooltip key={item.name} delayDuration={300}>
+                    <TooltipTrigger asChild>
+                      <Link
+                        href={item.href}
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className={cn(
+                          'flex items-center justify-center px-3 py-3 rounded-lg text-sm transition-colors',
+                          isActive
+                            ? 'bg-primary text-primary-foreground'
+                            : 'text-foreground hover:bg-secondary',
+                        )}
+                        aria-label={item.name}
+                        aria-current={isActive ? 'page' : undefined}
+                      >
+                        <Icon className="h-5 w-5" />
+                      </Link>
+                    </TooltipTrigger>
+                    <TooltipContent side="right">
+                      <p>{item.name}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                );
+              }
+
+              return (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className={cn(
+                    'flex items-center justify-between px-4 py-3 rounded-lg text-sm transition-colors',
+                    isActive
+                      ? 'bg-primary text-primary-foreground font-medium'
+                      : 'text-foreground hover:bg-secondary',
+                  )}
+                  aria-current={isActive ? 'page' : undefined}
+                >
+                  <div className="flex items-center gap-3">
+                    <Icon className="h-4 w-4" aria-hidden="true" />
+                    <span>{item.name}</span>
+                  </div>
+                </Link>
+              );
+            })}
+          </TooltipProvider>
+        </nav>
+      </aside>
+
+      {/* Mobile/Tablet Overlay */}
+      {isMobileMenuOpen && (
+        <div
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-30 lg:hidden transition-opacity duration-300"
+          onClick={() => setIsMobileMenuOpen(false)}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Close navigation menu"
+        />
+      )}
+    </>
   );
 }
