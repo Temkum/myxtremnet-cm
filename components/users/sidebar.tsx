@@ -31,11 +31,18 @@ interface NavLink {
   icon: React.ElementType;
 }
 
-// Data
+// Data — all available user routes
 const navLinks: NavLink[] = [
+  { name: 'Dashboard', href: '/users', icon: CreditCard },
   { name: 'Account Information', href: '/users/account', icon: CreditCard },
   { name: 'Order History', href: '/users/orders', icon: History },
   { name: 'Recharge', href: '/users/recharge', icon: RefreshCw },
+  { name: 'Bundles', href: '/users/bundles', icon: RefreshCw },
+  { name: 'Services', href: '/users/services', icon: RefreshCw },
+  { name: 'Support', href: '/users/support', icon: RefreshCw },
+  { name: 'FAQ', href: '/users/faq', icon: RefreshCw },
+  { name: 'Contact', href: '/users/contact', icon: RefreshCw },
+  { name: 'Settings', href: '/users/settings', icon: RefreshCw },
 ];
 
 // Utility hook for preventing body scroll
