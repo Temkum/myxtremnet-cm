@@ -37,14 +37,6 @@ function isRateLimited(ip: string): boolean {
 }
 
 export async function GET(request: NextRequest) {
-  // Disable OTP display in production for security
-  if (process.env.NODE_ENV === 'production') {
-    return NextResponse.json(
-      { message: 'OTP display is disabled in production' },
-      { status: 403 },
-    );
-  }
-
   // Get translations for error messages
   const t = await getTranslations('Auth');
 

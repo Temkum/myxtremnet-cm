@@ -111,11 +111,11 @@ export const auth = betterAuth({
             },
           });
 
-        // In development: log OTP to console and display endpoint for testing
-        if (process.env.NODE_ENV === 'development') {
-          console.log(`\n📱 OTP for ${phone}: ${code}\n`);
-          return;
-        }
+        // Log OTP to console and display endpoint for testing
+        // TODO: Remove this before actual production launch — users should receive
+        // the OTP via SMS only. The on-screen display is a temporary convenience.
+        console.log(`\n📱 OTP for ${phone}: ${code}\n`);
+        return;
 
         // ---- Production: Africa's Talking (common in Cameroon) ----
         // Uncomment and configure when ready for production:
@@ -144,14 +144,6 @@ export const auth = betterAuth({
         //   to: phone,
         // });
         // return;
-
-        // If we reach here, no SMS provider is configured.
-        // In production, this should never happen — configure one of the above.
-        if (process.env.NODE_ENV === 'production') {
-          throw new Error(
-            "No SMS provider configured. Set up Africa's Talking or Twilio in lib/auth.ts.",
-          );
-        }
       },
 
       // Brute-force protection — 3 wrong attempts invalidates the OTP
