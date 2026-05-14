@@ -111,15 +111,15 @@ export const auth = betterAuth({
             },
           });
 
-        if (
-          process.env.NODE_ENV === 'development' ||
-          process.env.NODE_ENV === 'production'
-        ) {
+        // In development: log OTP to console and display endpoint for testing
+        if (process.env.NODE_ENV === 'development') {
           console.log(`\n📱 OTP for ${phone}: ${code}\n`);
           return;
         }
 
         // ---- Production: Africa's Talking (common in Cameroon) ----
+        // Uncomment and configure when ready for production:
+        //
         // pnpm add africastalking
         // const AfricasTalking = require("africastalking");
         // const at = AfricasTalking({
@@ -131,8 +131,11 @@ export const auth = betterAuth({
         //   message: `Your Camtel verification code is: ${code}. Valid for 10 minutes.`,
         //   from: process.env.AT_SENDER_ID,
         // });
+        // return;
 
         // ---- Production: Twilio ----
+        // Uncomment and configure when ready for production:
+        //
         // pnpm add twilio
         // const twilio = require("twilio")(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
         // await twilio.messages.create({
@@ -140,10 +143,15 @@ export const auth = betterAuth({
         //   from: process.env.TWILIO_PHONE_NUMBER,
         //   to: phone,
         // });
+        // return;
 
-        throw new Error(
-          "No SMS provider configured. Set up Africa's Talking or Twilio in lib/auth.ts.",
-        );
+        // If we reach here, no SMS provider is configured.
+        // In production, this should never happen — configure one of the above.
+        if (process.env.NODE_ENV === 'production') {
+          throw new Error(
+            "No SMS provider configured. Set up Africa's Talking or Twilio in lib/auth.ts.",
+          );
+        }
       },
 
       // Brute-force protection — 3 wrong attempts invalidates the OTP
